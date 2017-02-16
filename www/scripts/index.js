@@ -2,8 +2,22 @@
  * Created by S on 2017/2/16.
  */
 $(function(){
-    var dg = $('#person-lists');
 
+    function getData(){
+			var rows = [];
+            $.get('/members',function(data){
+                for(var i=0;i<data.length;i++){
+                    rows.push({
+                        id:data[i]._id,
+                        rev:data[i]._rev,
+                        name:data[i].name,
+                        age:data[i].age
+                    });
+                }
+            });
+			return rows;
+		};
+    var dg = $('#person-lists');
         dg.datagrid({
             iconCls: 'icon-ok',
             height: 325,
@@ -21,14 +35,10 @@ $(function(){
             multiSort: true,
             //fitColumn: true,
             columns: [[
-                {field: 'identification', hidden: true},
-                {field: 'ck', checkbox: true},
-                {field: 'buyerType', title: '购买方类型编码', width: 110, align: 'left', sortable: true},
-                {field: 'buyerTypeName', title: '购买方类型', width: 100, align: 'left', sortable: true},
-                {field: 'dataTime', title: '时间', width: 110, align: 'left', sortable: true},
-                {field: 'noAgreeContent', title: '驳回内容', width: 120, align: 'left', sortable: true},
-                {field: 'mineUploadName', title: '创建人', width: 80, align: 'left', sortable: true},
-                {field: 'organName', title: '所属单位', width: 100, align: 'left', sortable: true},
+                {field: 'id', hidden: true},
+                {field: 'rev', checkbox: true},
+                {field: 'name', title: '姓名', width: 110, align: 'left', sortable: true},
+                {field: 'age', title: '年龄', width: 100, align: 'left', sortable: true}
             ]],
 //        loader: function (param, success, error) {
 //            var defaultUrl = '/bangDan/page';
