@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from commons import couch_db, make_uuid
 
+
 def get_now():
     return datetime.now().isoformat()
 
@@ -32,6 +33,7 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
         member['_id'] = make_uuid()
         couch_db.post(r'/jsmm/', member)
 
+
 @tornado_utils.bind_to(r'/members/([0-9a-f]+)')
 class MemberHandler(tornado.web.RequestHandler):
     def get(self, member_id):
@@ -48,7 +50,7 @@ class MemberHandler(tornado.web.RequestHandler):
         member = json.loads(self.request.body.decode('utf-8'))
         member['type'] = 'member'
         member['_id'] = member_id
-        couch_db.put(r'/jsmm/', member)
+        couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, member)
 
     def delete(self, member_id):
         '''
