@@ -8,6 +8,7 @@ from commons import couch_db, make_uuid
 def get_now():
     return datetime.now().isoformat()
 
+
 @tornado_utils.bind_to(r'/members/?')
 class MemberCollectionHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
