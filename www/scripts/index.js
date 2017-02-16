@@ -5,6 +5,20 @@ $(function () {
     var gridHeight = ($('#persons').height());
     var dg = $('#person-lists');
 
+    var toolbar = [{
+			text:'Add',
+			iconCls:'icon-add',
+			handler:function(){alert('add')}
+		},'-',{
+			text:'Cut',
+			iconCls:'icon-cut',
+			handler:function(){alert('cut')}
+		},'-',{
+			text:'Save',
+			iconCls:'icon-save',
+			handler:function(){alert('save')}
+		}];
+
     dg.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
@@ -19,6 +33,7 @@ $(function () {
         remoteSort: true,
         multiSort: true,
         //fitColumn: true,
+        toolbar: toolbar,
         columns: [[
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
@@ -84,5 +99,7 @@ $(function () {
     function getDataTime(value, row, index) {
         return row.dataTime.substr(0, 8);
     }
+
+
 
 });
