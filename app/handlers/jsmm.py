@@ -39,6 +39,7 @@ class MemberHandler(tornado.web.RequestHandler):
         获取_id为member_id的member对象。
         '''
         response = couch_db.get(r'/jsmm/%(id)s' % {"id": member_id})
+        print('test')
         self.write(response.body.decode('utf-8'))
 
     def put(self, member_id):
