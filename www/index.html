@@ -12,11 +12,107 @@
 </head>
 <body class="easyui-layout">
 	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">north region</div>
-	<div data-options="region:'west',collapsible:false,title:'West'" style="width:150px;padding:10px;">west content</div>
+    <div data-options="region:'west',collapsible:false,title:'West'" style="width:15%">west content</div>
 	<div data-options="region:'south',border:false" style="height:50px;background:#A9FACD;padding:10px;">south region</div>
-	<div data-options="region:'center',title:'社员信息列表'" class="easyui-layout">
-        <div data-options="region:'north'" style="height:350px;">aa aa</div>
+    <div data-options="region:'center',title:'社员信息列表'" style="width: 85%" class="easyui-layout">
+        <div id="persons" data-options="region:'north'" style="height:350px;">
+            <div id="person-lists" style="width: 100%"></div>
+        </div>
         <div data-options="region:'south'" style="height:200px;">bb bb</div>
     </div>
+
+    <script type="text/javascript">
+        var dg = $('#person-lists');
+        var gridHeight = ($('#persons').height() - 50);
+
+        dg.datagrid({
+            iconCls: 'icon-ok',
+            height: gridHeight,
+            //singleSelect: true,
+            rownumbers: true,
+            pageSize: 20,
+//        pageList: [10, 20, 30, 40, 50],
+            nowrap: true,
+            striped: true,
+            //url: '/system/accountsPage',
+            loadMsg: '数据装载中......',
+            pagination: true,
+            //idField: 'id',
+            allowSorts: true,
+            remoteSort: true,
+            multiSort: true,
+            //fitColumn: true,
+            columns: [[
+                {field: 'identification', hidden: true},
+                {field: 'ck', checkbox: true},
+                {field: 'dataStatus', title: '状态', width: 60, align: 'left', sortable: true, formatter: getDataStatus},
+                {
+                    field: 'reallyBusinessDate',
+                    title: '业务日期',
+                    width: 80,
+                    align: 'left',
+                    sortable: true,
+                    formatter: getDataTime
+                },
+                {field: 'mineName', title: '煤矿编码', width: 80, align: 'left', sortable: true},
+                {field: 'mineNameName', title: '煤矿名称', width: 130, align: 'left', sortable: true},
+                {field: 'varietyCoal', title: '煤种编码', width: 80, align: 'left', sortable: true},
+                {field: 'varietyCoalName', title: '煤种名称', width: 80, align: 'left', sortable: true},
+                {field: 'tonnage', title: '吨数', width: 100, align: 'left', sortable: true},
+                {field: 'loadingPoint', title: '装车点', width: 80, align: 'left', sortable: true},
+                {field: 'exitport', title: '出省口编码', width: 200, align: 'left', sortable: true},
+                {field: 'exitportName', title: '出省口', width: 80, align: 'left', sortable: true},
+                {field: 'unloadingPoint', title: '卸车点', width: 100, align: 'left', sortable: true},
+                {field: 'buyerName', title: '购买方名称', width: 200, align: 'left', sortable: true},
+                {field: 'buyerType', title: '购买方类型编码', width: 110, align: 'left', sortable: true},
+                {field: 'buyerTypeName', title: '购买方类型', width: 100, align: 'left', sortable: true},
+                {field: 'buyerAddress', title: '购买方所在地编码', width: 130, align: 'left', sortable: true},
+                {field: 'buyerAddressName', title: '购买方所在地', width: 100, align: 'left', sortable: true},
+                {field: 'contractNum', title: '合同编号', width: 100, align: 'left', sortable: true},
+                {field: 'carNum', title: '车牌号', width: 100, align: 'left', sortable: true},
+                {field: 'dataTime', title: '时间', width: 110, align: 'left', sortable: true},
+                {field: 'noAgreeContent', title: '驳回内容', width: 120, align: 'left', sortable: true},
+                {field: 'mineUploadName', title: '创建人', width: 80, align: 'left', sortable: true},
+                {field: 'organName', title: '所属单位', width: 100, align: 'left', sortable: true},
+            ]],
+//        loader: function (param, success, error) {
+//            var defaultUrl = '/bangDan/page';
+//            var jsonResult = JSON.stringify(param);
+//            $.post(defaultUrl, jsonResult, function (data) {
+//                if (data.success) {
+//                    utils.fastJson.format(data);
+//                    success(data.data)
+//                } else {
+//                    utils.modal.message('create', error);
+//                }
+//            }, 'json');
+//        },
+            onCheck: function (index, row) {
+                choiceRows = dg.datagrid("getChecked");
+                buttonStatus(choiceRows);
+            },
+            onUncheck: function (index, row) {
+                choiceRows = dg.datagrid("getChecked");
+                buttonStatus(choiceRows);
+            },
+            onCheckAll: function (rows) {
+                choiceRows = dg.datagrid("getChecked");
+                buttonStatus(choiceRows);
+            },
+            onUncheckAll: function (rows) {
+                choiceRows = null;
+                buttonStatus(choiceRows);
+            }
+        });
+
+        function getDataStatus(value, row, index) {
+            return utils.changeDataStatus(row.dataStatus);
+        }
+
+        function getDataTime(value, row, index) {
+            return row.dataTime.substr(0, 8);
+        }
+
+    </script>
 </body>
 </html>
