@@ -17,10 +17,11 @@ $(function(){
             });
 			return rows;
 		};
+    var gridHeight = ($('#persons').height());
     var dg = $('#person-lists');
         dg.datagrid({
             iconCls: 'icon-ok',
-            height: 325,
+            height: gridHeight,
             rownumbers: true,
             pageSize: 20,
 //        pageList: [10, 20, 30, 40, 50],
@@ -38,7 +39,8 @@ $(function(){
                 {field: 'id', hidden: true},
                 {field: 'rev', checkbox: true},
                 {field: 'name', title: '姓名', width: 110, align: 'left', sortable: true},
-                {field: 'age', title: '年龄', width: 100, align: 'left', sortable: true}
+                {field: 'age', title: '年龄', width: 100, align: 'left', sortable: true},
+
             ]],
 //        loader: function (param, success, error) {
 //            var defaultUrl = '/bangDan/page';
