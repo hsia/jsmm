@@ -6,8 +6,10 @@ from tornado.web import StaticFileHandler
 
 registered_handlers = []
 
+
 def register(pattern, handler):
     registered_handlers.append((pattern, handler))
+
 
 def bind_to(pattern):
   def append(handler):
