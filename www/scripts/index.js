@@ -4,6 +4,8 @@
 $(function () {
     var gridHeight = ($('#persons').height());
     var dg = $('#person-lists');
+    //存放选中的数据行
+    var choiceRows = {};
 
     var toolbar = [{
         text: '添加',
@@ -12,15 +14,15 @@ $(function () {
             $('#member-dialog').dialog({
                 width: 800,
                 height: 630,
-                title:'添加社员',
+                title: '添加社员',
                 closed: false,
                 cache: false,
                 modal: true,
-                buttons:[{
-                    text:'保存'
-                },{
-                    text:'取消',
-                    handler:function(){
+                buttons: [{
+                    text: '保存'
+                }, {
+                    text: '取消',
+                    handler: function () {
                         $('#member-dialog').closed();
                     }
                 }]
@@ -30,7 +32,7 @@ $(function () {
         text: '删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            alert('cut')
+            removeItem();
         }
     }, '-', {
         text: 'Save',
@@ -56,6 +58,7 @@ $(function () {
         //fitColumn: true,
         toolbar: toolbar,
         columns: [[
+            {field: 'ck', checkbox: true},
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, align: 'left'},
@@ -97,29 +100,48 @@ $(function () {
         },
         onCheck: function (index, row) {
             choiceRows = dg.datagrid("getChecked");
-            buttonStatus(choiceRows);
+            console.log(choiceRows);
         },
         onUncheck: function (index, row) {
             choiceRows = dg.datagrid("getChecked");
-            buttonStatus(choiceRows);
+            console.log(choiceRows);
         },
         onCheckAll: function (rows) {
             choiceRows = dg.datagrid("getChecked");
-            buttonStatus(choiceRows);
+            console.log(choiceRows);
         },
         onUncheckAll: function (rows) {
             choiceRows = null;
-            buttonStatus(choiceRows);
+            console.log(choiceRows);
         }
     });
 
-    function getDataStatus(value, row, index) {
-        return utils.changeDataStatus(row.dataStatus);
+    function removeItem() {
+        var selectList = idList(choiceRows);
+
+        if(selectList == null || selectList.length <= 0){
+            console.log("请选择需要删除的数据")
+            return false;
+        }
+        $.ajax({
+            url: '/members',
+            type: 'DELETE',
+            data: JSON.stringify(selectList),
+            success: function (data) {
+                dg.datagrid({reload: true});
+            },
+            error: function (data) {
+                console.log("error : " + selectList);
+            }
+        });
     }
 
-    function getDataTime(value, row, index) {
-        return row.dataTime.substr(0, 8);
+    function idList(choiceRows) {
+        var ids = [];
+        $.each(choiceRows, function (index, value) {
+            ids.push(value._id);
+        })
+        return ids;
     }
-
 
 });

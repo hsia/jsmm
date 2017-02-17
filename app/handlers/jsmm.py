@@ -34,6 +34,16 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
         member['_id'] = make_uuid()
         couch_db.post(r'/jsmm/', member)
 
+    def delete(self):
+        '''
+        删除一个或多个member对象
+        '''
+        memberIds = json.loads(self.request.body.decode('utf-8'))
+
+        for memberId in memberIds:
+            response = couch_db.get(r'/jsmm/%(id)s' % {'id': memberId})
+            member = json.loads(response.body.decode('utf-8'))
+            couch_db.delete(r'/jsmm/%(id)s?rev=%(rev)s' % {'id': memberId, 'rev': member['_rev']})
 
 @tornado_utils.bind_to(r'/members/([0-9a-f]+)')
 class MemberHandler(tornado.web.RequestHandler):
