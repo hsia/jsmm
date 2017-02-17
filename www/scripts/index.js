@@ -11,11 +11,19 @@ $(function () {
         handler: function () {
             $('#member-dialog').dialog({
                 width: 800,
-                height: 600,
+                height: 630,
                 title:'添加社员',
                 closed: false,
                 cache: false,
-                modal: true
+                modal: true,
+                buttons:[{
+                    text:'保存'
+                },{
+                    text:'取消',
+                    handler:function(){
+                        $('#member-dialog').closed();
+                    }
+                }]
             });
         }
     }, '-', {
