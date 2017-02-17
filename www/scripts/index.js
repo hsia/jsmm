@@ -6,12 +6,12 @@ $(function () {
     var dg = $('#person-lists');
 
     var toolbar = [{
-			text:'Add',
+			text:'添加',
 			iconCls:'icon-add',
 			handler:function(){alert('add')}
 		},'-',{
-			text:'Cut',
-			iconCls:'icon-cut',
+			text:'删除',
+			iconCls:'icon-cancel',
 			handler:function(){alert('cut')}
 		},'-',{
 			text:'Save',
