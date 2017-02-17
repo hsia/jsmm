@@ -7,6 +7,16 @@ $(function () {
     //存放选中的数据行
     var choiceRows = {};
 
+    $("#member-form").submit(function (event) {
+        event.preventDefault();
+        var formData = $(this).serializeArray();
+        var memberInfo = {};
+        $.each(formData, function (index, element) {
+            memberInfo[element.name] = element.value;
+        });
+        $.post('/members/', JSON.stringify(memberInfo), function(){})
+    });
+
     var toolbar = [{
         text: '添加',
         iconCls: 'icon-add',
@@ -19,7 +29,11 @@ $(function () {
                 cache: false,
                 modal: true,
                 buttons: [{
-                    text: '保存'
+                    iconCls: 'icon-ok',
+                    text: '保存',
+                    handler: function () {
+                        $('#member-form').trigger('submit');
+                    }
                 }, {
                     text: '取消',
                     handler: function () {
