@@ -76,7 +76,8 @@ $(function () {
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, align: 'left'},
-            {field: 'age', title: '年龄', width: 100, align: 'left'}
+            {field: 'gender', title: '性别', width: 50, align: 'left'},
+            {field: 'birthday', title: '出生日期', width: 120, align: 'left'}
         ]],
         loader: function (param, success) {
             var defaultUrl = '/members';

@@ -30,7 +30,6 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
         创建member对象。
         '''
         member = json.loads(self.request.body.decode('utf-8'))
-        print(member)
         member['type'] = 'member'
         member['_id'] = make_uuid()
         print(member)
