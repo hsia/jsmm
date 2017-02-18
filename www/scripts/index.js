@@ -37,7 +37,7 @@ $(function () {
                 }, {
                     text: '取消',
                     handler: function () {
-                        $('#member-dialog').closed();
+                        $('#member-dialog').dialog('close');
                     }
                 }]
             });

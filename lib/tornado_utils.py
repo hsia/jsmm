@@ -1,6 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 '''
 Copyright sunhaitao@devTaste.com
 '''
+
 import tornado.web
 from tornado.web import StaticFileHandler
 
