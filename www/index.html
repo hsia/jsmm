@@ -39,10 +39,14 @@
             <input class="easyui-textbox" name="usedName" style="width:100%" data-options="label:'曾用名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="gender" style="width:100%" data-options="label:'性别:',required:true">
+            <select class="easyui-combobox" name="gender" style="width:100%" data-options="label:'性别:',required:true">
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="未知">未知</option>
+            </select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
+            <input class="easyui-datebox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="nativePlace" style="width:100%" data-options="label:'籍贯:',required:true">
@@ -57,7 +61,10 @@
             <input class="easyui-textbox" name="health" style="width:100%" data-options="label:'健康状态:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="marriage" style="width:100%" data-options="label:'婚姻状况:',required:true">
+            <select class="easyui-combobox" name="marriage" style="width:100%" data-options="label:'婚姻状况:',required:true">
+                <option value="已婚">已婚</option>
+                <option value="未婚">未婚</option>
+            </select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="idCard" style="width:100%" data-options="label:'身份证号:',required:true">
@@ -75,7 +82,7 @@
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="branchTime" style="width:100%" data-options="label:'入社时间:',required:true">
+            <input class="easyui-datebox" name="branchTime" style="width:100%" data-options="label:'入社时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="partyCross" style="width:100%" data-options="label:'党派交叉:',required:true">
@@ -90,7 +97,10 @@
             <input class="easyui-textbox" name="department" style="width:100%" data-options="label:'工作部门:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="retire" style="width:100%" data-options="label:'是否办理退休手续:',required:true">
+            <select class="easyui-combobox" name="retire" style="width:100%" data-options="label:'办理退休手续:',required:true">
+                <option value="是">是</option>
+                <option value="否">否</option>
+            </select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="duty" style="width:100%" data-options="label:'职务:',required:true">
