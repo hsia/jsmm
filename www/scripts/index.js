@@ -2,8 +2,8 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
-    var gridHeight = ($('#persons').height());
-    var dg = $('#person-lists');
+    var gridHeight = ($('#members').height());
+    var $memberList = $('#member-list');
     //存放选中的数据行
     var choiceRows = {};
 
@@ -17,7 +17,7 @@ $(function () {
         $.post('/members/', JSON.stringify(memberInfo), function (data) {
             if (data.success == "true") {
                 $('#member-dialog').dialog('close');
-                dg.datagrid({reload: true});
+                $memberList.datagrid({reload: true});
                 $.messager.alert('提示信息', '添加社员成功！','info');
             }
         })
@@ -62,7 +62,7 @@ $(function () {
         }
     }];
 
-    dg.datagrid({
+    $memberList.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
         rownumbers: true,
@@ -104,8 +104,8 @@ $(function () {
                     rows: data
                 }
             }
-            var opts = dg.datagrid('options');
-            var pager = dg.datagrid('getPager');
+            var opts = $memberList.datagrid('options');
+            var pager = $memberList.datagrid('getPager');
             pager.pagination({
                 onSelectPage: function (pageNum, pageSize) {
                     opts.pageNumber = pageNum;
@@ -114,7 +114,7 @@ $(function () {
                         pageNumber: pageNum,
                         pageSize: pageSize
                     });
-                    dg.datagrid('loadData', data);
+                    $memberList.datagrid('loadData', data);
                 }
             });
             if (!data.originalRows) {
@@ -126,15 +126,15 @@ $(function () {
             return data;
         },
         onCheck: function (index, row) {
-            choiceRows = dg.datagrid("getChecked");
+            choiceRows = $memberList.datagrid("getChecked");
             console.log(choiceRows);
         },
         onUncheck: function (index, row) {
-            choiceRows = dg.datagrid("getChecked");
+            choiceRows = $memberList.datagrid("getChecked");
             console.log(choiceRows);
         },
         onCheckAll: function (rows) {
-            choiceRows = dg.datagrid("getChecked");
+            choiceRows = $memberList.datagrid("getChecked");
             console.log(choiceRows);
         },
         onUncheckAll: function (rows) {
@@ -169,7 +169,7 @@ $(function () {
             data: JSON.stringify(selectList),
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                dg.datagrid({reload: true});
+                $memberList.datagrid({reload: true});
                 choiceRows = null
                 $.messager.alert('提示', '<span style="color: green">数据删除成功!</span>');
             },
