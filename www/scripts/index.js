@@ -2,8 +2,8 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
-    var gridHeight = ($('#members').height());
-    var $memberList = $('#member-list');
+    var gridHeight = ($('#persons').height());
+    var dg = $('#person-lists');
     //存放选中的数据行
 
     $("#member-form").submit(function (event) {
@@ -16,7 +16,7 @@ $(function () {
         $.post('/members/', JSON.stringify(memberInfo), function (data) {
             if (data.success == "true") {
                 $('#member-dialog').dialog('close');
-                $memberList.datagrid({reload: true});
+                dg.datagrid({reload: true});
                 $.messager.alert('提示信息', '添加社员成功！','info');
             }
         })
@@ -61,7 +61,7 @@ $(function () {
         }
     }];
 
-    $memberList.datagrid({
+    dg.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
         rownumbers: true,
@@ -100,8 +100,8 @@ $(function () {
                     rows: data
                 }
             }
-            var opts = $memberList.datagrid('options');
-            var pager = $memberList.datagrid('getPager');
+            var opts = dg.datagrid('options');
+            var pager = dg.datagrid('getPager');
             pager.pagination({
                 onSelectPage: function (pageNum, pageSize) {
                     opts.pageNumber = pageNum;
@@ -110,7 +110,7 @@ $(function () {
                         pageNumber: pageNum,
                         pageSize: pageSize
                     });
-                    $memberList.datagrid('loadData', data);
+                    dg.datagrid('loadData', data);
                 }
             });
             if (!data.originalRows) {
@@ -120,25 +120,6 @@ $(function () {
             var end = start + parseInt(opts.pageSize);
             data.rows = (data.originalRows.slice(start, end));
             return data;
-<<<<<<< HEAD
-        },
-        onCheck: function (index, row) {
-            choiceRows = $memberList.datagrid("getChecked");
-            console.log(choiceRows);
-        },
-        onUncheck: function (index, row) {
-            choiceRows = $memberList.datagrid("getChecked");
-            console.log(choiceRows);
-        },
-        onCheckAll: function (rows) {
-            choiceRows = $memberList.datagrid("getChecked");
-            console.log(choiceRows);
-        },
-        onUncheckAll: function (rows) {
-            choiceRows = null;
-            console.log(choiceRows);
-=======
->>>>>>> 77c22911ae49c4a4c8aa40e51f6869784909381a
         }
     });
 
@@ -168,14 +149,8 @@ $(function () {
             type: 'DELETE',
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-<<<<<<< HEAD
-                $memberList.datagrid({reload: true});
-                choiceRows = null
-                $.messager.alert('提示', '<span style="color: green">数据删除成功!</span>');
-=======
                 dg.datagrid({reload: true});
                 $.messager.alert('提示', '数据删除成功!','info');
->>>>>>> 77c22911ae49c4a4c8aa40e51f6869784909381a
             },
             error: function (data) {
                 $.messager.alert('提示', '数据删除失败!','error');
