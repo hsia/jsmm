@@ -14,7 +14,8 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
-        $.post('/members/', JSON.stringify(memberInfo), function(){})
+        $.post('/members/', JSON.stringify(memberInfo), function () {
+        })
     });
 
     var toolbar = [{
@@ -37,7 +38,7 @@ $(function () {
                 }, {
                     text: '取消',
                     handler: function () {
-                        $('#member-dialog').dialog('close');
+                        $('#member-dialog').closed();
                     }
                 }]
             });
@@ -46,7 +47,7 @@ $(function () {
         text: '删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            removeItem();
+            confirmRemove();
         }
     }, '-', {
         text: 'Save',
@@ -76,9 +77,16 @@ $(function () {
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, align: 'left'},
-            {field: 'gender', title: '性别', width: 50, align: 'left'},
-            {field: 'birthday', title: '出生日期', width: 120, align: 'left'},
-            {field: 'idCard', title: '身份证号', width: 120, align: 'left'}
+            {field: 'foreignName', title: '外文名', width: 100, align: 'left'},
+            {field: 'usedName', title: '曾用名', width: 100, align: 'left'},
+            {field: 'gender', title: '性别', width: 100, align: 'left'},
+            {field: 'birthday', title: '出生日期', width: 100, align: 'left'},
+            {field: 'nativePlace', title: '籍贯', width: 100, align: 'left'},
+            {field: 'birthPalace', title: '出生地', width: 100, align: 'left'},
+            {field: 'nation', title: '民族', width: 100, align: 'left'},
+            {field: 'health', title: '健康状态', width: 100, align: 'left'},
+            {field: 'marriage', title: '婚姻状态', width: 100, align: 'left'},
+            {field: 'idCard', title: '公民身份证号', width: 100, align: 'left'},
         ]],
         loader: function (param, success) {
             var defaultUrl = '/members';
@@ -132,26 +140,43 @@ $(function () {
         }
     });
 
-    function removeItem() {
-        var selectList = idList(choiceRows);
-
-        if(selectList == null || selectList.length <= 0){
-            console.log("请选择需要删除的数据")
+    //确认删除
+    function confirmRemove() {
+        //1、先判断是否有选中的数据行
+        if (choiceRows == null || choiceRows.length <= 0) {
+            $.messager.alert('提示', '<span style="color: red">请选择需要删除的数据!</span>');
             return false;
         }
+        //2、将选中数据的_id放入到一个数组中
+        var selectList = idList(choiceRows);
+        //3、提示删除确认
+        $.messager.confirm('删除提示', '确定删除选中的数据?', function (r) {
+            if (r) {
+                //4、确认后，删除选中的数据
+                removeItem(selectList);
+            }
+        });
+    }
+    //删除数据行
+    function removeItem(selectList) {
         $.ajax({
             url: '/members',
             type: 'DELETE',
             data: JSON.stringify(selectList),
             success: function (data) {
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
                 dg.datagrid({reload: true});
+                choiceRows = null
+                return false;
             },
             error: function (data) {
                 console.log("error : " + selectList);
+                return false;
             }
         });
     }
 
+    //将对象中的_id存放到数组中
     function idList(choiceRows) {
         var ids = [];
         $.each(choiceRows, function (index, value) {
@@ -159,5 +184,7 @@ $(function () {
         })
         return ids;
     }
+
+
 
 });
