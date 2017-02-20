@@ -18,9 +18,33 @@ $(function () {
                 $('#member-dialog').dialog('close');
                 $('#member-form').form('clear');
                 $memberList.datagrid({reload: true});
-                $.messager.alert('提示信息', '添加社员成功！','info');
+                $.messager.alert('提示信息', '添加社员成功！', 'info');
             }
         })
+    });
+
+    $("#memberEdit-form").submit(function (event) {
+        event.preventDefault();
+        var formData = $(this).serializeArray();
+        var memberInfo = {};
+        $.each(formData, function (index, element) {
+            memberInfo[element.name] = element.value;
+        });
+        console.log(memberInfo);
+        $.ajax({
+            url: '/members/' + memberInfo._id,
+            type: 'PUT',
+            data: JSON.stringify(memberInfo),
+            success: function (data) {
+                $('#memberEdit-dialog').dialog('close');
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
+                $memberList.datagrid({reload: true});
+                $.messager.alert('提示', '数据更新成功!', 'info');
+            },
+            error: function (data) {
+                $.messager.alert('提示', '数据更新失败!', 'error');
+            }
+        });
     });
 
     var toolbar = [{
@@ -59,7 +83,8 @@ $(function () {
         text: '编辑',
         iconCls: 'icon-edit',
         handler: function () {
-            alert('edit')
+            //后台查询需要编辑的数据的详细信息，并将返回的数据放入到memeberEdit-form中
+            editInfo();
         }
     }];
 
@@ -70,13 +95,13 @@ $(function () {
         pageSize: 10,
         nowrap: true,
         striped: true,
-        fitColumns:true,
+        fitColumns: true,
         loadMsg: '数据装载中......',
         pagination: true,
         allowSorts: true,
         remoteSort: true,
         multiSort: true,
-        singleSelect:true,
+        singleSelect: true,
         toolbar: toolbar,
         columns: [[
             {field: '_id', hidden: true},
@@ -126,12 +151,51 @@ $(function () {
         }
     });
 
+    //编辑数据
+    function editInfo() {
+        //1、先判断是否有选中的数据行
+        var $member = $memberList.datagrid('getSelected');
+        if ($member == null) {
+            $.messager.alert('提示', '请选择需要编辑的数据!', 'error');
+            return;
+        }
+        // 2、 发送异步请求，获得信息数据
+        $.getJSON("/members/" + $member._id, function (data, status) {
+            if (status) {
+                $('#memberEdit-form').form('clear');
+                $('#memberEdit-form').form('load', data);
+                $('#memberEdit-dialog').dialog({
+                width: 800,
+                height: 630,
+                title: '编辑社员',
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons: [{
+                    iconCls: 'icon-ok',
+                    text: '保存',
+                    handler: function () {
+                        $('#memberEdit-form').trigger('submit');
+                    }
+                }, {
+                    text: '取消',
+                    handler: function () {
+                        $('#memberEdit-dialog').dialog('close');
+                    }
+                }]
+            });
+            } else {
+                $.messager.alert('提示', '数据请求失败!', 'error');
+            }
+        })
+    }
+
     //确认删除
     function confirmRemove() {
         //1、先判断是否有选中的数据行
-        var member=$memberList.datagrid('getSelected');
+        var member = $memberList.datagrid('getSelected');
         if (member == null) {
-            $.messager.alert('提示', '请选择需要删除的数据!','error');
+            $.messager.alert('提示', '请选择需要删除的数据!', 'error');
             return;
         }
         //2、将选中数据的_id放入到一个数组中
@@ -148,18 +212,16 @@ $(function () {
     //删除数据行
     function removeItem(id) {
         $.ajax({
-            url: '/members/'+id,
+            url: '/members/' + id,
             type: 'DELETE',
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 $memberList.datagrid({reload: true});
-                $.messager.alert('提示', '数据删除成功!','info');
+                $.messager.alert('提示', '数据删除成功!', 'info');
             },
             error: function (data) {
-                $.messager.alert('提示', '数据删除失败!','error');
+                $.messager.alert('提示', '数据删除失败!', 'error');
             }
         });
     }
-
-
 });
