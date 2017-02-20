@@ -5,7 +5,6 @@ $(function () {
     var gridHeight = ($('#persons').height());
     var dg = $('#person-lists');
     //存放选中的数据行
-    var choiceRows = {};
 
     $("#member-form").submit(function (event) {
         event.preventDefault();
