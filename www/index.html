@@ -39,11 +39,7 @@
             <input class="easyui-textbox" name="usedName" style="width:100%" data-options="label:'曾用名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <select class="easyui-combobox" name="gender" style="width:100%" data-options="label:'性别:',required:true">
-                <option value="男">男</option>
-                <option value="女">女</option>
-                <option value="未知">未知</option>
-            </select>
+            <input class="easyui-combobox" name="gender" style="width:100%" data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
@@ -59,12 +55,7 @@
                    data-options="label:'民族:',required:true,valueField:'value',textField:'text',url:'data/peoples.json',method:'get',prompt:'请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <select class="easyui-combobox" name="health" style="width:100%" data-options="label:'健康状态:',required:true">
-                <option value="健康">健康</option>
-                <option value="一般">一般</option>
-                <option value="慢性病">慢性病</option>
-                <option value="残疾">残疾</option>
-            </select>
+            <input class="easyui-combobox" name="health" style="width:100%" data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <select class="easyui-combobox" name="marriage" style="width:100%" data-options="label:'婚姻状况:',required:true">
