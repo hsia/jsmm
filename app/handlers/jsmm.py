@@ -37,8 +37,8 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
         member['_id'] = make_uuid()
         print(member)
         couch_db.post(r'/jsmm/', member)
-        # response = {"success":"true"}
-        # self.write(json.dumps(response))
+        response = {"success":"true"}
+        self.write(response)
 
     def delete(self):
         '''

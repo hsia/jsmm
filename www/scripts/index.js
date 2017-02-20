@@ -14,7 +14,13 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
-        $.post('/members/', JSON.stringify(memberInfo), function () {
+        $.post('/members/', JSON.stringify(memberInfo), function (data) {
+            console.log(data);
+            if (data.success == "true") {
+                $('#member-dialog').dialog('close');
+                dg.datagrid({reload: true});
+                $.messager.alert('提示信息', '添加社员成功！','info');
+            }
         })
     });
 
@@ -38,7 +44,7 @@ $(function () {
                 }, {
                     text: '取消',
                     handler: function () {
-                        $('#member-dialog').closed();
+                        $('#member-dialog').dialog('close');
                     }
                 }]
             });
@@ -47,7 +53,7 @@ $(function () {
         text: '删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            confirmRemove();
+            removeItem();
         }
     }, '-', {
         text: 'Save',
@@ -77,16 +83,13 @@ $(function () {
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, align: 'left'},
-            {field: 'foreignName', title: '外文名', width: 100, align: 'left'},
-            {field: 'usedName', title: '曾用名', width: 100, align: 'left'},
-            {field: 'gender', title: '性别', width: 100, align: 'left'},
-            {field: 'birthday', title: '出生日期', width: 100, align: 'left'},
-            {field: 'nativePlace', title: '籍贯', width: 100, align: 'left'},
-            {field: 'birthPalace', title: '出生地', width: 100, align: 'left'},
-            {field: 'nation', title: '民族', width: 100, align: 'left'},
-            {field: 'health', title: '健康状态', width: 100, align: 'left'},
-            {field: 'marriage', title: '婚姻状态', width: 100, align: 'left'},
-            {field: 'idCard', title: '公民身份证号', width: 100, align: 'left'},
+            {field: 'gender', title: '性别', width: 50, align: 'left'},
+            {field: 'birthday', title: '出生日期', width: 120, align: 'left'},
+            {field: 'nation', title: '民族', width: 120, align: 'left'},
+            {field: 'idCard', title: '身份证号', width: 120, align: 'left'},
+            {field: 'branch', title: '所属支社', width: 120, align: 'left'},
+            {field: 'organ', title: '所属基层组织', width: 120, align: 'left'},
+            {field: 'branchTime', title: '入社时间', width: 120, align: 'left'}
         ]],
         loader: function (param, success) {
             var defaultUrl = '/members';
@@ -157,6 +160,7 @@ $(function () {
             }
         });
     }
+
     //删除数据行
     function removeItem(selectList) {
         $.ajax({
@@ -164,7 +168,6 @@ $(function () {
             type: 'DELETE',
             data: JSON.stringify(selectList),
             success: function (data) {
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
                 dg.datagrid({reload: true});
                 choiceRows = null
                 return false;
@@ -184,7 +187,6 @@ $(function () {
         })
         return ids;
     }
-
 
 
 });
