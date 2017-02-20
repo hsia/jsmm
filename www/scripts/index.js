@@ -158,7 +158,7 @@ $(function () {
     function memberInfo(rowData) {
         var html = `
 <div class="member-detail">
-    <div class="member-picture"></div>
+    <div class="member-picture"><img src="/styles/th5RFQH01A.jpg" style="width:100%;"></div>
     <div class="member-column">
         <div class="member-item"><span class="member-item-title">外文姓名: </span>${rowData.foreignName || ""}</div>
         <div class="member-item"><span class="member-item-title">曾用名: </span>${rowData.usedName || ""}</div>
