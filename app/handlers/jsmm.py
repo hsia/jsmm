@@ -76,3 +76,5 @@ class MemberHandler(tornado.web.RequestHandler):
         response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
         member = json.loads(response.body.decode('utf-8'))
         couch_db.delete(r'/jsmm/%(id)s?rev=%(rev)s' % {'id': member_id, 'rev': member['_rev']})
+        response = {"success": "true"}
+        self.write(response)

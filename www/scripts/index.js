@@ -71,15 +71,12 @@ $(function () {
         striped: true,
         loadMsg: '数据装载中......',
         pagination: true,
-        //idField: 'id',
         allowSorts: true,
         remoteSort: true,
         multiSort: true,
         singleSelect:true,
-        //fitColumn: true,
         toolbar: toolbar,
         columns: [[
-            //{field: 'ck', checkbox: true},
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, align: 'left'},
@@ -124,71 +121,43 @@ $(function () {
             var end = start + parseInt(opts.pageSize);
             data.rows = (data.originalRows.slice(start, end));
             return data;
-        },
-        onCheck: function (index, row) {
-            choiceRows = dg.datagrid("getChecked");
-            console.log(choiceRows);
-        },
-        onUncheck: function (index, row) {
-            choiceRows = dg.datagrid("getChecked");
-            console.log(choiceRows);
-        },
-        onCheckAll: function (rows) {
-            choiceRows = dg.datagrid("getChecked");
-            console.log(choiceRows);
-        },
-        onUncheckAll: function (rows) {
-            choiceRows = null;
-            console.log(choiceRows);
         }
     });
 
     //确认删除
     function confirmRemove() {
         //1、先判断是否有选中的数据行
-        if (choiceRows == null || choiceRows.length <= 0) {
-            $.messager.alert('提示', '<span style="color: red">请选择需要删除的数据!</span>');
-            return false;
+        var member=dg.datagrid('getSelected');
+        if (member == null) {
+            $.messager.alert('提示', '请选择需要删除的数据!','error');
+            return;
         }
         //2、将选中数据的_id放入到一个数组中
-        var selectList = idList(choiceRows);
+        var id = member._id;
         //3、提示删除确认
         $.messager.confirm('删除提示', '确定删除选中的数据?', function (r) {
             if (r) {
                 //4、确认后，删除选中的数据
-                removeItem(selectList)
+                removeItem(id)
             }
         });
     }
 
     //删除数据行
-    function removeItem(selectList) {
+    function removeItem(id) {
         $.ajax({
-            url: '/members',
+            url: '/members/'+id,
             type: 'DELETE',
-            data: JSON.stringify(selectList),
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 dg.datagrid({reload: true});
-                choiceRows = null
-                $.messager.alert('提示', '<span style="color: green">数据删除成功!</span>');
+                $.messager.alert('提示', '数据删除成功!','info');
             },
             error: function (data) {
-                console.log("error : " + selectList);
-                $.messager.alert('提示', '<span style="color: red">数据删除失败!</span>');
+                $.messager.alert('提示', '数据删除失败!','error');
             }
         });
     }
-
-    //将对象中的_id存放到数组中
-    function idList(choiceRows) {
-        var ids = [];
-        $.each(choiceRows, function (index, value) {
-            ids.push(value._id);
-        })
-        return ids;
-    }
-
 
 
 });
