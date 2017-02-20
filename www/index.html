@@ -55,15 +55,22 @@
             <input class="easyui-textbox" name="birthPlace" style="width:100%" data-options="label:'出生地:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="nation" style="width:100%" data-options="label:'民族:',required:true">
+            <input class="easyui-combobox" id="peoples" name="nation" style="width:100%" text="请选择"
+                   data-options="label:'民族:',required:true,valueField:'value',textField:'text',url:'data/peoples.json',method:'get',prompt:'请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="health" style="width:100%" data-options="label:'健康状态:',required:true">
+            <select class="easyui-combobox" name="health" style="width:100%" data-options="label:'健康状态:',required:true">
+                <option value="健康">健康</option>
+                <option value="一般">一般</option>
+                <option value="慢性病">慢性病</option>
+                <option value="残疾">残疾</option>
+            </select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <select class="easyui-combobox" name="marriage" style="width:100%" data-options="label:'婚姻状况:',required:true">
-                <option value="已婚">已婚</option>
                 <option value="未婚">未婚</option>
+                <option value="已婚">已婚</option>
+                <option value="丧偶">丧偶</option>
             </select>
         </div>
         <div style="margin-bottom:20px" class="member-property">

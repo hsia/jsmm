@@ -55,10 +55,10 @@ $(function () {
             confirmRemove();
         }
     }, '-', {
-        text: 'Save',
-        iconCls: 'icon-save',
+        text: '编辑',
+        iconCls: 'icon-edit',
         handler: function () {
-            alert('save')
+            alert('edit')
         }
     }];
 
@@ -75,10 +75,11 @@ $(function () {
         allowSorts: true,
         remoteSort: true,
         multiSort: true,
+        singleSelect:true,
         //fitColumn: true,
         toolbar: toolbar,
         columns: [[
-            {field: 'ck', checkbox: true},
+            //{field: 'ck', checkbox: true},
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, align: 'left'},
