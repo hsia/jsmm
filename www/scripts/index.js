@@ -2,8 +2,8 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
-    var gridHeight = ($('#persons').height());
-    var dg = $('#person-lists');
+    var gridHeight = ($('#members').height());
+    var $memberList = $('#member-list');
     //存放选中的数据行
 
     $("#member-form").submit(function (event) {
@@ -16,7 +16,8 @@ $(function () {
         $.post('/members/', JSON.stringify(memberInfo), function (data) {
             if (data.success == "true") {
                 $('#member-dialog').dialog('close');
-                dg.datagrid({reload: true});
+                $('#member-form').form('clear');
+                $memberList.datagrid({reload: true});
                 $.messager.alert('提示信息', '添加社员成功！','info');
             }
         })
@@ -42,6 +43,7 @@ $(function () {
                 }, {
                     text: '取消',
                     handler: function () {
+                        $('#member-form').form('clear');
                         $('#member-dialog').dialog('close');
                     }
                 }]
@@ -61,13 +63,14 @@ $(function () {
         }
     }];
 
-    dg.datagrid({
+    $memberList.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
         rownumbers: true,
         pageSize: 10,
         nowrap: true,
         striped: true,
+        fitColumns:true,
         loadMsg: '数据装载中......',
         pagination: true,
         allowSorts: true,
@@ -100,8 +103,8 @@ $(function () {
                     rows: data
                 }
             }
-            var opts = dg.datagrid('options');
-            var pager = dg.datagrid('getPager');
+            var opts = $memberList.datagrid('options');
+            var pager = $memberList.datagrid('getPager');
             pager.pagination({
                 onSelectPage: function (pageNum, pageSize) {
                     opts.pageNumber = pageNum;
@@ -110,7 +113,7 @@ $(function () {
                         pageNumber: pageNum,
                         pageSize: pageSize
                     });
-                    dg.datagrid('loadData', data);
+                    $memberList.datagrid('loadData', data);
                 }
             });
             if (!data.originalRows) {
@@ -126,7 +129,7 @@ $(function () {
     //确认删除
     function confirmRemove() {
         //1、先判断是否有选中的数据行
-        var member=dg.datagrid('getSelected');
+        var member=$memberList.datagrid('getSelected');
         if (member == null) {
             $.messager.alert('提示', '请选择需要删除的数据!','error');
             return;
@@ -149,7 +152,7 @@ $(function () {
             type: 'DELETE',
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                dg.datagrid({reload: true});
+                $memberList.datagrid({reload: true});
                 $.messager.alert('提示', '数据删除成功!','info');
             },
             error: function (data) {
