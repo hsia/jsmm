@@ -52,7 +52,7 @@ $(function () {
         text: '删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            removeItem();
+            confirmRemove();
         }
     }, '-', {
         text: 'Save',
@@ -155,7 +155,7 @@ $(function () {
         $.messager.confirm('删除提示', '确定删除选中的数据?', function (r) {
             if (r) {
                 //4、确认后，删除选中的数据
-                removeItem(selectList);
+                removeItem(selectList)
             }
         });
     }
@@ -167,13 +167,14 @@ $(function () {
             type: 'DELETE',
             data: JSON.stringify(selectList),
             success: function (data) {
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
                 dg.datagrid({reload: true});
                 choiceRows = null
-                return false;
+                $.messager.alert('提示', '<span style="color: green">数据删除成功!</span>');
             },
             error: function (data) {
                 console.log("error : " + selectList);
-                return false;
+                $.messager.alert('提示', '<span style="color: red">数据删除失败!</span>');
             }
         });
     }
@@ -186,6 +187,7 @@ $(function () {
         })
         return ids;
     }
+
 
 
 });
