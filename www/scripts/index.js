@@ -15,7 +15,6 @@ $(function () {
             memberInfo[element.name] = element.value;
         });
         $.post('/members/', JSON.stringify(memberInfo), function (data) {
-            console.log(data);
             if (data.success == "true") {
                 $('#member-dialog').dialog('close');
                 dg.datagrid({reload: true});
