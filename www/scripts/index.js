@@ -160,37 +160,37 @@ $(function () {
 <div class="member-detail">
     <div class="member-picture"></div>
     <div class="member-column">
-        <div class="member-item"><span class="member-item-title">外文姓名: </span>${rowData.foreignName}</div>
-        <div class="member-item"><span class="member-item-title">曾用名: </span>${rowData.usedName}</div>
-        <div class="member-item"><span class="member-item-title">籍贯: </span>${rowData.nativePlace}</div>
-        <div class="member-item"><span class="member-item-title">出生地: </span>${rowData.birthPlace}</div>
-        <div class="member-item"><span class="member-item-title">健康状态: </span>${rowData.health}</div>
-        <div class="member-item"><span class="member-item-title">婚姻状况: </span>${rowData.marriage}</div>
-        <div class="member-item"><span class="member-item-title">有效证件类别: </span>${rowData.idType}</div>
-        <div class="member-item"><span class="member-item-title">证件号码: </span>${rowData.idNo}</div>
-        <div class="member-item"><span class="member-item-title">移动电话: </span>${rowData.mobile}</div>
+        <div class="member-item"><span class="member-item-title">外文姓名: </span>${rowData.foreignName || ""}</div>
+        <div class="member-item"><span class="member-item-title">曾用名: </span>${rowData.usedName || ""}</div>
+        <div class="member-item"><span class="member-item-title">籍贯: </span>${rowData.nativePlace || ""}</div>
+        <div class="member-item"><span class="member-item-title">出生地: </span>${rowData.birthPlace || ""}</div>
+        <div class="member-item"><span class="member-item-title">健康状态: </span>${rowData.health || ""}</div>
+        <div class="member-item"><span class="member-item-title">婚姻状况: </span>${rowData.marriage || ""}</div>
+        <div class="member-item"><span class="member-item-title">有效证件类别: </span>${rowData.idType || ""}</div>
+        <div class="member-item"><span class="member-item-title">证件号码: </span>${rowData.idNo || ""}</div>
+        <div class="member-item"><span class="member-item-title">移动电话: </span>${rowData.mobile || ""}</div>
     </div>
     <div class="member-column">
-        <div class="member-item"><span class="member-item-title">党派交叉: </span>${rowData.partyCross}</div>
-        <div class="member-item"><span class="member-item-title">单位名称: </span>${rowData.companyName}</div>
-        <div class="member-item"><span class="member-item-title">参加工作时间: </span>${rowData.jobTime}</div>
-        <div class="member-item"><span class="member-item-title">工作部门: </span>${rowData.department}</div>
-        <div class="member-item"><span class="member-item-title">办理退休手续: </span>${rowData.retire}</div>
-        <div class="member-item"><span class="member-item-title">职务: </span>${rowData.duty}</div>
-        <div class="member-item"><span class="member-item-title">职称: </span>${rowData.jobTitle}</div>
-        <div class="member-item"><span class="member-item-title">学术职务: </span>${rowData.academic}</div>
-        <div class="member-item"><span class="member-item-title">电子邮箱: </span>${rowData.email}</div>
+        <div class="member-item"><span class="member-item-title">党派交叉: </span>${rowData.partyCross || ""}</div>
+        <div class="member-item"><span class="member-item-title">单位名称: </span>${rowData.companyName || ""}</div>
+        <div class="member-item"><span class="member-item-title">参加工作时间: </span>${rowData.jobTime || ""}</div>
+        <div class="member-item"><span class="member-item-title">工作部门: </span>${rowData.department || ""}</div>
+        <div class="member-item"><span class="member-item-title">办理退休手续: </span>${rowData.retire || ""}</div>
+        <div class="member-item"><span class="member-item-title">职务: </span>${rowData.duty || ""}</div>
+        <div class="member-item"><span class="member-item-title">职称: </span>${rowData.jobTitle || ""}</div>
+        <div class="member-item"><span class="member-item-title">学术职务: </span>${rowData.academic || ""}</div>
+        <div class="member-item"><span class="member-item-title">电子邮箱: </span>${rowData.email || ""}</div>
     </div>
     <div class="member-column">
-        <div class="member-item"><span class="member-item-title">家庭地址: </span>${rowData.homeAddress}</div>
-        <div class="member-item"><span class="member-item-title">家庭地址邮编: </span>${rowData.homePost}</div>
-        <div class="member-item"><span class="member-item-title">家庭电话: </span>${rowData.homeTel}</div>
-        <div class="member-item"><span class="member-item-title">公司地址: </span>${rowData.companyAddress}</div>
-        <div class="member-item"><span class="member-item-title">公司邮编: </span>${rowData.companyPost}</div>
-        <div class="member-item"><span class="member-item-title">单位电话: </span>${rowData.companyTel}</div>
-        <div class="member-item"><span class="member-item-title">通信地址: </span>${rowData.commAddress}</div>
-        <div class="member-item"><span class="member-item-title">通信地址邮编: </span>${rowData.commPost}</div>
-        <div class="member-item"><span class="member-item-title">爱好: </span>${rowData.hobby}</div>
+        <div class="member-item"><span class="member-item-title">家庭地址: </span>${rowData.homeAddress || ""}</div>
+        <div class="member-item"><span class="member-item-title">家庭地址邮编: </span>${rowData.homePost || ""}</div>
+        <div class="member-item"><span class="member-item-title">家庭电话: </span>${rowData.homeTel || ""}</div>
+        <div class="member-item"><span class="member-item-title">公司地址: </span>${rowData.companyAddress || ""}</div>
+        <div class="member-item"><span class="member-item-title">公司邮编: </span>${rowData.companyPost || ""}</div>
+        <div class="member-item"><span class="member-item-title">单位电话: </span>${rowData.companyTel || ""}</div>
+        <div class="member-item"><span class="member-item-title">通信地址: </span>${rowData.commAddress || ""}</div>
+        <div class="member-item"><span class="member-item-title">通信地址邮编: </span>${rowData.commPost || ""}</div>
+        <div class="member-item"><span class="member-item-title">爱好: </span>${rowData.hobby || ""}</div>
     </div>
 </div>
 `;
