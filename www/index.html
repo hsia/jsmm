@@ -12,6 +12,8 @@
     <script type="text/javascript" src="lib/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="lib/easyui/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="scripts/index.js"></script>
+    <script type="text/javascript" src="scripts/tab/edudegreeinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/professionalinfo.js"></script>
 </head>
 <body>
     <div class="easyui-layout container" data-options="fit:true">
@@ -26,8 +28,12 @@
                 <div data-options="region:'south',border:false" style="height:40%;">
                     <div class="easyui-tabs" style="height:100%;">
                         <div id="member-info" title="社员详情" style="height:100%;"></div>
-                        <div title="学历学位" style="height:100%;"></div>
-                        <div title="学历学位" style="height:100%;"></div>
+                        <div title="学历学位" style="height:100%;">
+                            <div id="edudegree-list" style="height: 100%"></div >
+                        </div>
+                        <div title="专业技术工作" style="height:100%;">
+                            <div id="professional-list" style="height: 100%"></div >
+                        </div>
                     </div>
                 </div>
             </div>

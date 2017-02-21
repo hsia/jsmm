@@ -12,7 +12,7 @@ def try_(operation_result):
 try_(couch_db.delete('/jsmm'))
 try_(couch_db.put('/jsmm'))
 
-members = ['Ulysses Francis', 'Rolf Tel', 'Kaiden Michi', 'Dallas Billie', 'Warren Granville', '林丹娜', 'Hyram Makoto', '杨爱丽', 'Cary Cheyenne', 'Temple Colbert', 'Delroy Naoki', 'Bishop Arthur', 'Yori Shiro']
+members = ['Ulysses Francis', 'Rolf Tel', 'Kaiden Michi', 'Dallas Billie', 'Warren Granville', '林丹娜', 'Hyram Makoto', '杨爱丽', 'Cary Cheyenne', 'Temple Colbert', 'Delroy Naoki', 'Bishop Arthur', 'Yori Shiro','zhangsan','lisi','wangwu','zhaoliu','tianqi']
 for member in members:
     try_(couch_db.post('/jsmm', {
         'type': 'member',
