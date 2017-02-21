@@ -43,7 +43,6 @@ $(function () {
             {field: 'rolesInProject', title: '项目中所任角色', width: 120, align: 'left', editor: {type:'textbox', options:{required:true}}},
             {field: 'startDate', title: '开始时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/education.json',required:true,prompt:'请选择'}}},
             {field: 'endDate', title: '结束时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/degree.json',required:true,prompt:'请选择'}}},
-            {field: 'educationType', title: '教育类别', width: 80, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/educationType.json',required:true,prompt:'请选择',panelHeight:'auto'}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
