@@ -1,4 +1,9 @@
 $(function () {
+
+    window.addEventListener("grid-row-selection", function (event) {
+        console.log(event.detail);
+    });
+
     //学位学历
     var $edudegreeList = $("#edudegree-list");
     var edudegGridHeight = $("#member-info").height();
@@ -37,13 +42,86 @@ $(function () {
         singleSelect: true,
         toolbar: edudegToolbar,
         columns: [[
-            {field: 'schoolName', title: '学校(单位)名称', width: 150, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'startingDate', title: '入学时间', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'graduateDate', title: '毕业时间', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'major', title: '专业', width: 120, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'education', title: '学历', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/education.json',required:true,prompt:'请选择'}}},
-            {field: 'degree', title: '学位', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/degree.json',required:true,prompt:'请选择'}}},
-            {field: 'educationType', title: '教育类别', width: 80, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/educationType.json',required:true,prompt:'请选择',panelHeight:'auto'}}},
+            {
+                field: 'schoolName',
+                title: '学校(单位)名称',
+                width: 150,
+                align: 'left',
+                editor: {type: 'textbox', options: {required: true}}
+            },
+            {
+                field: 'startingDate',
+                title: '入学时间',
+                width: 60,
+                align: 'left',
+                editor: {type: 'datebox', options: {required: true}}
+            },
+            {
+                field: 'graduateDate',
+                title: '毕业时间',
+                width: 60,
+                align: 'left',
+                editor: {type: 'datebox', options: {required: true}}
+            },
+            {
+                field: 'major',
+                title: '专业',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {required: true}}
+            },
+            {
+                field: 'education',
+                title: '学历',
+                width: 110,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/education.json',
+                        required: true,
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'degree',
+                title: '学位',
+                width: 110,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/degree.json',
+                        required: true,
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'educationType',
+                title: '教育类别',
+                width: 80,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/educationType.json',
+                        required: true,
+                        prompt: '请选择',
+                        panelHeight: 'auto'
+                    }
+                }
+            },
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
