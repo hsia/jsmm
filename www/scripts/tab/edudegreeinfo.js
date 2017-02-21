@@ -2,7 +2,7 @@ $(function () {
 
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
-        console.log(event.detail);
+        // console.log(event.detail);
         memberInfo = event.detail;
     });
 
@@ -45,35 +45,35 @@ $(function () {
         toolbar: edudegToolbar,
         columns: [[
             {
-                field: 'schoolName',
+                field: 'eduSchoolName',
                 title: '学校(单位)名称',
                 width: 150,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'startingDate',
+                field: 'eduStartingDate',
                 title: '入学时间',
                 width: 60,
                 align: 'left',
                 editor: {type: 'datebox', options: {}}
             },
             {
-                field: 'graduateDate',
+                field: 'eduGraduateDate',
                 title: '毕业时间',
                 width: 60,
                 align: 'left',
                 editor: {type: 'datebox', options: {}}
             },
             {
-                field: 'major',
+                field: 'eduMajor',
                 title: '专业',
                 width: 120,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'education',
+                field: 'eduEducation',
                 title: '学历',
                 width: 110,
                 align: 'left',
@@ -89,7 +89,7 @@ $(function () {
                 }
             },
             {
-                field: 'degree',
+                field: 'eduDegree',
                 title: '学位',
                 width: 110,
                 align: 'left',
@@ -105,7 +105,7 @@ $(function () {
                 }
             },
             {
-                field: 'educationType',
+                field: 'eduEducationType',
                 title: '教育类别',
                 width: 80,
                 align: 'left',
@@ -151,6 +151,10 @@ $(function () {
     }
 
     function append() {
+        if (memberInfo == null) {
+            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
+            return;
+        }
         if (endEditing()) {
             $edudegreeList.datagrid('appendRow', {});
             editIndex = $edudegreeList.datagrid('getRows').length - 1;
@@ -179,7 +183,6 @@ $(function () {
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
-                    //删除成功以后，重新加载数据，并将choiceRows置为空。
                     $.messager.alert('提示', '数据保存成功!', 'info');
                 },
                 error: function (data) {

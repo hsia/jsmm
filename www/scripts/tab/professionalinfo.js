@@ -1,6 +1,8 @@
 $(function () {
+    var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
-        console.log(event.detail);
+        // console.log(event.detail);
+        memberInfo = event.detail;
     });
 
     //学位学历
@@ -42,14 +44,14 @@ $(function () {
         toolbar: professionalToolbar,
         columns: [[
             {
-                field: 'projectName',
+                field: 'proProjectName',
                 title: '项目名称',
                 width: 120,
                 align: 'left',
                 editor: {type: 'textbox', options: {required: true}}
             },
             {
-                field: 'projectType',
+                field: 'proProjectType',
                 title: '项目类型',
                 width: 90,
                 align: 'left',
@@ -66,14 +68,14 @@ $(function () {
                 }
             },
             {
-                field: 'projectCompany',
+                field: 'proProjectCompany',
                 title: '项目下达单位',
                 width: 120,
                 align: 'left',
                 editor: {type: 'textbox', options: {required: true}}
             },
             {
-                field: 'rolesInProject',
+                field: 'proRolesInProject',
                 title: '项目中所任角色',
                 width: 60,
                 align: 'left',
@@ -90,13 +92,13 @@ $(function () {
                 }
             },
             {
-                field: 'startDate',
+                field: 'proStartDate',
                 title: '开始时间',
                 width: 60,
                 align: 'left',
                 editor: {type: 'datebox', options: {required: true}}
             },
-            {field: 'endDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
+            {field: 'porEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -139,6 +141,10 @@ $(function () {
     }
 
     function append() {
+        if (memberInfo == null) {
+            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
+            return;
+        }
         if (endEditing()) {
             $professionalList.datagrid('appendRow', {});
             editIndex = $professionalList.datagrid('getRows').length - 1;
@@ -157,8 +163,24 @@ $(function () {
     }
 
     function accept() {
+        if(memberInfo==null){
+            return
+        }
         if (endEditing()) {
             console.log($professionalList.datagrid('getRows'));
+            memberInfo.professionalSkill = $professionalList.datagrid('getRows');
+            $.ajax({
+                url: '/members/' + memberInfo._id,
+                type: 'PUT',
+                data: JSON.stringify(memberInfo),
+                success: function (data) {
+                    $.messager.alert('提示', '数据保存成功!', 'info');
+                },
+                error: function (data) {
+                    alert("success");
+                    $.messager.alert('提示', '数据更新失败!', 'error');
+                }
+            });
         }
     }
 
