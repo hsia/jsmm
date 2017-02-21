@@ -74,17 +74,17 @@ $(function () {
             });
         }
     }, '-', {
-        text: '删除',
-        iconCls: 'icon-cancel',
-        handler: function () {
-            confirmRemove();
-        }
-    }, '-', {
         text: '编辑',
         iconCls: 'icon-edit',
         handler: function () {
             //后台查询需要编辑的数据的详细信息，并将返回的数据放入到memeberEdit-form中
             editInfo();
+        }
+    }, '-', {
+        text: '删除',
+        iconCls: 'icon-cancel',
+        handler: function () {
+            confirmRemove();
         }
     }];
 

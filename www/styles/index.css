@@ -35,6 +35,7 @@ html, body {
 
 .member-column {
     min-width: 200px;
+    max-width: 400px;
     margin: 0 0.5em;
     flex-grow: 1;
 }
