@@ -3,12 +3,11 @@
  */
 
 $(function () {
-
-    var postData = null;
-
-    window.addEventListener("grid-row-selection", function (event) {
-        postData = event.detail;
-    });
+    var memberInfo = null;
+    window.addEventListener("grid-row-selection", function(event) {
+    console.log(event.detail);
+    memberInfo = event.detail;
+  });
     var gridHeight = ($('#member-info').height());
     var $jobResumes = $('#job-resumes');
     var toolbar = [
@@ -18,13 +17,13 @@ $(function () {
             handler: function () {
                 addRow();
             }
-        }, '-', {
+        },'-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {
                 removeit();
             }
-        }, '-', {
+        },'-', {
             text: '保存记录',
             iconCls: 'icon-save',
             handler: function () {
@@ -47,7 +46,7 @@ $(function () {
         singleSelect: true,
         toolbar: toolbar,
         columns: [[
-            {field: 'jobName', title: '单位名称', width: 110, align: 'left', editor: 'textbox'},
+            {field: 'name', title: '单位名称', width: 110, align: 'left', editor: 'textbox'},
             {field: 'gender', title: '工作部门', width: 50, align: 'left', editor: 'textbox'},
             {field: 'birthday', title: '职务', width: 120, align: 'left', editor: 'textbox'},
             {field: 'nation', title: '职称', width: 120, align: 'left', editor: 'textbox'},
@@ -56,16 +55,16 @@ $(function () {
             {field: 'organ', title: '结束时间', width: 120, align: 'left', editor: 'datebox'},
             {field: 'branchTime', title: '证明人', width: 120, align: 'left', editor: 'textbox'}
         ]],
-        onClickRow: function (index, row) {
-            if (editIndex != index) {
-                if (endEditing()) {
-                    $jobResumes.datagrid('selectRow', index)
-                        .datagrid('beginEdit', index);
-                    editIndex = index;
-                } else {
-                    $jobResumes.datagrid('selectRow', editIndex);
-                }
-            }
+        onClickRow:function(index,row){
+			if (editIndex != index){
+				if (endEditing()){
+					$jobResumes.datagrid('selectRow', index)
+							.datagrid('beginEdit', index);
+					editIndex = index;
+				} else {
+					$jobResumes.datagrid('selectRow', editIndex);
+				}
+			}
         }
     });
 
@@ -85,10 +84,6 @@ $(function () {
     }
 
     function addRow() {
-        if (postData == null) {
-            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
-            return;
-        }
         if (endEditing()) {
             $jobResumes.datagrid('appendRow', {});
             editIndex = $jobResumes.datagrid('getRows').length - 1;
@@ -106,21 +101,22 @@ $(function () {
     }
 
     function save() {
-        if (postData == null) {
-            return;
-        }
-        $jobResumes.datagrid('acceptChanges');
-        postData.job = $jobResumes.datagrid('getRows');
-        $.ajax({
-            url: '/members/' + postData._id,
-            type: 'PUT',
-            data: JSON.stringify(postData),
-            success: function (data) {
-                if (data.success == "true") {
-                    $.messager.alert('提示信息', '社员工作履历添加成功！', 'info');
+        if (endEditing()) {
+            memberInfo.jobResumes = $jobResumes.datagrid('getRows');
+            $.ajax({
+                url: '/members/' + memberInfo._id,
+                type: 'PUT',
+                data: JSON.stringify(memberInfo),
+                success: function (data) {
+                    //删除成功以后，重新加载数据，并将choiceRows置为空。
+                    $.messager.alert('提示', '数据保存成功!', 'info');
+                },
+                error: function (data) {
+                    alert("success");
+                    $.messager.alert('提示', '数据更新失败!', 'error');
                 }
-            }
-        });
+            });
+        }
     }
 
 });

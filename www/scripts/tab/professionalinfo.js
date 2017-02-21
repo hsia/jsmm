@@ -1,4 +1,8 @@
 $(function () {
+    window.addEventListener("grid-row-selection", function (event) {
+        console.log(event.detail);
+    });
+
     //学位学历
     var $professionalList = $("#professional-list");
     var professionalGridHeight = $("#member-info").height();
@@ -37,12 +41,62 @@ $(function () {
         singleSelect: true,
         toolbar: professionalToolbar,
         columns: [[
-            {field: 'projectName', title: '项目名称', width: 150, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'projectType', title: '项目类型', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'projectCompany', title: '项目下达单位', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'rolesInProject', title: '项目中所任角色', width: 120, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'startDate', title: '开始时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/education.json',required:true,prompt:'请选择'}}},
-            {field: 'endDate', title: '结束时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/degree.json',required:true,prompt:'请选择'}}},
+            {
+                field: 'projectName',
+                title: '项目名称',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {required: true}}
+            },
+            {
+                field: 'projectType',
+                title: '项目类型',
+                width: 90,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/projectType.json',
+                        required: true,
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'projectCompany',
+                title: '项目下达单位',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {required: true}}
+            },
+            {
+                field: 'rolesInProject',
+                title: '项目中所任角色',
+                width: 60,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/roleInProject.json',
+                        required: true,
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'startDate',
+                title: '开始时间',
+                width: 60,
+                align: 'left',
+                editor: {type: 'datebox', options: {required: true}}
+            },
+            {field: 'endDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
