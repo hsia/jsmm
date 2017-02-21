@@ -69,6 +69,8 @@ class MemberHandler(tornado.web.RequestHandler):
         member['type'] = 'member'
         member['_id'] = member_id
         couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, member)
+        response = {"success": "true"}
+        self.write(response)
 
     def delete(self, member_id):
         '''

@@ -1,7 +1,9 @@
 $(function () {
 
+    var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
-        console.log(event.detail);
+        // console.log(event.detail);
+        memberInfo = event.detail;
     });
 
     //学位学历
@@ -23,7 +25,7 @@ $(function () {
         text: '保存记录',
         iconCls: 'icon-save',
         handler: function () {
-            accept();
+            save();
         }
     }];
     $edudegreeList.datagrid({
@@ -43,35 +45,35 @@ $(function () {
         toolbar: edudegToolbar,
         columns: [[
             {
-                field: 'schoolName',
+                field: 'eduSchoolName',
                 title: '学校(单位)名称',
                 width: 150,
                 align: 'left',
-                editor: {type: 'textbox', options: {required: true}}
+                editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'startingDate',
+                field: 'eduStartingDate',
                 title: '入学时间',
                 width: 60,
                 align: 'left',
-                editor: {type: 'datebox', options: {required: true}}
+                editor: {type: 'datebox', options: {}}
             },
             {
-                field: 'graduateDate',
+                field: 'eduGraduateDate',
                 title: '毕业时间',
                 width: 60,
                 align: 'left',
-                editor: {type: 'datebox', options: {required: true}}
+                editor: {type: 'datebox', options: {}}
             },
             {
-                field: 'major',
+                field: 'eduMajor',
                 title: '专业',
                 width: 120,
                 align: 'left',
-                editor: {type: 'textbox', options: {required: true}}
+                editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'education',
+                field: 'eduEducation',
                 title: '学历',
                 width: 110,
                 align: 'left',
@@ -82,13 +84,12 @@ $(function () {
                         textField: 'text',
                         method: 'get',
                         url: 'data/education.json',
-                        required: true,
                         prompt: '请选择'
                     }
                 }
             },
             {
-                field: 'degree',
+                field: 'eduDegree',
                 title: '学位',
                 width: 110,
                 align: 'left',
@@ -99,13 +100,12 @@ $(function () {
                         textField: 'text',
                         method: 'get',
                         url: 'data/degree.json',
-                        required: true,
                         prompt: '请选择'
                     }
                 }
             },
             {
-                field: 'educationType',
+                field: 'eduEducationType',
                 title: '教育类别',
                 width: 80,
                 align: 'left',
@@ -116,7 +116,6 @@ $(function () {
                         textField: 'text',
                         method: 'get',
                         url: 'data/educationType.json',
-                        required: true,
                         prompt: '请选择',
                         panelHeight: 'auto'
                     }
@@ -151,19 +150,11 @@ $(function () {
         }
     }
 
-    function onClickRow(index) {
-        if (editIndex != index) {
-            if (endEditing()) {
-                $edudegreeList.datagrid('selectRow', index)
-                    .datagrid('beginEdit', index);
-                editIndex = index;
-            } else {
-                $edudegreeList.datagrid('selectRow', editIndex);
-            }
-        }
-    }
-
     function append() {
+        if (memberInfo == null) {
+            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
+            return;
+        }
         if (endEditing()) {
             $edudegreeList.datagrid('appendRow', {});
             editIndex = $edudegreeList.datagrid('getRows').length - 1;
@@ -181,9 +172,24 @@ $(function () {
         editIndex = undefined;
     }
 
-    function accept() {
+    function save() {
+        if(memberInfo==null){
+            return
+        }
         if (endEditing()) {
-            console.log($edudegreeList.datagrid('getRows'));
+            memberInfo.educationDegree = $edudegreeList.datagrid('getRows');
+            $.ajax({
+                url: '/members/' + memberInfo._id,
+                type: 'PUT',
+                data: JSON.stringify(memberInfo),
+                success: function (data) {
+                    $.messager.alert('提示', '数据保存成功!', 'info');
+                },
+                error: function (data) {
+                    alert("success");
+                    $.messager.alert('提示', '数据更新失败!', 'error');
+                }
+            });
         }
     }
 

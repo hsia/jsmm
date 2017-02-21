@@ -1,4 +1,10 @@
 $(function () {
+    var memberInfo = null;
+    window.addEventListener("grid-row-selection", function (event) {
+        // console.log(event.detail);
+        memberInfo = event.detail;
+    });
+
     //学位学历
     var $professionalList = $("#professional-list");
     var professionalGridHeight = $("#member-info").height();
@@ -37,12 +43,62 @@ $(function () {
         singleSelect: true,
         toolbar: professionalToolbar,
         columns: [[
-            {field: 'projectName', title: '项目名称', width: 150, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'projectType', title: '项目类型', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'projectCompany', title: '项目下达单位', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'rolesInProject', title: '项目中所任角色', width: 120, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'startDate', title: '开始时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/education.json',required:true,prompt:'请选择'}}},
-            {field: 'endDate', title: '结束时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/degree.json',required:true,prompt:'请选择'}}},
+            {
+                field: 'proProjectName',
+                title: '项目名称',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {required: true}}
+            },
+            {
+                field: 'proProjectType',
+                title: '项目类型',
+                width: 90,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/projectType.json',
+                        required: true,
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'proProjectCompany',
+                title: '项目下达单位',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {required: true}}
+            },
+            {
+                field: 'proRolesInProject',
+                title: '项目中所任角色',
+                width: 60,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/roleInProject.json',
+                        required: true,
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'proStartDate',
+                title: '开始时间',
+                width: 60,
+                align: 'left',
+                editor: {type: 'datebox', options: {required: true}}
+            },
+            {field: 'porEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -85,6 +141,10 @@ $(function () {
     }
 
     function append() {
+        if (memberInfo == null) {
+            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
+            return;
+        }
         if (endEditing()) {
             $professionalList.datagrid('appendRow', {});
             editIndex = $professionalList.datagrid('getRows').length - 1;
@@ -103,8 +163,24 @@ $(function () {
     }
 
     function accept() {
+        if(memberInfo==null){
+            return
+        }
         if (endEditing()) {
             console.log($professionalList.datagrid('getRows'));
+            memberInfo.professionalSkill = $professionalList.datagrid('getRows');
+            $.ajax({
+                url: '/members/' + memberInfo._id,
+                type: 'PUT',
+                data: JSON.stringify(memberInfo),
+                success: function (data) {
+                    $.messager.alert('提示', '数据保存成功!', 'info');
+                },
+                error: function (data) {
+                    alert("success");
+                    $.messager.alert('提示', '数据更新失败!', 'error');
+                }
+            });
         }
     }
 
