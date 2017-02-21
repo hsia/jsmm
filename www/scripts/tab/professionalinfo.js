@@ -1,6 +1,6 @@
 $(function () {
     //学位学历
-    var $edudegreeList = $("#professional-list");
+    var $professionalList = $("#professional-list");
     var professionalGridHeight = $("#member-info").height();
     var professionalToolbar = [{
         text: '添加记录',
@@ -21,7 +21,7 @@ $(function () {
             accept();
         }
     }];
-    $edudegreeList.datagrid({
+    $professionalList.datagrid({
         iconCls: 'icon-ok',
         height: professionalGridHeight,
         rownumbers: true,
@@ -37,22 +37,22 @@ $(function () {
         singleSelect: true,
         toolbar: professionalToolbar,
         columns: [[
-            {field: 'schoolName', title: '学校(单位)名称', width: 150, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'startingDate', title: '入学时间', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'graduateDate', title: '毕业时间', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
-            {field: 'major', title: '专业', width: 120, align: 'left', editor: {type:'textbox', options:{required:true}}},
-            {field: 'education', title: '学历', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/education.json',required:true,prompt:'请选择'}}},
-            {field: 'degree', title: '学位', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/degree.json',required:true,prompt:'请选择'}}},
+            {field: 'projectName', title: '项目名称', width: 150, align: 'left', editor: {type:'textbox', options:{required:true}}},
+            {field: 'projectType', title: '项目类型', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
+            {field: 'projectCompany', title: '项目下达单位', width: 60, align: 'left', editor: {type:'datebox', options:{required:true}}},
+            {field: 'rolesInProject', title: '项目中所任角色', width: 120, align: 'left', editor: {type:'textbox', options:{required:true}}},
+            {field: 'startDate', title: '开始时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/education.json',required:true,prompt:'请选择'}}},
+            {field: 'endDate', title: '结束时间', width: 110, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/degree.json',required:true,prompt:'请选择'}}},
             {field: 'educationType', title: '教育类别', width: 80, align: 'left', editor: {type:'combobox', options:{valueField:'value',textField:'text',method:'get', url:'data/educationType.json',required:true,prompt:'请选择',panelHeight:'auto'}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
                 if (endEditing()) {
-                    $edudegreeList.datagrid('selectRow', index)
+                    $professionalList.datagrid('selectRow', index)
                         .datagrid('beginEdit', index);
                     editIndex = index;
                 } else {
-                    $edudegreeList.datagrid('selectRow', editIndex);
+                    $professionalList.datagrid('selectRow', editIndex);
                 }
             }
         }
@@ -64,8 +64,8 @@ $(function () {
         if (editIndex == undefined) {
             return true
         }
-        if ($edudegreeList.datagrid('validateRow', editIndex)) {
-            $edudegreeList.datagrid('endEdit', editIndex);
+        if ($professionalList.datagrid('validateRow', editIndex)) {
+            $professionalList.datagrid('endEdit', editIndex);
             editIndex = undefined;
             return true;
         } else {
@@ -76,20 +76,20 @@ $(function () {
     function onClickRow(index) {
         if (editIndex != index) {
             if (endEditing()) {
-                $edudegreeList.datagrid('selectRow', index)
+                $professionalList.datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
                 editIndex = index;
             } else {
-                $edudegreeList.datagrid('selectRow', editIndex);
+                $professionalList.datagrid('selectRow', editIndex);
             }
         }
     }
 
     function append() {
         if (endEditing()) {
-            $edudegreeList.datagrid('appendRow', {});
-            editIndex = $edudegreeList.datagrid('getRows').length - 1;
-            $edudegreeList.datagrid('selectRow', editIndex)
+            $professionalList.datagrid('appendRow', {});
+            editIndex = $professionalList.datagrid('getRows').length - 1;
+            $professionalList.datagrid('selectRow', editIndex)
                 .datagrid('beginEdit', editIndex);
         }
     }
@@ -98,14 +98,14 @@ $(function () {
         if (editIndex == undefined) {
             return
         }
-        $edudegreeList.datagrid('cancelEdit', editIndex)
+        $professionalList.datagrid('cancelEdit', editIndex)
             .datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
 
     function accept() {
         if (endEditing()) {
-            console.log($edudegreeList.datagrid('getRows'));
+            console.log($professionalList.datagrid('getRows'));
         }
     }
 
