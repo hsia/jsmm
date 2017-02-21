@@ -16,25 +16,26 @@ def register(pattern, handler):
 
 
 def bind_to(pattern):
-  def append(handler):
-    register(pattern, handler)
-  return append
+    def append(handler):
+        register(pattern, handler)
+    return append
 
 static_file_dir = 'www'
 default_filename = 'index.html'
+
 
 def serve(port, **options):
     from tornado.web import Application
     application = Application(
         registered_handlers + [
-          (
-            r'/(.*)',
-            StaticFileHandler,
-            {
-              'path': static_file_dir,
-              'default_filename': default_filename
-            }
-          )
+            (
+                r'/(.*)',
+                StaticFileHandler,
+                {
+                    'path': static_file_dir,
+                    'default_filename': default_filename
+                }
+            )
         ],
         **options
     )
