@@ -5,7 +5,6 @@
 $(function () {
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function(event) {
-    console.log(event.detail);
     memberInfo = event.detail;
   });
     var gridHeight = ($('#member-info').height());
@@ -84,6 +83,10 @@ $(function () {
     }
 
     function addRow() {
+        if (memberInfo == null) {
+            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
+            return;
+        }
         if (endEditing()) {
             $jobResumes.datagrid('appendRow', {});
             editIndex = $jobResumes.datagrid('getRows').length - 1;
@@ -101,6 +104,9 @@ $(function () {
     }
 
     function save() {
+        if(memberInfo==null){
+            return
+        }
         if (endEditing()) {
             memberInfo.jobResumes = $jobResumes.datagrid('getRows');
             $.ajax({

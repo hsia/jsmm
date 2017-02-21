@@ -169,6 +169,9 @@ $(function () {
     }
 
     function save() {
+        if(memberInfo==null){
+            return
+        }
         if (endEditing()) {
             memberInfo.educationDegree = $edudegreeList.datagrid('getRows');
             $.ajax({
