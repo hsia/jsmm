@@ -18,7 +18,7 @@ $(function () {
                 $('#member-dialog').dialog('close');
                 $('#member-form').form('clear');
                 $memberList.datagrid({reload: true});
-                $.messager.alert('提示信息', '添加社员成功！','info');
+                $.messager.alert('提示信息', '添加社员成功！', 'info');
             }
         })
     });
@@ -59,12 +59,13 @@ $(function () {
                 cache: false,
                 modal: true,
                 buttons: [{
-                    iconCls: 'icon-ok',
+                    iconCls: 'icon-save',
                     text: '保存',
                     handler: function () {
                         $('#member-form').trigger('submit');
                     }
                 }, {
+                    iconCls: 'icon-cancel',
                     text: '取消',
                     handler: function () {
                         $('#member-form').form('clear');
@@ -151,6 +152,10 @@ $(function () {
         },
         onSelect: function (rowIndex, rowData) {
             memberInfo(rowData);
+            var event = new CustomEvent("grid-row-selection",{
+                detail: rowData
+            });
+            window.dispatchEvent(event);
         }
     });
 
@@ -211,25 +216,25 @@ $(function () {
                 $('#memberEdit-form').form('clear');
                 $('#memberEdit-form').form('load', data);
                 $('#memberEdit-dialog').dialog({
-                width: 800,
-                height: 630,
-                title: '编辑社员',
-                closed: false,
-                cache: false,
-                modal: true,
-                buttons: [{
-                    iconCls: 'icon-ok',
-                    text: '保存',
-                    handler: function () {
-                        $('#memberEdit-form').trigger('submit');
-                    }
-                }, {
-                    text: '取消',
-                    handler: function () {
-                        $('#memberEdit-dialog').dialog('close');
-                    }
-                }]
-            });
+                    width: 800,
+                    height: 630,
+                    title: '编辑社员',
+                    closed: false,
+                    cache: false,
+                    modal: true,
+                    buttons: [{
+                        iconCls: 'icon-ok',
+                        text: '保存',
+                        handler: function () {
+                            $('#memberEdit-form').trigger('submit');
+                        }
+                    }, {
+                        text: '取消',
+                        handler: function () {
+                            $('#memberEdit-dialog').dialog('close');
+                        }
+                    }]
+                });
             } else {
                 $.messager.alert('提示', '数据请求失败!', 'error');
             }
