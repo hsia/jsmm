@@ -122,12 +122,14 @@ $(function () {
         if (endEditing()) {
             memberInfo.achievements = $achievementsList.datagrid('getRows');
             $.ajax({
-                url: '/members/' + memberInfo._id,
+                url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
                     //删除成功以后，重新加载数据，并将choiceRows置为空。
-                    $.messager.alert('提示', '数据保存成功!', 'info');
+                    if (data.success) {
+                        $.messager.alert('提示', '数据保存成功!', 'info');
+                    }
                 },
                 error: function (data) {
                     alert("success");

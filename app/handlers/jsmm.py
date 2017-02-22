@@ -82,3 +82,20 @@ class MemberHandler(tornado.web.RequestHandler):
                         {'id': member_id, 'rev': member['_rev']})
         response = {"success": "true"}
         self.write(response)
+
+
+@tornado_utils.bind_to(r'/members/tab/([0-9a-f]+)')
+class MemberHandlerTab(tornado.web.RequestHandler):
+
+    def put(self, member_id):
+        '''
+        修改_id为member_id的member对象。
+        '''
+        memberInfo = couch_db.get(r'/jsmm/%(id)s' % {"id": member_id})
+        rev = json.loads(memberInfo.body.decode('utf-8'))
+        member = json.loads(self.request.body.decode('utf-8'))
+        member['_id'] = member_id
+        member['_rev'] = rev['_rev']
+        couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, member)
+        response = {"success": "true"}
+        self.write(response)

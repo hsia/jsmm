@@ -179,7 +179,7 @@ $(function () {
         if (endEditing()) {
             memberInfo.educationDegree = $dataGrid.datagrid('getRows');
             $.ajax({
-                url: '/members/' + memberInfo._id,
+                url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
