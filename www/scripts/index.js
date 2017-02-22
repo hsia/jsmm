@@ -25,6 +25,9 @@ $(function () {
 
     $("#memberEdit-form").submit(function (event) {
         event.preventDefault();
+
+        var currentPage = $memberList.datagrid('options').pageNumber;
+        console.log(currentPage);
         var formData = $(this).serializeArray();
         var memberInfo = {};
         $.each(formData, function (index, element) {
@@ -38,7 +41,7 @@ $(function () {
             success: function (data) {
                 $('#memberEdit-dialog').dialog('close');
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $memberList.datagrid({reload: true});
+                $memberList.datagrid('gotoPage',currentPage).datagrid('reload');
                 $.messager.alert('提示', '数据更新成功!', 'info');
             },
             error: function (data) {

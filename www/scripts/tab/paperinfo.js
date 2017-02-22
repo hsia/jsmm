@@ -1,4 +1,5 @@
 $(function () {
+
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
         // console.log(event.detail);
@@ -6,7 +7,7 @@ $(function () {
     });
 
     //学位学历
-    var $dataGrid = $("#professional-list");
+    var $dataGrid = $("#paper-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
         text: '添加记录',
@@ -24,7 +25,7 @@ $(function () {
         text: '保存记录',
         iconCls: 'icon-save',
         handler: function () {
-            accept();
+            save();
         }
     }];
     $dataGrid.datagrid({
@@ -44,38 +45,8 @@ $(function () {
         toolbar: toolbar,
         columns: [[
             {
-                field: 'proProjectName',
-                title: '项目名称',
-                width: 120,
-                align: 'left',
-                editor: {type: 'textbox', options: {}}
-            },
-            {
-                field: 'proProjectType',
-                title: '项目类型',
-                width: 90,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/projectType.json',
-                        prompt: '请选择'
-                    }
-                }
-            },
-            {
-                field: 'proProjectCompany',
-                title: '项目下达单位',
-                width: 120,
-                align: 'left',
-                editor: {type: 'textbox', options: {}}
-            },
-            {
-                field: 'proRolesInProject',
-                title: '项目中所任角色',
+                field: 'paperPublications',
+                title: '论文/著作',
                 width: 60,
                 align: 'left',
                 editor: {
@@ -84,19 +55,60 @@ $(function () {
                         valueField: 'value',
                         textField: 'text',
                         method: 'get',
-                        url: 'data/roleInProject.json',
+                        url: 'data/publicationsType.json',
+                        panelHeight: 'auto',
                         prompt: '请选择'
                     }
                 }
             },
             {
-                field: 'proStartDate',
-                title: '开始时间',
+                field: 'paperName',
+                title: '作品名称',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'paperPress',
+                title: '刊物/出版社',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'paperAuthorSort',
+                title: '第几作者',
+                width: 50,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'paperPressDate',
+                title: '发行时间',
                 width: 60,
                 align: 'left',
-                editor: {type: 'datebox', options: {}}
+                editor: {
+                    type: 'datebox',
+                    options: {}
+                }
             },
-            {field: 'porEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
+            {
+                field: 'paperRoleDetail',
+                title: '角色说明',
+                width: 110,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/rolesInPublications.json',
+                        prompt: '请选择',
+                        panelHeight: 'auto'
+                    }
+                }
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -126,18 +138,6 @@ $(function () {
         }
     }
 
-    function onClickRow(index) {
-        if (editIndex != index) {
-            if (endEditing()) {
-                $dataGrid.datagrid('selectRow', index)
-                    .datagrid('beginEdit', index);
-                editIndex = index;
-            } else {
-                $dataGrid.datagrid('selectRow', editIndex);
-            }
-        }
-    }
-
     function append() {
         if (memberInfo == null) {
             $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
@@ -160,13 +160,12 @@ $(function () {
         editIndex = undefined;
     }
 
-    function accept() {
+    function save() {
         if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            console.log($dataGrid.datagrid('getRows'));
-            memberInfo.professionalSkill = $dataGrid.datagrid('getRows');
+            memberInfo.paper = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/' + memberInfo._id,
                 type: 'PUT',

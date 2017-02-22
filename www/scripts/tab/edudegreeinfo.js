@@ -7,9 +7,9 @@ $(function () {
     });
 
     //学位学历
-    var $edudegreeList = $("#edudegree-list");
-    var edudegGridHeight = $("#member-info").height();
-    var edudegToolbar = [{
+    var $dataGrid = $("#edudegree-list");
+    var gridHeight = $("#member-info").height();
+    var toolbar = [{
         text: '添加记录',
         iconCls: 'icon-add',
         handler: function () {
@@ -28,9 +28,9 @@ $(function () {
             save();
         }
     }];
-    $edudegreeList.datagrid({
+    $dataGrid.datagrid({
         iconCls: 'icon-ok',
-        height: edudegGridHeight,
+        height: gridHeight,
         rownumbers: true,
         pageSize: 10,
         nowrap: true,
@@ -42,7 +42,7 @@ $(function () {
         remoteSort: true,
         multiSort: true,
         singleSelect: true,
-        toolbar: edudegToolbar,
+        toolbar: toolbar,
         columns: [[
             {
                 field: 'eduSchoolName',
@@ -125,11 +125,11 @@ $(function () {
         onClickRow: function (index, row) {
             if (editIndex != index) {
                 if (endEditing()) {
-                    $edudegreeList.datagrid('selectRow', index)
+                    $dataGrid.datagrid('selectRow', index)
                         .datagrid('beginEdit', index);
                     editIndex = index;
                 } else {
-                    $edudegreeList.datagrid('selectRow', editIndex);
+                    $dataGrid.datagrid('selectRow', editIndex);
                 }
             }
         }
@@ -141,8 +141,8 @@ $(function () {
         if (editIndex == undefined) {
             return true
         }
-        if ($edudegreeList.datagrid('validateRow', editIndex)) {
-            $edudegreeList.datagrid('endEdit', editIndex);
+        if ($dataGrid.datagrid('validateRow', editIndex)) {
+            $dataGrid.datagrid('endEdit', editIndex);
             editIndex = undefined;
             return true;
         } else {
@@ -156,9 +156,9 @@ $(function () {
             return;
         }
         if (endEditing()) {
-            $edudegreeList.datagrid('appendRow', {});
-            editIndex = $edudegreeList.datagrid('getRows').length - 1;
-            $edudegreeList.datagrid('selectRow', editIndex)
+            $dataGrid.datagrid('appendRow', {});
+            editIndex = $dataGrid.datagrid('getRows').length - 1;
+            $dataGrid.datagrid('selectRow', editIndex)
                 .datagrid('beginEdit', editIndex);
         }
     }
@@ -167,7 +167,7 @@ $(function () {
         if (editIndex == undefined) {
             return
         }
-        $edudegreeList.datagrid('cancelEdit', editIndex)
+        $dataGrid.datagrid('cancelEdit', editIndex)
             .datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
@@ -177,13 +177,15 @@ $(function () {
             return
         }
         if (endEditing()) {
-            memberInfo.educationDegree = $edudegreeList.datagrid('getRows');
+            memberInfo.educationDegree = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/' + memberInfo._id,
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
-                    $.messager.alert('提示', '数据保存成功!', 'info');
+                    if (data.success) {
+                        $.messager.alert('提示', '数据保存成功!', 'info');
+                    }
                 },
                 error: function (data) {
                     alert("success");

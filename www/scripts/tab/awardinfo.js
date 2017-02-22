@@ -1,4 +1,5 @@
 $(function () {
+
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
         // console.log(event.detail);
@@ -6,7 +7,7 @@ $(function () {
     });
 
     //学位学历
-    var $dataGrid = $("#professional-list");
+    var $dataGrid = $("#award-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
         text: '添加记录',
@@ -24,7 +25,7 @@ $(function () {
         text: '保存记录',
         iconCls: 'icon-save',
         handler: function () {
-            accept();
+            save();
         }
     }];
     $dataGrid.datagrid({
@@ -44,59 +45,56 @@ $(function () {
         toolbar: toolbar,
         columns: [[
             {
-                field: 'proProjectName',
-                title: '项目名称',
-                width: 120,
-                align: 'left',
-                editor: {type: 'textbox', options: {}}
-            },
-            {
-                field: 'proProjectType',
-                title: '项目类型',
-                width: 90,
+                field: 'awardProjectName',
+                title: '获奖项目名称',
+                width: 150,
                 align: 'left',
                 editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/projectType.json',
-                        prompt: '请选择'
-                    }
+                    type: 'textbox',
+                    options: {}
                 }
             },
             {
-                field: 'proProjectCompany',
-                title: '项目下达单位',
-                width: 120,
-                align: 'left',
-                editor: {type: 'textbox', options: {}}
-            },
-            {
-                field: 'proRolesInProject',
-                title: '项目中所任角色',
-                width: 60,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/roleInProject.json',
-                        prompt: '请选择'
-                    }
-                }
-            },
-            {
-                field: 'proStartDate',
-                title: '开始时间',
+                field: 'awardDate',
+                title: '获奖日期',
                 width: 60,
                 align: 'left',
                 editor: {type: 'datebox', options: {}}
             },
-            {field: 'porEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
+            {
+                field: 'awardNameAndLevel',
+                title: '获奖名称及级别',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'awardRoleInProject',
+                title: '项目中角色',
+                width: 50,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'awardCompany',
+                title: '授予单位',
+                width: 100,
+                align: 'left',
+                editor: {
+                    type: 'textbox',
+                    options: {}
+                }
+            },
+            {
+                field: 'awardMemo',
+                title: '备注',
+                width: 150,
+                align: 'left',
+                editor: {
+                    type: 'textbox',
+                    options: {}
+                }
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -126,18 +124,6 @@ $(function () {
         }
     }
 
-    function onClickRow(index) {
-        if (editIndex != index) {
-            if (endEditing()) {
-                $dataGrid.datagrid('selectRow', index)
-                    .datagrid('beginEdit', index);
-                editIndex = index;
-            } else {
-                $dataGrid.datagrid('selectRow', editIndex);
-            }
-        }
-    }
-
     function append() {
         if (memberInfo == null) {
             $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
@@ -160,13 +146,12 @@ $(function () {
         editIndex = undefined;
     }
 
-    function accept() {
+    function save() {
         if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            console.log($dataGrid.datagrid('getRows'));
-            memberInfo.professionalSkill = $dataGrid.datagrid('getRows');
+            memberInfo.award = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/' + memberInfo._id,
                 type: 'PUT',
