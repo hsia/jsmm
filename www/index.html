@@ -30,7 +30,11 @@
 <body>
 <div class="easyui-layout container" data-options="fit:true">
     <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA">九三学社社员管理系统</div>
-    <div data-options="region:'west',title:'组织机构'" style="width:15%">组织机构树</div>
+    <div data-options="region:'west',title:'组织机构'" style="width:15%">
+        <div class="easyui-panel" style="padding:5px; height:100%;">
+            <ul class="easyui-tree" id="organization-tree" data-options="url:'data/organization.json',method:'get',animate:true"></ul>
+        </div>
+    </div>
     <div data-options="region:'south',border:false" style="height:30px;background:#A9FACD">版权信息</div>
     <div data-options="region:'center',title:'社员信息'" style="height:100%">
         <div class="easyui-layout container" data-options="fit:true">
