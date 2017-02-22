@@ -116,13 +116,13 @@ $(function () {
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {field: 'name', title: '姓名', width: 110, sortable: true, align: 'left'},
-            {field: 'gender', title: '性别', width: 50, align: 'left'},
-            {field: 'birthday', title: '出生日期', width: 120, align: 'left'},
-            {field: 'nation', title: '民族', width: 120, align: 'left'},
-            {field: 'idCard', title: '身份证号', width: 120, align: 'left'},
-            {field: 'branch', title: '所属支社', width: 120, align: 'left'},
-            {field: 'organ', title: '所属基层组织', width: 120, align: 'left'},
-            {field: 'branchTime', title: '入社时间', width: 120, align: 'left'}
+            {field: 'gender', title: '性别', width: 50, sortable: true, align: 'left'},
+            {field: 'birthday', title: '出生日期', width: 120, sortable: true, align: 'left'},
+            {field: 'nation', title: '民族', width: 120, sortable: true, align: 'left'},
+            {field: 'idCard', title: '身份证号', width: 120, sortable: true, align: 'left'},
+            {field: 'branch', title: '所属支社', width: 120, sortable: true, align: 'left'},
+            {field: 'organ', title: '所属基层组织', width: 120, sortable: true, align: 'left'},
+            {field: 'branchTime', title: '入社时间', width: 120, sortable: true, align: 'left'}
         ]],
         loader: function (param, success) {
             var defaultUrl = '/members';
