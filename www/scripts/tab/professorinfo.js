@@ -4,6 +4,11 @@ $(function () {
     window.addEventListener("grid-row-selection", function (event) {
         // console.log(event.detail);
         memberInfo = event.detail;
+        if (!$.isEmptyObject(memberInfo)) {
+            if (!$.isEmptyObject(memberInfo.professor)) {
+                $dataGrid.datagrid('loadData', memberInfo.professor);
+            }
+        }
     });
 
     //学位学历
@@ -151,7 +156,7 @@ $(function () {
             return
         }
         if (endEditing()) {
-            memberInfo.profesor = $dataGrid.datagrid('getRows');
+            memberInfo.professor = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',

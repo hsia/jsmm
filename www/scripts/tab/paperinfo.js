@@ -4,6 +4,11 @@ $(function () {
     window.addEventListener("grid-row-selection", function (event) {
         // console.log(event.detail);
         memberInfo = event.detail;
+        if (!$.isEmptyObject(memberInfo)) {
+            if (!$.isEmptyObject(memberInfo.paper)) {
+                $dataGrid.datagrid('loadData', memberInfo.paper);
+            }
+        }
     });
 
     //学位学历

@@ -6,6 +6,11 @@ $(function () {
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
         memberInfo = event.detail;
+        if (!$.isEmptyObject(memberInfo)) {
+            if (!$.isEmptyObject(memberInfo.familyRelations)) {
+                $familyList.datagrid('loadData', memberInfo.familyRelations);
+            }
+        }
     });
 
     var gridHeight = ($('#member-info').height());

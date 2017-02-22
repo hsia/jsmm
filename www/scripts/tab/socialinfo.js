@@ -3,6 +3,11 @@ $(function () {
     window.addEventListener("grid-row-selection", function (event) {
         // console.log(event.detail);
         memberInfo = event.detail;
+        if (!$.isEmptyObject(memberInfo)) {
+            if (!$.isEmptyObject(memberInfo.social)) {
+                $dataGrid.datagrid('loadData', memberInfo.social);
+            }
+        }
     });
 
     //学位学历

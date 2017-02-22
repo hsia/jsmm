@@ -6,6 +6,11 @@ $(function () {
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
         memberInfo = event.detail;
+        if (!$.isEmptyObject(memberInfo)) {
+            if (!$.isEmptyObject(memberInfo.achievements)) {
+                $achievementsList.datagrid('loadData', memberInfo.achievements);
+            }
+        }
     });
 
     var gridHeight = ($('#member-info').height());
