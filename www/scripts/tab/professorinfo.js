@@ -7,7 +7,7 @@ $(function () {
     });
 
     //学位学历
-    var $dataGrid = $("#edudegree-list");
+    var $dataGrid = $("#professor-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
         text: '添加记录',
@@ -45,82 +45,56 @@ $(function () {
         toolbar: toolbar,
         columns: [[
             {
-                field: 'eduSchoolName',
-                title: '学校(单位)名称',
-                width: 150,
+                field: 'professorName',
+                title: '专家名称',
+                width: 60,
                 align: 'left',
-                editor: {type: 'textbox', options: {}}
+                editor: {
+                    type: 'textbox',
+                    options: {}
+                }
             },
             {
-                field: 'eduStartingDate',
-                title: '入学时间',
+                field: 'approvalDate',
+                title: '批准时间',
                 width: 60,
                 align: 'left',
                 editor: {type: 'datebox', options: {}}
             },
             {
-                field: 'eduGraduateDate',
-                title: '毕业时间',
-                width: 60,
-                align: 'left',
-                editor: {type: 'datebox', options: {}}
-            },
-            {
-                field: 'eduMajor',
-                title: '专业',
-                width: 120,
+                field: 'approvalCompanyLevel',
+                title: '批准单位级别',
+                width: 80,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'eduEducation',
-                title: '学历',
-                width: 110,
+                field: 'approvalCompanyName',
+                title: '批准单位名称',
+                width: 100,
                 align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/education.json',
-                        prompt: '请选择'
-                    }
-                }
+                editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'eduDegree',
-                title: '学位',
-                width: 110,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/degree.json',
-                        prompt: '请选择'
-                    }
-                }
-            },
-            {
-                field: 'eduEducationType',
-                title: '教育类别',
+                field: 'govSubsidiesType',
+                title: '政府津贴类别',
                 width: 80,
                 align: 'left',
                 editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/educationType.json',
-                        prompt: '请选择',
-                        panelHeight: 'auto'
-                    }
+                    type: 'textbox',
+                    options: {}
                 }
             },
+            {
+                field: 'subsidiesDate',
+                title: '享受津贴时间',
+                width: 60,
+                align: 'left',
+                editor: {
+                    type: 'datebox',
+                    options: {}
+                }
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -173,11 +147,11 @@ $(function () {
     }
 
     function save() {
-        if(memberInfo==null){
+        if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            memberInfo.educationDegree = $dataGrid.datagrid('getRows');
+            memberInfo.profesor = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',

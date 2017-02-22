@@ -7,7 +7,7 @@ $(function () {
     });
 
     //学位学历
-    var $dataGrid = $("#edudegree-list");
+    var $dataGrid = $("#paper-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
         text: '添加记录',
@@ -45,36 +45,56 @@ $(function () {
         toolbar: toolbar,
         columns: [[
             {
-                field: 'eduSchoolName',
-                title: '学校(单位)名称',
-                width: 150,
-                align: 'left',
-                editor: {type: 'textbox', options: {}}
-            },
-            {
-                field: 'eduStartingDate',
-                title: '入学时间',
+                field: 'paperPublications',
+                title: '论文/著作',
                 width: 60,
                 align: 'left',
-                editor: {type: 'datebox', options: {}}
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/publicationsType.json',
+                        panelHeight: 'auto',
+                        prompt: '请选择'
+                    }
+                }
             },
             {
-                field: 'eduGraduateDate',
-                title: '毕业时间',
-                width: 60,
-                align: 'left',
-                editor: {type: 'datebox', options: {}}
-            },
-            {
-                field: 'eduMajor',
-                title: '专业',
+                field: 'paperName',
+                title: '作品名称',
                 width: 120,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'eduEducation',
-                title: '学历',
+                field: 'paperPress',
+                title: '刊物/出版社',
+                width: 120,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'paperAuthorSort',
+                title: '第几作者',
+                width: 50,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'paperPressDate',
+                title: '发行时间',
+                width: 60,
+                align: 'left',
+                editor: {
+                    type: 'datebox',
+                    options: {}
+                }
+            },
+            {
+                field: 'paperRoleDetail',
+                title: '角色说明',
                 width: 110,
                 align: 'left',
                 editor: {
@@ -83,44 +103,12 @@ $(function () {
                         valueField: 'value',
                         textField: 'text',
                         method: 'get',
-                        url: 'data/education.json',
-                        prompt: '请选择'
-                    }
-                }
-            },
-            {
-                field: 'eduDegree',
-                title: '学位',
-                width: 110,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/degree.json',
-                        prompt: '请选择'
-                    }
-                }
-            },
-            {
-                field: 'eduEducationType',
-                title: '教育类别',
-                width: 80,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/educationType.json',
+                        url: 'data/rolesInPublications.json',
                         prompt: '请选择',
                         panelHeight: 'auto'
                     }
                 }
-            },
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -173,11 +161,11 @@ $(function () {
     }
 
     function save() {
-        if(memberInfo==null){
+        if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            memberInfo.educationDegree = $dataGrid.datagrid('getRows');
+            memberInfo.paper = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',

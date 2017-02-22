@@ -6,9 +6,9 @@ $(function () {
     });
 
     //学位学历
-    var $professionalList = $("#professional-list");
-    var professionalGridHeight = $("#member-info").height();
-    var professionalToolbar = [{
+    var $dataGrid = $("#professional-list");
+    var gridHeight = $("#member-info").height();
+    var toolbar = [{
         text: '添加记录',
         iconCls: 'icon-add',
         handler: function () {
@@ -27,9 +27,9 @@ $(function () {
             accept();
         }
     }];
-    $professionalList.datagrid({
+    $dataGrid.datagrid({
         iconCls: 'icon-ok',
-        height: professionalGridHeight,
+        height: gridHeight,
         rownumbers: true,
         pageSize: 10,
         nowrap: true,
@@ -41,14 +41,14 @@ $(function () {
         remoteSort: true,
         multiSort: true,
         singleSelect: true,
-        toolbar: professionalToolbar,
+        toolbar: toolbar,
         columns: [[
             {
                 field: 'proProjectName',
                 title: '项目名称',
                 width: 120,
                 align: 'left',
-                editor: {type: 'textbox', options: {required: true}}
+                editor: {type: 'textbox', options: {}}
             },
             {
                 field: 'proProjectType',
@@ -62,7 +62,6 @@ $(function () {
                         textField: 'text',
                         method: 'get',
                         url: 'data/projectType.json',
-                        required: true,
                         prompt: '请选择'
                     }
                 }
@@ -72,7 +71,7 @@ $(function () {
                 title: '项目下达单位',
                 width: 120,
                 align: 'left',
-                editor: {type: 'textbox', options: {required: true}}
+                editor: {type: 'textbox', options: {}}
             },
             {
                 field: 'proRolesInProject',
@@ -86,7 +85,6 @@ $(function () {
                         textField: 'text',
                         method: 'get',
                         url: 'data/roleInProject.json',
-                        required: true,
                         prompt: '请选择'
                     }
                 }
@@ -96,18 +94,18 @@ $(function () {
                 title: '开始时间',
                 width: 60,
                 align: 'left',
-                editor: {type: 'datebox', options: {required: true}}
+                editor: {type: 'datebox', options: {}}
             },
             {field: 'porEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
                 if (endEditing()) {
-                    $professionalList.datagrid('selectRow', index)
+                    $dataGrid.datagrid('selectRow', index)
                         .datagrid('beginEdit', index);
                     editIndex = index;
                 } else {
-                    $professionalList.datagrid('selectRow', editIndex);
+                    $dataGrid.datagrid('selectRow', editIndex);
                 }
             }
         }
@@ -119,8 +117,8 @@ $(function () {
         if (editIndex == undefined) {
             return true
         }
-        if ($professionalList.datagrid('validateRow', editIndex)) {
-            $professionalList.datagrid('endEdit', editIndex);
+        if ($dataGrid.datagrid('validateRow', editIndex)) {
+            $dataGrid.datagrid('endEdit', editIndex);
             editIndex = undefined;
             return true;
         } else {
@@ -131,11 +129,11 @@ $(function () {
     function onClickRow(index) {
         if (editIndex != index) {
             if (endEditing()) {
-                $professionalList.datagrid('selectRow', index)
+                $dataGrid.datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
                 editIndex = index;
             } else {
-                $professionalList.datagrid('selectRow', editIndex);
+                $dataGrid.datagrid('selectRow', editIndex);
             }
         }
     }
@@ -146,9 +144,9 @@ $(function () {
             return;
         }
         if (endEditing()) {
-            $professionalList.datagrid('appendRow', {});
-            editIndex = $professionalList.datagrid('getRows').length - 1;
-            $professionalList.datagrid('selectRow', editIndex)
+            $dataGrid.datagrid('appendRow', {});
+            editIndex = $dataGrid.datagrid('getRows').length - 1;
+            $dataGrid.datagrid('selectRow', editIndex)
                 .datagrid('beginEdit', editIndex);
         }
     }
@@ -157,24 +155,26 @@ $(function () {
         if (editIndex == undefined) {
             return
         }
-        $professionalList.datagrid('cancelEdit', editIndex)
+        $dataGrid.datagrid('cancelEdit', editIndex)
             .datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
 
     function accept() {
-        if(memberInfo==null){
+        if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            console.log($professionalList.datagrid('getRows'));
-            memberInfo.professionalSkill = $professionalList.datagrid('getRows');
+            console.log($dataGrid.datagrid('getRows'));
+            memberInfo.professionalSkill = $dataGrid.datagrid('getRows');
             $.ajax({
-                url: '/members/' + memberInfo._id,
+                url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
-                    $.messager.alert('提示', '数据保存成功!', 'info');
+                    if (data.success) {
+                        $.messager.alert('提示', '数据保存成功!', 'info');
+                    }
                 },
                 error: function (data) {
                     alert("success");

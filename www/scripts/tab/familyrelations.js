@@ -1,97 +1,92 @@
-$(function () {
+/**
+ * Created by S on 2017/2/21.
+ */
 
+$(function () {
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
-        // console.log(event.detail);
         memberInfo = event.detail;
     });
 
-    //学位学历
-    var $dataGrid = $("#edudegree-list");
-    var gridHeight = $("#member-info").height();
-    var toolbar = [{
-        text: '添加记录',
-        iconCls: 'icon-add',
-        handler: function () {
-            append();
+    var gridHeight = ($('#member-info').height());
+    var $familyList = $('#familyRelation-list');
+    var toolbar = [
+        {
+            text: '添加记录',
+            iconCls: 'icon-add',
+            handler: function () {
+                addRow();
+            }
+        }, '-', {
+            text: '移除记录',
+            iconCls: 'icon-remove',
+            handler: function () {
+                removeit();
+            }
+        }, '-', {
+            text: '保存记录',
+            iconCls: 'icon-save',
+            handler: function () {
+                save();
+            }
         }
-    }, '-', {
-        text: '移除记录',
-        iconCls: 'icon-remove',
-        handler: function () {
-            removeit();
-        }
-    }, '-', {
-        text: '保存记录',
-        iconCls: 'icon-save',
-        handler: function () {
-            save();
-        }
-    }];
-    $dataGrid.datagrid({
+    ];
+
+    $familyList.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
         rownumbers: true,
-        pageSize: 10,
         nowrap: true,
         striped: true,
         fitColumns: true,
         loadMsg: '数据装载中......',
-        // pagination: true,
         allowSorts: true,
         remoteSort: true,
         multiSort: true,
         singleSelect: true,
         toolbar: toolbar,
         columns: [[
+            {field: 'familyName', title: '姓名', width: 110, align: 'left', editor: 'textbox'},
             {
-                field: 'eduSchoolName',
-                title: '学校(单位)名称',
-                width: 150,
+                field: 'familyRelation',
+                title: '与本人的关系',
+                width: 100,
                 align: 'left',
-                editor: {type: 'textbox', options: {}}
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/relationship.json',
+                        prompt: '请选择'
+                    }
+                }
             },
             {
-                field: 'eduStartingDate',
-                title: '入学时间',
-                width: 60,
-                align: 'left',
-                editor: {type: 'datebox', options: {}}
-            },
-            {
-                field: 'eduGraduateDate',
-                title: '毕业时间',
-                width: 60,
-                align: 'left',
-                editor: {type: 'datebox', options: {}}
-            },
-            {
-                field: 'eduMajor',
-                title: '专业',
+                field: 'familyGender',
+                title: '性别',
                 width: 120,
                 align: 'left',
-                editor: {type: 'textbox', options: {}}
-            },
-            {
-                field: 'eduEducation',
-                title: '学历',
-                width: 110,
-                align: 'left',
                 editor: {
                     type: 'combobox',
                     options: {
                         valueField: 'value',
                         textField: 'text',
                         method: 'get',
-                        url: 'data/education.json',
+                        url: 'data/gender.json',
                         prompt: '请选择'
                     }
                 }
             },
+            {field: 'familyBirthDay', title: '出生年月', width: 120, align: 'left', editor: 'datebox'},
+            {field: 'familyCompany', title: '工作单位', width: 120, align: 'left', editor: 'textbox'},
+            {field: 'familyJob', title: '职务', width: 120, align: 'left', editor: 'textbox'},
+            {field: 'familyNationality', title: '国籍', width: 120, align: 'left', editor: 'textbox'},
             {
-                field: 'eduDegree',
-                title: '学位',
-                width: 110,
+                field: 'familyPolitical ',
+                title: '政治面貌',
+                width: 120,
                 align: 'left',
                 editor: {
                     type: 'combobox',
@@ -99,37 +94,20 @@ $(function () {
                         valueField: 'value',
                         textField: 'text',
                         method: 'get',
-                        url: 'data/degree.json',
+                        url: 'data/party.json',
                         prompt: '请选择'
                     }
                 }
-            },
-            {
-                field: 'eduEducationType',
-                title: '教育类别',
-                width: 80,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/educationType.json',
-                        prompt: '请选择',
-                        panelHeight: 'auto'
-                    }
-                }
-            },
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
                 if (endEditing()) {
-                    $dataGrid.datagrid('selectRow', index)
+                    $familyList.datagrid('selectRow', index)
                         .datagrid('beginEdit', index);
                     editIndex = index;
                 } else {
-                    $dataGrid.datagrid('selectRow', editIndex);
+                    $familyList.datagrid('selectRow', editIndex);
                 }
             }
         }
@@ -141,8 +119,8 @@ $(function () {
         if (editIndex == undefined) {
             return true
         }
-        if ($dataGrid.datagrid('validateRow', editIndex)) {
-            $dataGrid.datagrid('endEdit', editIndex);
+        if ($familyList.datagrid('validateRow', editIndex)) {
+            $familyList.datagrid('endEdit', editIndex);
             editIndex = undefined;
             return true;
         } else {
@@ -150,39 +128,39 @@ $(function () {
         }
     }
 
-    function append() {
+    function addRow() {
         if (memberInfo == null) {
             $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
             return;
         }
         if (endEditing()) {
-            $dataGrid.datagrid('appendRow', {});
-            editIndex = $dataGrid.datagrid('getRows').length - 1;
-            $dataGrid.datagrid('selectRow', editIndex)
+            $familyList.datagrid('appendRow', {});
+            editIndex = $familyList.datagrid('getRows').length - 1;
+            $familyList.datagrid('selectRow', editIndex)
                 .datagrid('beginEdit', editIndex);
         }
     }
 
     function removeit() {
         if (editIndex == undefined) {
-            return
+            return;
         }
-        $dataGrid.datagrid('cancelEdit', editIndex)
-            .datagrid('deleteRow', editIndex);
+        $familyList.datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
 
     function save() {
-        if(memberInfo==null){
+        if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            memberInfo.educationDegree = $dataGrid.datagrid('getRows');
+            memberInfo.familyRelations = $familyList.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
+                    //删除成功以后，重新加载数据，并将choiceRows置为空。
                     if (data.success) {
                         $.messager.alert('提示', '数据保存成功!', 'info');
                     }
@@ -194,6 +172,4 @@ $(function () {
             });
         }
     }
-
-
-})
+});

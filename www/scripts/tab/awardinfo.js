@@ -7,7 +7,7 @@ $(function () {
     });
 
     //学位学历
-    var $dataGrid = $("#edudegree-list");
+    var $dataGrid = $("#award-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
         text: '添加记录',
@@ -45,82 +45,56 @@ $(function () {
         toolbar: toolbar,
         columns: [[
             {
-                field: 'eduSchoolName',
-                title: '学校(单位)名称',
+                field: 'awardProjectName',
+                title: '获奖项目名称',
                 width: 150,
                 align: 'left',
-                editor: {type: 'textbox', options: {}}
+                editor: {
+                    type: 'textbox',
+                    options: {}
+                }
             },
             {
-                field: 'eduStartingDate',
-                title: '入学时间',
+                field: 'awardDate',
+                title: '获奖日期',
                 width: 60,
                 align: 'left',
                 editor: {type: 'datebox', options: {}}
             },
             {
-                field: 'eduGraduateDate',
-                title: '毕业时间',
-                width: 60,
-                align: 'left',
-                editor: {type: 'datebox', options: {}}
-            },
-            {
-                field: 'eduMajor',
-                title: '专业',
+                field: 'awardNameAndLevel',
+                title: '获奖名称及级别',
                 width: 120,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'eduEducation',
-                title: '学历',
-                width: 110,
+                field: 'awardRoleInProject',
+                title: '项目中角色',
+                width: 50,
+                align: 'left',
+                editor: {type: 'textbox', options: {}}
+            },
+            {
+                field: 'awardCompany',
+                title: '授予单位',
+                width: 100,
                 align: 'left',
                 editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/education.json',
-                        prompt: '请选择'
-                    }
+                    type: 'textbox',
+                    options: {}
                 }
             },
             {
-                field: 'eduDegree',
-                title: '学位',
-                width: 110,
+                field: 'awardMemo',
+                title: '备注',
+                width: 150,
                 align: 'left',
                 editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/degree.json',
-                        prompt: '请选择'
-                    }
+                    type: 'textbox',
+                    options: {}
                 }
-            },
-            {
-                field: 'eduEducationType',
-                title: '教育类别',
-                width: 80,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/educationType.json',
-                        prompt: '请选择',
-                        panelHeight: 'auto'
-                    }
-                }
-            },
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -173,11 +147,11 @@ $(function () {
     }
 
     function save() {
-        if(memberInfo==null){
+        if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            memberInfo.educationDegree = $dataGrid.datagrid('getRows');
+            memberInfo.award = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',

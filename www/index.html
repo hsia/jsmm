@@ -15,6 +15,14 @@
     <script type="text/javascript" src="scripts/tab/jobresumes.js"></script>
     <script type="text/javascript" src="scripts/tab/edudegreeinfo.js"></script>
     <script type="text/javascript" src="scripts/tab/professionalinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/paperinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/awardinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/familyrelations.js"></script>
+    <script type="text/javascript" src="scripts/tab/achievements.js"></script>
+    <script type="text/javascript" src="scripts/tab/patentsinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/professorinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/specializedskillinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/socialinfo.js"></script>
 </head>
 <body>
     <div class="easyui-layout container" data-options="fit:true">
@@ -32,50 +40,79 @@
                 </div>
                 <div  data-options="region:'south',border:false" style="height:40%;">
                     <div class="easyui-tabs" style="height:100%;">
-                        <div id="member-info" title="社员详情" style="height:100%;"></div>
-                        <div title="学历学位" style="height:100%;">
-                            <table id="edudegree-list" style="width:100%;height: 100%"></table >
-                        </div>
-                        <div title="工作履历" style="height:100%;">
-                            <table id="job-resumes" style="width:100%;height:100%;"></table>
-                        </div>
-                        <div title="专业技术工作" style="height:100%;">
-                            <table id="professional-list" style="width:100%;height: 100%"></table >
-                        </div>
+                      <div id="member-info" title="社员详情" style="height:100%;"></div>
+                      <div title="学历学位" style="height:100%;">
+                          <table id="edudegree-list" style="width:100%;height: 100%"></table >
+                      </div>
+                    <div title="工作履历" style="height:100%;">
+                        <table id="job-resumes" style="width:100%;height:100%;"></table>
+                    </div>
+                    <div title="专业技术工作" style="height:100%;">
+                        <table id="professional-list" style="width:100%;height:100%"></table>
+                    </div>
+                    <div title="家庭社会关系" style="height:100%;">
+                        <table id="familyRelation-list" style="width:100%;height: 100%"></table>
+                    </div>
+                    <div title="主要论文及著作" style="height:100%;">
+                        <table id="paper-list" style="width:100%;height:100%"></table>
+                    </div>
+                    <div title="专业技术成果" style="height:100%;">
+                        <table id="achievements-list" style="width:100%;height: 100%"></table>
+                    </div>
+                    <div title="专业技术工作获奖" style="height:100%;">
+                        <table id="award-list" style="width:100%;height:100%"></table>
+                    </div>
+                    <div title="专利情况" style="height:100%;">
+                        <table id="patents-list" style="width:100%;height:100%"></table>
+                    </div>
+                    <div title="专家情况" style="height:100%;">
+                        <table id="professor-list" style="width:100%;height:100%"></table>
+                    </div>
+                    <div title="业务专长" style="height:100%;">
+                        <table id="specializedskill-list" style="width:100%;height:100%"></table>
+                    </div>
+                    <div title="政府和主要社会职务" style="height:100%;">
+                        <table id="social-list" style="width:100%;height:100%"></table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true">
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="foreignName" style="width:100%" data-options="label:'外文姓名:',required:true,validType:'email'">
+            <input class="easyui-textbox" name="foreignName" style="width:100%"
+                   data-options="label:'外文姓名:',required:true,validType:'email'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="usedName" style="width:100%" data-options="label:'曾用名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="gender" style="width:100%" data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" name="gender" style="width:100%"
+                   data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="nativePlace" style="width:100%" data-options="label:'籍贯:',required:true">
+            <input class="easyui-textbox" name="nativePlace" style="width:100%"
+                   data-options="label:'籍贯:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="birthPlace" style="width:100%" data-options="label:'出生地:',required:true">
+            <input class="easyui-textbox" name="birthPlace" style="width:100%"
+                   data-options="label:'出生地:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="nation" style="width:100%" text="请选择"
                    data-options="label:'民族:',required:true,valueField:'value',textField:'text',url:'data/peoples.json',method:'get',prompt:'请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="health" style="width:100%" data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" name="health" style="width:100%"
+                   data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="marriage" style="width:100%"
@@ -98,19 +135,24 @@
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-datebox" name="branchTime" style="width:100%" data-options="label:'入社时间:',required:true">
+            <input class="easyui-datebox" name="branchTime" style="width:100%"
+                   data-options="label:'入社时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="partyCross" style="width:100%" data-options="label:'党派交叉:',required:true">
+            <input class="easyui-textbox" name="partyCross" style="width:100%"
+                   data-options="label:'党派交叉:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyName" style="width:100%" data-options="label:'单位名称:',required:true">
+            <input class="easyui-textbox" name="companyName" style="width:100%"
+                   data-options="label:'单位名称:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-datebox" name="jobTime" style="width:100%" data-options="label:'参加工作时间:',required:true">
+            <input class="easyui-datebox" name="jobTime" style="width:100%"
+                   data-options="label:'参加工作时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="department" style="width:100%" data-options="label:'工作部门:',required:true">
+            <input class="easyui-textbox" name="department" style="width:100%"
+                   data-options="label:'工作部门:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="retire" style="width:100%"
@@ -126,28 +168,35 @@
             <input class="easyui-textbox" name="academic" style="width:100%" data-options="label:'学术职务:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="homeAddress" style="width:100%" data-options="label:'家庭地址:',required:true">
+            <input class="easyui-textbox" name="homeAddress" style="width:100%"
+                   data-options="label:'家庭地址:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="homePost" style="width:100%" data-options="label:'家庭地址邮编:',required:true">
+            <input class="easyui-textbox" name="homePost" style="width:100%"
+                   data-options="label:'家庭地址邮编:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="homeTel" style="width:100%" data-options="label:'家庭电话:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyAddress" style="width:100%" data-options="label:'公司地址:',required:true">
+            <input class="easyui-textbox" name="companyAddress" style="width:100%"
+                   data-options="label:'公司地址:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyPost" style="width:100%" data-options="label:'公司邮编:',required:true">
+            <input class="easyui-textbox" name="companyPost" style="width:100%"
+                   data-options="label:'公司邮编:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyTel" style="width:100%" data-options="label:'单位电话:',required:true">
+            <input class="easyui-textbox" name="companyTel" style="width:100%"
+                   data-options="label:'单位电话:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="commAddress" style="width:100%" data-options="label:'通信地址:',required:true">
+            <input class="easyui-textbox" name="commAddress" style="width:100%"
+                   data-options="label:'通信地址:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="commPost" style="width:100%" data-options="label:'通信地址邮编:',required:true">
+            <input class="easyui-textbox" name="commPost" style="width:100%"
+                   data-options="label:'通信地址邮编:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="mobile" style="width:100%" data-options="label:'移动电话:',required:true">
@@ -166,29 +215,34 @@
             <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="foreignName" style="width:100%" data-options="label:'外文姓名:',required:true,validType:'email'">
+            <input class="easyui-textbox" name="foreignName" style="width:100%"
+                   data-options="label:'外文姓名:',required:true,validType:'email'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="usedName" style="width:100%" data-options="label:'曾用名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="gender" style="width:100%" data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" name="gender" style="width:100%"
+                   data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="nativePlace" style="width:100%" data-options="label:'籍贯:',required:true">
+            <input class="easyui-textbox" name="nativePlace" style="width:100%"
+                   data-options="label:'籍贯:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="birthPlace" style="width:100%" data-options="label:'出生地:',required:true">
+            <input class="easyui-textbox" name="birthPlace" style="width:100%"
+                   data-options="label:'出生地:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="nation" style="width:100%" text="请选择"
                    data-options="label:'民族:',required:true,valueField:'value',textField:'text',url:'data/peoples.json',method:'get',prompt:'请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="health" style="width:100%" data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" name="health" style="width:100%"
+                   data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="marriage" style="width:100%"
@@ -211,19 +265,24 @@
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-datebox" name="branchTime" style="width:100%" data-options="label:'入社时间:',required:true">
+            <input class="easyui-datebox" name="branchTime" style="width:100%"
+                   data-options="label:'入社时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="partyCross" style="width:100%" data-options="label:'党派交叉:',required:true">
+            <input class="easyui-textbox" name="partyCross" style="width:100%"
+                   data-options="label:'党派交叉:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyName" style="width:100%" data-options="label:'单位名称:',required:true">
+            <input class="easyui-textbox" name="companyName" style="width:100%"
+                   data-options="label:'单位名称:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-datebox" name="jobTime" style="width:100%" data-options="label:'参加工作时间:',required:true">
+            <input class="easyui-datebox" name="jobTime" style="width:100%"
+                   data-options="label:'参加工作时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="department" style="width:100%" data-options="label:'工作部门:',required:true">
+            <input class="easyui-textbox" name="department" style="width:100%"
+                   data-options="label:'工作部门:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="retire" style="width:100%"
@@ -239,28 +298,35 @@
             <input class="easyui-textbox" name="academic" style="width:100%" data-options="label:'学术职务:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="homeAddress" style="width:100%" data-options="label:'家庭地址:',required:true">
+            <input class="easyui-textbox" name="homeAddress" style="width:100%"
+                   data-options="label:'家庭地址:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="homePost" style="width:100%" data-options="label:'家庭地址邮编:',required:true">
+            <input class="easyui-textbox" name="homePost" style="width:100%"
+                   data-options="label:'家庭地址邮编:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="homeTel" style="width:100%" data-options="label:'家庭电话:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyAddress" style="width:100%" data-options="label:'公司地址:',required:true">
+            <input class="easyui-textbox" name="companyAddress" style="width:100%"
+                   data-options="label:'公司地址:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyPost" style="width:100%" data-options="label:'公司邮编:',required:true">
+            <input class="easyui-textbox" name="companyPost" style="width:100%"
+                   data-options="label:'公司邮编:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="companyTel" style="width:100%" data-options="label:'单位电话:',required:true">
+            <input class="easyui-textbox" name="companyTel" style="width:100%"
+                   data-options="label:'单位电话:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="commAddress" style="width:100%" data-options="label:'通信地址:',required:true">
+            <input class="easyui-textbox" name="commAddress" style="width:100%"
+                   data-options="label:'通信地址:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="commPost" style="width:100%" data-options="label:'通信地址邮编:',required:true">
+            <input class="easyui-textbox" name="commPost" style="width:100%"
+                   data-options="label:'通信地址邮编:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="mobile" style="width:100%" data-options="label:'移动电话:',required:true">

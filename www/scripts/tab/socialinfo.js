@@ -1,5 +1,4 @@
 $(function () {
-
     var memberInfo = null;
     window.addEventListener("grid-row-selection", function (event) {
         // console.log(event.detail);
@@ -7,7 +6,7 @@ $(function () {
     });
 
     //学位学历
-    var $dataGrid = $("#edudegree-list");
+    var $dataGrid = $("#social-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
         text: '添加记录',
@@ -25,7 +24,7 @@ $(function () {
         text: '保存记录',
         iconCls: 'icon-save',
         handler: function () {
-            save();
+            accept();
         }
     }];
     $dataGrid.datagrid({
@@ -45,82 +44,48 @@ $(function () {
         toolbar: toolbar,
         columns: [[
             {
-                field: 'eduSchoolName',
-                title: '学校(单位)名称',
-                width: 150,
+                field: 'socialOrgType',
+                title: '社会组织类别',
+                width: 60,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'eduStartingDate',
-                title: '入学时间',
-                width: 60,
+                field: 'socialOrgName',
+                title: '社会组织名称',
+                width: 100,
                 align: 'left',
-                editor: {type: 'datebox', options: {}}
+                editor: {
+                    type: 'textbox',
+                    options: {}
+                }
             },
             {
-                field: 'eduGraduateDate',
-                title: '毕业时间',
+                field: 'socialPositionLevel',
+                title: '社会职务级别',
                 width: 60,
-                align: 'left',
-                editor: {type: 'datebox', options: {}}
-            },
-            {
-                field: 'eduMajor',
-                title: '专业',
-                width: 120,
                 align: 'left',
                 editor: {type: 'textbox', options: {}}
             },
             {
-                field: 'eduEducation',
-                title: '学历',
-                width: 110,
+                field: 'socialPositionName',
+                title: '社会职务名称',
+                width: 100,
                 align: 'left',
                 editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/education.json',
-                        prompt: '请选择'
-                    }
+                    type: 'textbox',
+                    options: {}
                 }
             },
             {
-                field: 'eduDegree',
-                title: '学位',
-                width: 110,
+                field: 'socialPeriod',
+                title: '届次',
+                width: 30,
                 align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/degree.json',
-                        prompt: '请选择'
-                    }
-                }
+                editor: {type: 'textbox', options: {}}
             },
-            {
-                field: 'eduEducationType',
-                title: '教育类别',
-                width: 80,
-                align: 'left',
-                editor: {
-                    type: 'combobox',
-                    options: {
-                        valueField: 'value',
-                        textField: 'text',
-                        method: 'get',
-                        url: 'data/educationType.json',
-                        prompt: '请选择',
-                        panelHeight: 'auto'
-                    }
-                }
-            },
+            {field: 'socialBeginDate', title: '开始时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
+            {field: 'socialEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
@@ -150,6 +115,18 @@ $(function () {
         }
     }
 
+    function onClickRow(index) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $dataGrid.datagrid('selectRow', index)
+                    .datagrid('beginEdit', index);
+                editIndex = index;
+            } else {
+                $dataGrid.datagrid('selectRow', editIndex);
+            }
+        }
+    }
+
     function append() {
         if (memberInfo == null) {
             $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
@@ -172,12 +149,13 @@ $(function () {
         editIndex = undefined;
     }
 
-    function save() {
-        if(memberInfo==null){
+    function accept() {
+        if (memberInfo == null) {
             return
         }
         if (endEditing()) {
-            memberInfo.educationDegree = $dataGrid.datagrid('getRows');
+            console.log($dataGrid.datagrid('getRows'));
+            memberInfo.social = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',
