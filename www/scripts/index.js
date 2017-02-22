@@ -3,7 +3,7 @@
  */
 $(function () {
     $('#organization-tree').tree({
-        onSelect: function (node) {
+        onSelect: function(node) {
             console.log('Selected: ', node);
         }
     });
@@ -46,7 +46,7 @@ $(function () {
             success: function (data) {
                 $('#memberEdit-dialog').dialog('close');
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $memberList.datagrid('gotoPage', currentPage).datagrid('reload');
+                $memberList.datagrid('gotoPage',currentPage).datagrid('reload');
                 $.messager.alert('提示', '数据更新成功!', 'info');
             },
             error: function (data) {
@@ -160,7 +160,7 @@ $(function () {
         },
         onSelect: function (rowIndex, rowData) {
             memberInfo(rowData);
-            var event = new CustomEvent("grid-row-selection", {
+            var event = new CustomEvent("grid-row-selection",{
                 detail: rowData
             });
             window.dispatchEvent(event);
@@ -282,7 +282,7 @@ $(function () {
                 });
                 window.dispatchEvent(eventDelete);
 
-                memberInfo({})
+                memberInfo({});
 
                 $.messager.alert('提示', '数据删除成功!', 'info');
             },

@@ -9,9 +9,18 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.jobResumes)) {
                 $jobResumes.datagrid('loadData', memberInfo.jobResumes);
+            }else{
+                $jobResumes.datagrid('loadData', []);
             }
         }
     });
+
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        if (event.detail.success == true) {
+            $jobResumes.datagrid('loadData', []);
+        }
+    });
+
     var gridHeight = ($('#member-info').height());
     var $jobResumes = $('#job-resumes');
     var toolbar = [
@@ -104,6 +113,7 @@ $(function () {
         if (editIndex == undefined) {
             return;
         }
+        console.log(editIndex);
         $jobResumes.datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
@@ -115,14 +125,12 @@ $(function () {
         if (endEditing()) {
             memberInfo.jobResumes = $jobResumes.datagrid('getRows');
             $.ajax({
-                url: '/members/tab/' + memberInfo._id,
+                url: '/members/' + memberInfo._id,
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
                     //删除成功以后，重新加载数据，并将choiceRows置为空。
-                    if (data.success) {
-                        $.messager.alert('提示', '数据保存成功!', 'info');
-                    }
+                    $.messager.alert('提示', '数据保存成功!', 'info');
                 },
                 error: function (data) {
                     alert("success");
