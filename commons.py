@@ -9,11 +9,10 @@ import sys
 import uuid
 from datetime import datetime
 
-from couchdb import CouchDB
-
 os.chdir(os.path.dirname(__file__))
 sys.path[:0] = ['app', 'lib']
 
+from couchdb import CouchDB
 couch_db = CouchDB('http://127.0.0.1:5984')
 
 
