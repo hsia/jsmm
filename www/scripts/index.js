@@ -8,6 +8,11 @@ $(function () {
         }
     });
 
+    //下拉框、时间框点击的时候自动下拉
+    $(".combo").click(function () {
+        $(this).prev().combobox("showPanel");
+    });
+
     var gridHeight = ($('#members').height());
     var $memberList = $('#member-list');
 

@@ -110,6 +110,11 @@ $(function () {
                     $dataGrid.datagrid('selectRow', editIndex);
                 }
             }
+        },
+        onBeginEdit: function (index, row) {
+            $(".combo").click(function () {
+                $(this).prev().combobox("showPanel");
+            });
         }
     });
 

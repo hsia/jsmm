@@ -72,7 +72,8 @@ $(function () {
                         textField: 'text',
                         method: 'get',
                         url: 'data/resultsLevel.json',
-                        prompt: '请选择'
+                        prompt: '请选择',
+                        panelHeight: 'auto'
                     }
                 }
             },
@@ -89,6 +90,11 @@ $(function () {
                     $achievementsList.datagrid('selectRow', editIndex);
                 }
             }
+        },
+        onBeginEdit: function (index, row) {
+            $(".combo").click(function () {
+                $(this).prev().combobox("showPanel");
+            });
         }
     });
 
