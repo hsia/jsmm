@@ -23,7 +23,7 @@ $(function () {
             if (data.success == "true") {
                 $('#member-dialog').dialog('close');
                 $('#member-form').form('clear');
-                $memberList.datagrid({reload: true});
+                $memberList.datagrid('reload');
                 $.messager.alert('提示信息', '添加社员成功！', 'info');
             }
         })
@@ -275,7 +275,7 @@ $(function () {
             type: 'DELETE',
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $memberList.datagrid({reload: true});
+                $memberList.datagrid('reload');
 
                 var eventDelete = new CustomEvent("grid-row-deleteRow", {
                     detail: {success: true}
