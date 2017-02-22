@@ -7,8 +7,9 @@ $(function () {
     window.addEventListener("grid-row-selection", function (event) {
         memberInfo = event.detail;
     });
+
     var gridHeight = ($('#member-info').height());
-    var $jobResumes = $('#job-resumes');
+    var $achievementsList = $('#achievements-list');
     var toolbar = [
         {
             text: '添加记录',
@@ -31,7 +32,7 @@ $(function () {
         }
     ];
 
-    $jobResumes.datagrid({
+    $achievementsList.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
         rownumbers: true,
@@ -45,23 +46,34 @@ $(function () {
         singleSelect: true,
         toolbar: toolbar,
         columns: [[
-            {field: 'jobCompanyName', title: '单位名称', width: 110, align: 'left', editor: 'textbox'},
-            {field: 'jobDep', title: '工作部门', width: 50, align: 'left', editor: 'textbox'},
-            {field: 'jobDuties', title: '职务', width: 120, align: 'left', editor: 'textbox'},
-            {field: 'jobTitle', title: '职称', width: 120, align: 'left', editor: 'textbox'},
-            {field: 'jobAcademic', title: '学术职务', width: 120, align: 'left', editor: 'textbox'},
-            {field: 'jobStartTime', title: '开始时间', width: 120, align: 'left', editor: 'datebox'},
-            {field: 'jobEndTime', title: '结束时间', width: 120, align: 'left', editor: 'datebox'},
-            {field: 'jobReterence', title: '证明人', width: 120, align: 'left', editor: 'textbox'}
+            {field: 'achievementsName', title: '成果名称', width: 110, align: 'left', editor: 'textbox'},
+            {
+                field: 'achievementsLevel',
+                title: '成果水平',
+                width: 110,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/resultsLevel.json',
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {field: 'identificationUnit', title: '鉴定单位', width: 120, align: 'left', editor: 'textbox'},
+            {field: 'achievementsRemark', title: '备注', width: 120, align: 'left', editor: 'textbox'}
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
                 if (endEditing()) {
-                    $jobResumes.datagrid('selectRow', index)
+                    $achievementsList.datagrid('selectRow', index)
                         .datagrid('beginEdit', index);
                     editIndex = index;
                 } else {
-                    $jobResumes.datagrid('selectRow', editIndex);
+                    $achievementsList.datagrid('selectRow', editIndex);
                 }
             }
         }
@@ -73,8 +85,8 @@ $(function () {
         if (editIndex == undefined) {
             return true
         }
-        if ($jobResumes.datagrid('validateRow', editIndex)) {
-            $jobResumes.datagrid('endEdit', editIndex);
+        if ($achievementsList.datagrid('validateRow', editIndex)) {
+            $achievementsList.datagrid('endEdit', editIndex);
             editIndex = undefined;
             return true;
         } else {
@@ -88,9 +100,9 @@ $(function () {
             return;
         }
         if (endEditing()) {
-            $jobResumes.datagrid('appendRow', {});
-            editIndex = $jobResumes.datagrid('getRows').length - 1;
-            $jobResumes.datagrid('selectRow', editIndex)
+            $achievementsList.datagrid('appendRow', {});
+            editIndex = $achievementsList.datagrid('getRows').length - 1;
+            $achievementsList.datagrid('selectRow', editIndex)
                 .datagrid('beginEdit', editIndex);
         }
     }
@@ -99,7 +111,7 @@ $(function () {
         if (editIndex == undefined) {
             return;
         }
-        $jobResumes.datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
+        $achievementsList.datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
 
@@ -108,7 +120,7 @@ $(function () {
             return
         }
         if (endEditing()) {
-            memberInfo.jobResumes = $jobResumes.datagrid('getRows');
+            memberInfo.achievements = $achievementsList.datagrid('getRows');
             $.ajax({
                 url: '/members/' + memberInfo._id,
                 type: 'PUT',

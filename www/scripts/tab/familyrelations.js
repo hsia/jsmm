@@ -7,8 +7,9 @@ $(function () {
     window.addEventListener("grid-row-selection", function (event) {
         memberInfo = event.detail;
     });
+
     var gridHeight = ($('#member-info').height());
-    var $jobResumes = $('#job-resumes');
+    var $familyList = $('#familyRelation-list');
     var toolbar = [
         {
             text: '添加记录',
@@ -31,7 +32,7 @@ $(function () {
         }
     ];
 
-    $jobResumes.datagrid({
+    $familyList.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
         rownumbers: true,
@@ -45,23 +46,68 @@ $(function () {
         singleSelect: true,
         toolbar: toolbar,
         columns: [[
-            {field: 'jobCompanyName', title: '单位名称', width: 110, align: 'left', editor: 'textbox'},
-            {field: 'jobDep', title: '工作部门', width: 50, align: 'left', editor: 'textbox'},
-            {field: 'jobDuties', title: '职务', width: 120, align: 'left', editor: 'textbox'},
-            {field: 'jobTitle', title: '职称', width: 120, align: 'left', editor: 'textbox'},
-            {field: 'jobAcademic', title: '学术职务', width: 120, align: 'left', editor: 'textbox'},
-            {field: 'jobStartTime', title: '开始时间', width: 120, align: 'left', editor: 'datebox'},
-            {field: 'jobEndTime', title: '结束时间', width: 120, align: 'left', editor: 'datebox'},
-            {field: 'jobReterence', title: '证明人', width: 120, align: 'left', editor: 'textbox'}
+            {field: 'familyName', title: '姓名', width: 110, align: 'left', editor: 'textbox'},
+            {
+                field: 'familyRelation',
+                title: '与本人的关系',
+                width: 100,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/relationship.json',
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {
+                field: 'familyGender',
+                title: '性别',
+                width: 120,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/gender.json',
+                        prompt: '请选择'
+                    }
+                }
+            },
+            {field: 'familyBirthDay', title: '出生年月', width: 120, align: 'left', editor: 'datebox'},
+            {field: 'familyCompany', title: '工作单位', width: 120, align: 'left', editor: 'textbox'},
+            {field: 'familyJob', title: '职务', width: 120, align: 'left', editor: 'textbox'},
+            {field: 'familyNationality', title: '国籍', width: 120, align: 'left', editor: 'textbox'},
+            {
+                field: 'familyPolitical ',
+                title: '政治面貌',
+                width: 120,
+                align: 'left',
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'value',
+                        textField: 'text',
+                        method: 'get',
+                        url: 'data/party.json',
+                        prompt: '请选择'
+                    }
+                }
+            }
         ]],
         onClickRow: function (index, row) {
             if (editIndex != index) {
                 if (endEditing()) {
-                    $jobResumes.datagrid('selectRow', index)
+                    $familyList.datagrid('selectRow', index)
                         .datagrid('beginEdit', index);
                     editIndex = index;
                 } else {
-                    $jobResumes.datagrid('selectRow', editIndex);
+                    $familyList.datagrid('selectRow', editIndex);
                 }
             }
         }
@@ -73,8 +119,8 @@ $(function () {
         if (editIndex == undefined) {
             return true
         }
-        if ($jobResumes.datagrid('validateRow', editIndex)) {
-            $jobResumes.datagrid('endEdit', editIndex);
+        if ($familyList.datagrid('validateRow', editIndex)) {
+            $familyList.datagrid('endEdit', editIndex);
             editIndex = undefined;
             return true;
         } else {
@@ -88,9 +134,9 @@ $(function () {
             return;
         }
         if (endEditing()) {
-            $jobResumes.datagrid('appendRow', {});
-            editIndex = $jobResumes.datagrid('getRows').length - 1;
-            $jobResumes.datagrid('selectRow', editIndex)
+            $familyList.datagrid('appendRow', {});
+            editIndex = $familyList.datagrid('getRows').length - 1;
+            $familyList.datagrid('selectRow', editIndex)
                 .datagrid('beginEdit', editIndex);
         }
     }
@@ -99,7 +145,7 @@ $(function () {
         if (editIndex == undefined) {
             return;
         }
-        $jobResumes.datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
+        $familyList.datagrid('cancelEdit', editIndex).datagrid('deleteRow', editIndex);
         editIndex = undefined;
     }
 
@@ -108,7 +154,7 @@ $(function () {
             return
         }
         if (endEditing()) {
-            memberInfo.jobResumes = $jobResumes.datagrid('getRows');
+            memberInfo.familyRelations = $familyList.datagrid('getRows');
             $.ajax({
                 url: '/members/' + memberInfo._id,
                 type: 'PUT',
