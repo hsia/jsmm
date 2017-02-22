@@ -9,7 +9,15 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.achievements)) {
                 $achievementsList.datagrid('loadData', memberInfo.achievements);
+            } else {
+                $achievementsList.datagrid('loadData', []);
             }
+        }
+    });
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        console.log(event.detail);
+        if (event.detail.success) {
+            $achievementsList.datagrid('loadData', []);
         }
     });
 

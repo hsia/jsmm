@@ -9,9 +9,18 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.agencybroker)) {
                 $agencyBroker.datagrid('loadData', memberInfo.agencybroker);
+            } else {
+                $agencyBroker.datagrid('loadData', []);
             }
         }
     });
+
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        if (event.detail.success) {
+            $agencyBroker.datagrid('loadData', []);
+        }
+    });
+
     var gridHeight = ($('#member-info').height());
     var $agencyBroker = $('#agencyBroker-list');
     var toolbar = [

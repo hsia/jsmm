@@ -9,7 +9,15 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.familyRelations)) {
                 $familyList.datagrid('loadData', memberInfo.familyRelations);
+            } else {
+                $familyList.datagrid('loadData', []);
             }
+        }
+    });
+
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        if (event.detail.success) {
+            $familyList.datagrid('loadData', []);
         }
     });
 

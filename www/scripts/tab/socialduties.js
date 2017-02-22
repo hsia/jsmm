@@ -9,9 +9,18 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.socialduties)) {
                 $socialDuties.datagrid('loadData', memberInfo.socialduties);
+            } else {
+                $socialDuties.datagrid('loadData', []);
             }
         }
     });
+
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        if (event.detail.success) {
+            $socialDuties.datagrid('loadData', []);
+        }
+    });
+
     var gridHeight = ($('#member-info').height());
     var $socialDuties = $('#socialDuties-list');
     var toolbar = [

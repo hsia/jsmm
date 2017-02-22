@@ -7,7 +7,15 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.paper)) {
                 $dataGrid.datagrid('loadData', memberInfo.paper);
+            } else {
+                $dataGrid.datagrid('loadData', []);
             }
+        }
+    });
+
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        if (event.detail.success) {
+            $dataGrid.datagrid('loadData', []);
         }
     });
 

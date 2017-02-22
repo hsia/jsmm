@@ -9,9 +9,18 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.formercluboffice)) {
                 $formerClubOffice.datagrid('loadData', memberInfo.formercluboffice);
+            } else {
+                $formerClubOffice.datagrid('loadData', []);
             }
         }
     });
+
+    window.addEventListener("grid-row-deleteRow", function (event) {
+        if (event.detail.success) {
+            $formerClubOffice.datagrid('loadData', []);
+        }
+    });
+
     var gridHeight = ($('#member-info').height());
     var $formerClubOffice = $('#formerClubOffice-list');
     var toolbar = [
