@@ -108,7 +108,6 @@ $(function () {
         loadMsg: '数据装载中......',
         pagination: true,
         allowSorts: true,
-        remoteSort: true,
         multiSort: true,
         singleSelect: true,
         toolbar: toolbar,
