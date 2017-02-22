@@ -27,7 +27,6 @@ $(function () {
         event.preventDefault();
 
         var currentPage = $memberList.datagrid('options').pageNumber;
-        console.log(currentPage);
         var formData = $(this).serializeArray();
         var memberInfo = {};
         $.each(formData, function (index, element) {
