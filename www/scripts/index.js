@@ -2,6 +2,12 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
+    $('#organization-tree').tree({
+        onSelect: function(node) {
+            console.log('Selected: ', node);
+        }
+    });
+
     var gridHeight = ($('#members').height());
     var $memberList = $('#member-list');
 
