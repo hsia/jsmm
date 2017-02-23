@@ -304,4 +304,6 @@ $(function () {
     }).click(function () {
         $('#all-tabs').tabs('select', 15);
     });
+
+
 });
