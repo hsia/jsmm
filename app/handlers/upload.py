@@ -1,0 +1,51 @@
+import os.path
+import uuid
+import tornado.web
+
+import tornado_utils
+
+
+class UploadHandler(tornado.web.RequestHandler):
+
+    def initialize(self, callback):
+        '''
+        callback(file_info)，其中file_info格式为：
+        {'filename': 'xxx.xls', 'path': 'aaa/bbb/xxx.xls', 'content_type': 'application/vnd.ms-excel'}
+        filename为原文件名，path为实际保存路径，content_type为文件类型
+        '''
+        self._callback = callback
+
+    @tornado.web.addslash
+    def get(self):
+        self.write('''
+<html>
+  <head><title>Upload File</title></head>
+  <body>
+    <form action='/members/upload/' enctype="multipart/form-data" method='post'>
+    <input type='file' name='members'/><br/>
+    <input type='submit' value='submit'/>
+    </form>
+  </body>
+</html>
+''')
+
+    @tornado.web.addslash
+    def post(self):
+        '''
+        接收多个上传文件，调用callback对上传的。
+        '''
+        # 文件的保存路径
+        inbox_path = os.path.join(os.path.dirname(__file__), '../../inbox')
+        # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
+        # 'content_type': 'application/vnd.ms-excel'}]}
+        file_infos = self.request.files['members']
+        for file_info in file_infos:
+            filename = file_info['filename']
+            upload_path = os.path.join(inbox_path, filename)
+            # 在保存的文件名和扩展名中间加6个随机字符，避免文件重名。
+            (root, ext) = os.path.splitext(upload_path)
+            path = root + '-' + uuid.uuid4().hex[0:6] + ext
+            with open(path, 'wb') as file:
+                file.write(file_info['body'])
+            self._callback({'filename': filename, 'path': path, 'content_type': file_info['content_type']})
+

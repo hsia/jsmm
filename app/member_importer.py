@@ -16,6 +16,9 @@ def make_uuid():
     return uuid.uuid4().hex
 
 
+def import_info(file_info):
+    print(file_info)
+
 class MemberInfoImporter():
     '''
     导入社员信息。
