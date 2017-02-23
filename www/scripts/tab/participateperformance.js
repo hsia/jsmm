@@ -142,7 +142,7 @@ $(function () {
                             panelHeight: 'auto'
                         }
                     }
-                },
+                }
             ]],
             onClickRow: function (index, row) {
                 if (editIndex != index) {
@@ -164,7 +164,6 @@ $(function () {
         });
         loadD();
     });
-
 
     var editIndex = undefined;
 
