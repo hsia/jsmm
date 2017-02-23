@@ -9,8 +9,8 @@ $(function () {
 
     function loadD() {
         if (memberInfo != null) {
-            if (memberInfo.participatePerformance != null) {
-                $dataGrid.datagrid('loadData', memberInfo.participatePerformance);
+            if (memberInfo.departmentReport != null) {
+                $dataGrid.datagrid('loadData', memberInfo.departmentReport);
             } else {
                 $dataGrid.datagrid('loadData', []);
             }
@@ -45,7 +45,7 @@ $(function () {
         }
     }];
 
-    $('#participate-performance').click(function () {
+    $('#department-report').click(function () {
         window.addEventListener("grid-row-selection", function (event) {
             memberInfo = event.detail;
             loadD()
@@ -67,23 +67,16 @@ $(function () {
             toolbar: toolbar,
             columns: [[
                 {
-                    field: 'perfDate',
-                    title: '日期',
-                    width: 60,
-                    align: 'left',
-                    editor: {type: 'datebox', options: {}}
-                },
-                {
-                    field: 'perfEvent',
-                    title: '事件',
-                    width: 160,
-                    align: 'left',
-                    editor: {type: 'textbox', options: {}}
-                },
-                {
-                    field: 'perfResult',
-                    title: '结果',
+                    field: 'depReportTime',
+                    title: '上传时间',
                     width: 80,
+                    align: 'left',
+                    editor: {type: 'datetimebox', options: {}}
+                },
+                {
+                    field: 'depReportName',
+                    title: '文件名称',
+                    width: 160,
                     align: 'left',
                     editor: {type: 'textbox', options: {}}
                 }
@@ -152,7 +145,7 @@ $(function () {
             return
         }
         if (endEditing()) {
-            memberInfo.participatePerformance = $dataGrid.datagrid('getRows');
+            memberInfo.departmentReport = $dataGrid.datagrid('getRows');
             $.ajax({
                 url: '/members/tab/' + memberInfo._id,
                 type: 'PUT',
