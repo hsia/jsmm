@@ -4,6 +4,8 @@
 import math
 import random
 
+from tornado.httpclient import HTTPError
+
 from commons import couch_db, make_uuid
 
 
@@ -11,19 +13,21 @@ def try_(operation_result):
     if isinstance(operation_result, Exception):
         raise operation_result
 
-try_(couch_db.delete('/jsmm'))
+# ！！！注意：此处会删除原有的数据库！！！
+if not isinstance(couch_db.get('/jsmm'), HTTPError):
+    try_(couch_db.delete('/jsmm'))
 try_(couch_db.put('/jsmm'))
 
-members = ['Ulysses Francis', 'Rolf Tel', 'Kaiden Michi', 'Dallas Billie', 'Warren Granville',
-           '林丹娜', 'Hyram Makoto', '杨爱丽', 'Cary Cheyenne', 'Temple Colbert', 'Delroy Naoki',
-           'Bishop Arthur', 'Yori Shiro', 'zhangsan', 'lisi', 'wangwu', 'zhaoliu', 'tianqi']
-for member in members:
-    try_(couch_db.post('/jsmm', {
-        'type': 'member',
-        '_id': make_uuid(),
-        'name': member,
-        'age': math.ceil(random.uniform(16, 90))
-    }))
+# members = ['Ulysses Francis', 'Rolf Tel', 'Kaiden Michi', 'Dallas Billie', 'Warren Granville',
+#            '林丹娜', 'Hyram Makoto', '杨爱丽', 'Cary Cheyenne', 'Temple Colbert', 'Delroy Naoki',
+#            'Bishop Arthur', 'Yori Shiro', 'zhangsan', 'lisi', 'wangwu', 'zhaoliu', 'tianqi']
+# for member in members:
+#     try_(couch_db.post('/jsmm', {
+#         'type': 'member',
+#         '_id': make_uuid(),
+#         'name': member,
+#         'age': math.ceil(random.uniform(16, 90))
+#     }))
 
 try_(couch_db.put('/jsmm/_design/members', {
     'views': {
