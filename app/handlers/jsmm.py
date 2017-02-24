@@ -107,7 +107,7 @@ class DocumentHandlerTab(tornado.web.RequestHandler):
         '''
         修改_id为member_id的member对象。
         '''
-        response = couch_db.get(r'/jsmm/_design/documentList/_view/documents')
+        response = couch_db.get(r'/jsmm/_design/documents/_view/all')
         doucmentList = json.loads(response.body.decode('utf-8'))
         documents = []
         for row in doucmentList['rows']:
