@@ -31,6 +31,7 @@
     <script type="text/javascript" src="scripts/tab/depreportinfo.js"></script>
     <script type="text/javascript" src="scripts/tab/depinfo.js"></script>
     <script type="text/javascript" src="scripts/tab/speechesinfo.js"></script>
+    <script type="text/javascript" src="scripts/documentlist.js"></script>
 </head>
 <body>
 <div class="easyui-layout container" data-options="fit:true">
@@ -42,60 +43,65 @@
         </div>
     </div>
     <div data-options="region:'south',border:false" style="height:30px;background:#A9FACD">版权信息</div>
-    <div data-options="region:'center',title:'社员信息'" style="height:100%">
-        <div class="easyui-layout container" data-options="fit:true">
-            <div id="members" data-options="region:'north',border:false" style="height:60%;">
-                <table id="member-list" style="width:100%;height:100%;"></table>
-            </div>
-            <div data-options="region:'south',border:false" style="height:40%;">
-                <div id="all-tabs" class="easyui-tabs" style="height:100%;">
-                    <div id="member-info" title="社员详情" style="height:100%;"></div>
-                    <div title="学历学位" style="height:100%;">
-                        <table id="edudegree-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="工作履历" style="height:100%;">
-                        <table id="job-resumes" style="width:100%;height:100%;"></table>
-                    </div>
-                    <div title="专业技术" style="height:100%;">
-                        <table id="professional-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="社会关系" style="height:100%;">
-                        <table id="familyRelation-list" style="width:100%;height: 100%"></table>
-                    </div>
-                    <div title="论文著作" style="height:100%;">
-                        <table id="paper-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="技术成果" style="height:100%;">
-                        <table id="achievements-list" style="width:100%;height: 100%"></table>
-                    </div>
-                    <div title="工作获奖" style="height:100%;">
-                        <table id="award-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="专利情况" style="height:100%;">
-                        <table id="patents-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="专家情况" style="height:100%;">
-                        <table id="professor-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="业务专长" style="height:100%;">
-                        <table id="specializedskill-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="社内职务" style="height:100%;">
-                        <table id="formerClubOffice-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="社会职务" style="height:100%;">
-                        <table id="social-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="其它职务" style="height:100%;">
-                        <table id="socialDuties-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div title="介绍人" style="height:100%;">
-                        <table id="agencyBroker-list" style="width:100%;height:100%"></table>
-                    </div>
-                    <div id="docWord" title="文档" style="height:100%;">
-                        <table id="docWord-list" style="width:100%;height:100%"></table>
+    <div data-options="region:'center'" style="height:100%">
+        <div class="easyui-tabs" style="height:100%;">
+            <div id="membersinfo" title="社员信息" data-options="fit:true">
+                <div id="members" data-options="region:'north',border:false" style="height:50%;">
+                    <table id="member-list" style="width:100%;height:100%;"></table>
+                </div>
+                <div data-options="region:'south',border:false" style="height:50%;">
+                    <div id="all-tabs" class="easyui-tabs" style="height:100%;">
+                        <div id="member-info" title="社员详情" style="height:100%;"></div>
+                        <div title="学历学位" style="height:100%;">
+                            <table id="edudegree-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="工作履历" style="height:100%;">
+                            <table id="job-resumes" style="width:100%;height:100%;"></table>
+                        </div>
+                        <div title="专业技术" style="height:100%;">
+                            <table id="professional-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="社会关系" style="height:100%;">
+                            <table id="familyRelation-list" style="width:100%;height: 100%"></table>
+                        </div>
+                        <div title="论文著作" style="height:100%;">
+                            <table id="paper-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="技术成果" style="height:100%;">
+                            <table id="achievements-list" style="width:100%;height: 100%"></table>
+                        </div>
+                        <div title="工作获奖" style="height:100%;">
+                            <table id="award-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="专利情况" style="height:100%;">
+                            <table id="patents-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="专家情况" style="height:100%;">
+                            <table id="professor-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="业务专长" style="height:100%;">
+                            <table id="specializedskill-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="社内职务" style="height:100%;">
+                            <table id="formerClubOffice-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="社会职务" style="height:100%;">
+                            <table id="social-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="其它职务" style="height:100%;">
+                            <table id="socialDuties-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div title="介绍人" style="height:100%;">
+                            <table id="agencyBroker-list" style="width:100%;height:100%"></table>
+                        </div>
+                        <div id="docWord" title="文档" style="height:100%;">
+                            <table id="docWord-list" style="width:100%;height:100%"></table>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div title="文件信息" style="height:100%;">
+                <div id="document-list" style="width:100%;height:100%"></div>
             </div>
         </div>
     </div>

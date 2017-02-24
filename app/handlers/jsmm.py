@@ -99,3 +99,18 @@ class MemberHandlerTab(tornado.web.RequestHandler):
         couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, member)
         response = {"success": "true"}
         self.write(response)
+
+
+@tornado_utils.bind_to(r'/documents/?')
+class MemberHandlerTab(tornado.web.RequestHandler):
+    def get(self):
+        '''
+        修改_id为member_id的member对象。
+        '''
+        response = couch_db.get(r'/jsmm/_design/documentList/_view/documents')
+        doucmentList = json.loads(response.body.decode('utf-8'))
+        documents = []
+        for row in doucmentList['rows']:
+            documents.append(row['value'])
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(documents))

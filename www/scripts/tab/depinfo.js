@@ -118,7 +118,6 @@ $(function () {
     }
 
     function append() {
-        //下拉框、时间框点击的时候自动下拉
         if (memberInfo == null) {
             $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
             return;
