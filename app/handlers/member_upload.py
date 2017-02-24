@@ -36,7 +36,7 @@ class UploadHandler(tornado.web.RequestHandler):
         :return:
         """
         # 文件的保存路径
-        inbox_path = os.path.join(os.path.dirname(__file__), '../../inbox/member')
+        inbox_path = os.path.join(os.path.dirname(__file__), '../../inbox/members')
         # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
         # 'content_type': 'application/vnd.ms-excel'}]}
         file_infos = self.request.files['members']
