@@ -102,7 +102,7 @@ class MemberHandlerTab(tornado.web.RequestHandler):
 
 
 @tornado_utils.bind_to(r'/documents/?')
-class MemberHandlerTab(tornado.web.RequestHandler):
+class DocumentHandlerTab(tornado.web.RequestHandler):
     def get(self):
         '''
         修改_id为member_id的member对象。
