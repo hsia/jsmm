@@ -6,6 +6,9 @@ if ($.fn.pagination) {
 if ($.fn.datagrid) {
     $.fn.datagrid.defaults.loadMsg = '正在处理，请稍待。。。';
 }
+if($.fn.filebox){
+    $.fn.filebox.defaults.buttonText='选择文件'
+}
 if ($.fn.treegrid && $.fn.datagrid) {
     $.fn.treegrid.defaults.loadMsg = $.fn.datagrid.defaults.loadMsg;
 }

@@ -1,1 +1,1 @@
-__all__ = ["jsmm", "upload"]
+__all__ = ["jsmm", "member_upload"]

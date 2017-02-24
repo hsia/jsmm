@@ -100,6 +100,40 @@ $(function () {
         handler: function () {
             confirmRemove();
         }
+    }, '-', {
+        text: '社员导入',
+        iconCls: 'icon-import',
+        handler: function () {
+            $('#member_upload_form').form('clear');
+            $('#member_upload').dialog({
+                width: 300,
+                height: 200,
+                title: '导入社员',
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons: [{
+                    iconCls: 'icon-import',
+                    text: '导入',
+                    handler: function () {
+                        $('#member_upload_form').form('submit', {
+                            success: function (data) {
+                                $memberList.datagrid('reload');
+                                $('#member_upload').dialog('close');
+                                $.messager.alert('提示信息', '导入社员成功！', 'info');
+                            }
+                        });
+                    }
+                }, {
+                    iconCls: 'icon-cancel',
+                    text: '取消',
+                    handler: function () {
+                        $('#member_upload_form').form('clear');
+                        $('#member_upload').dialog('close');
+                    }
+                }]
+            })
+        }
     }];
 
     $memberList.datagrid({
@@ -305,5 +339,11 @@ $(function () {
         $('#all-tabs').tabs('select', 15);
     });
 
+    function memberUpload() {
+        $.ajax({
+            url: '/members/upload',
+            type: 'POST'
+        });
+    }
 
 });

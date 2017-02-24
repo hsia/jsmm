@@ -5,9 +5,7 @@ Copyright lixia@ccrise.com
 '''
 import uuid
 from xlrd import open_workbook
-
-# from commons import couch_db, make_uuid
-
+from commons import couch_db
 
 def make_uuid():
     '''
@@ -18,77 +16,377 @@ def make_uuid():
 
 def import_info(file_info):
     print(file_info)
+    member_info_importer = MemberInfoImporter(file_info['path'])
+    member_info_importer.get_basic_info()
+    member_info_importer.main_function()
+    member_info_importer.save_member()
+
 
 class MemberInfoImporter():
-    '''
+    """
     导入社员信息。
-    '''
-
+    """
     def __init__(self, path):
-        '''
+        """
         打开一个包含社员基本信息的Excel文件。
-        '''
+        :param path:
+        """
+        self.current_row = 19
         self._book = open_workbook(path)
+        self._sheet = self._book.sheet_by_index(0)
         self._member = {
             'type': 'member',
-            '_id': make_uuid()
+            '_id': make_uuid(),
+            'educationDegree': [],      # 学历信息       1
+            'jobResumes': [],           # 工作履历       1
+            'professionalSkill': [],    # 专业技术工作   1
+            'familyRelations': [],      # 社会关系       1
+            'paper': [],                # 主要论文著作   1
+            'achievements': [],         # 专业技术成果   1
+            'award': [],                # 工作获奖       0
+            'patents': [],              # 专利情况       1
+            'professor': [],            # 专家情况       0
+            'specializedskill': [],     # 业务专长       1
+            'formerClubOffice': [],     # 社内职务       0
+            'social': [],               # 社会职务       0
+            'socialduties': [],         # 其它职务       0
+            'agencybroker': []          # 入社介绍人     1
+        }
+        self._tabs_name = {
+            "学历信息": self.member_edu_degree,             # 学历信息
+            "工作履历": self.member_job_esumes,             # 工作履历
+            "专业技术工作": self.member_professional,       # 专业技术工作
+            "社会关系": self.member_family_relation,        # 社会关系
+            "主要论文著作": self.member_paper,              # 主要论文著作
+            "专业技术成果": self.member_achievements,       # 专业技术成果
+            "工作获奖": self.member_award,                  # 工作获奖
+            "专利情况": self.member_patents,                # 专利情况
+            "专家情况": self.member_professor,              # 专家情况
+            "业务专长": self.member_specialized_skill,      # 业务专长
+            "社内职务": self.member_former_club_office,     # 社内职务
+            "社会职务": self.member_social,                 # 社会职务
+            "其它职务": self.member_social_duties,          # 其它职务
+            "入社介绍人": self.member_agency_broker         # 入社介绍人
         }
         print(r'正在处理%(path)s' % {'path': path})
 
     def get_basic_info(self):
-        '''
-        获取"A01.基本信息页"
-        '''
-        mapper = {'姓名': 'name',
-                  '外文姓名': 'foreignName',
-                  '曾用名': 'usedName',
-                  '性别': 'gender',
-                  '出生日期': 'birthday',
-                  '籍贯': 'nativePlace',
-                  '出生地': 'birthPlace',
-                  '民族': 'nation',
-                  '健康状态': 'health',
-                  '婚姻状态': 'marriage',
-                  '公民身份证号码': 'idCard',
-                  '有效证件类别': 'idType',
-                  '证件号码': 'idNo',
-                  '所属支社': 'branch',
-                  '所属基层组织名称': 'organ',
-                  '入社时间': 'branchTime',
-                  '党派交叉': 'partyCross',
-                  '单位名称': 'companyName',
-                  '参加工作时间': 'jobTime',
-                  '工作部门': 'department',
-                  '是否办理退休手续': 'retire',
-                  '职务': 'duty',
-                  '职称': 'jobTitle',
-                  '学术职务': 'academic',
-                  '家庭地址': 'homeAddress',
-                  '家庭地址邮编': 'homePost',
-                  '家庭电话': 'homeTel',
-                  '单位地址': 'companyAddress',
-                  '单位地址邮编': 'companyPost',
-                  '通信地址': 'commAddress',
-                  '通信地址邮编': 'commPost',
-                  '移动电话': 'mobile',
-                  '电子信箱': 'email',
-                  '单位电话': 'companyTel',
-                  '爱好': 'hobby'}
+        """
+        获取"基本信息页"
+        :return:
+        """
+        mapper = {
+            (1, 1): "name",                 # 姓名
+            (1, 3): "gender",               # 性别
+            (1, 5): "nativePlace",          # 籍贯
+            (2, 1): "nation",               # 民族
+            (2, 3): "birthPlace",           # 出生地
+            (2, 5): "birthday",             # 出生日期
+            (3, 1): "foreignName",          # 外文姓名
+            (3, 4): "usedName",             # 曾用名
+            (4, 1): "health",               # 健康状态
+            (4, 4): "marriage",             # 婚姻状态
+            (5, 1): "branch",               # 所属支社
+            (5, 4): "organ",                # 所属基层组织名称
+            (6, 1): "branchTime",           # 入社时间
+            (6, 4): "partyCross",           # 党派交叉
+            (7, 1): "companyName",          # 单位名称
+            (7, 4): "department",           # 工作部门
+            (8, 1): "duty",                 # 职务
+            (8, 4): "jobTitle",             # 职称
+            (9, 1): "academic",             # 学术职务
+            (9, 4): "jobTime",              # 参加工作时间
+            (9, 8): "retire",               # 是否办理退休手续
+            (10, 1): "idCard",              # 公民身份证号码
+            (10, 4): "idType",              # 有效证件类别
+            (10, 8): "idNo",                # 证件号码
+            (11, 1): "homeAddress",         # 家庭地址
+            (11, 5): "homePost",            # 家庭地址邮编
+            (12, 1): "companyAddress",      # 单位地址
+            (12, 5): "companyPost",         # 单位地址邮编
+            (13, 1): "commAddress",         # 通信地址
+            (13, 5): "commPost",            # 通信地址邮编
+            (14, 1): "mobile",              # 移动电话
+            (14, 5): "homeTel",             # 家庭电话
+            (15, 1): "email",               # 电子信箱
+            (15, 5): "companyTel",          # 单位电话
+            (16, 1): "hobby",               # 爱好
+            (17, 1): "speciality"           # 专长
+        }
 
-        sheet = self._book.sheet_by_name(r'A01.基本信息页')
-        for row_index in range(2, sheet.nrows):
-            name = sheet.cell_value(row_index, 1)
-            if name in mapper:
-                self._member[mapper[name]] = sheet.cell_value(row_index, 2)
-        print(self._member)
+        for key in mapper.keys():
+            self._member[mapper[key]] = self._sheet.cell_value(key[0], key[1])
+
+    def main_function(self):
+        for row_index in range(self.current_row, self._sheet.nrows):
+            name = self._sheet.cell_value(row_index, 0)
+            if name in self._tabs_name:
+                self._tabs_name[name](row_index+2)
+
+    def member_edu_degree(self, row_index):
+        """
+        学历信息
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                [start_time, end_time] = self._sheet.cell_value(i, 2).split(' - ')
+
+                edu_degree = {"eduSchoolName": self._sheet.cell_value(i, 0),
+                             "eduStartingDate": start_time,
+                             "eduGraduateDate": end_time,
+                             "eduMajor": self._sheet.cell_value(i, 4),
+                             "eduEducation": self._sheet.cell_value(i, 6),
+                             "eduDegree": self._sheet.cell_value(i, 7),
+                             "eduEducationType": self._sheet.cell_value(i, 9)}
+                self._member["educationDegree"].append(edu_degree)
+
+    def member_job_esumes(self, row_index):
+        """
+        工作履历
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                [start_time, end_time] = self._sheet.cell_value(i, 7).split(' - ')
+
+                job_esumes = {"jobCompanyName": self._sheet.cell_value(i, 0),
+                              "jobDep": self._sheet.cell_value(i, 2),
+                              "jobDuties": self._sheet.cell_value(i, 4),
+                              "jobTitle": self._sheet.cell_value(i, 5),
+                              "jobAcademic": self._sheet.cell_value(i, 6),
+                              "jobStartTime": start_time,
+                              "jobEndTime": end_time,
+                              "jobReterence": self._sheet.cell_value(i, 9)}
+                self._member["jobResumes"].append(job_esumes)
+
+    def member_professional(self, row_index):
+        """
+        专业技术工作
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                [start_time, end_time] = self._sheet.cell_value(i, 8).split(' - ')
+
+                professional_skill = {
+                              "proProjectName": self._sheet.cell_value(i, 0),
+                              "proProjectType": self._sheet.cell_value(i, 4),
+                              "proProjectCompany": self._sheet.cell_value(i, 5),
+                              "proRolesInProject": self._sheet.cell_value(i, 7),
+                              "proStartDate": start_time,
+                              "porEndDate": end_time}
+                self._member["professionalSkill"].append(professional_skill)
+
+    def member_family_relation(self, row_index):
+        """
+        社会关系
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                family_relations = {
+                              "familyName": self._sheet.cell_value(i, 0),
+                              "familyRelation": self._sheet.cell_value(i, 1),
+                              "familyGender": self._sheet.cell_value(i, 2),
+                              "familyBirthDay": self._sheet.cell_value(i, 3),
+                              "familyCompany": self._sheet.cell_value(i, 4),
+                              "familyJob": self._sheet.cell_value(i, 6),
+                              "familyNationality": self._sheet.cell_value(i, 7),
+                              "familyPolitical": self._sheet.cell_value(i, 8)}
+                self._member["familyRelations"].append(family_relations)
+
+    def member_paper(self, row_index):
+        """
+        主要论文著作
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                paper = {
+                              "paperPublications": self._sheet.cell_value(i, 0),
+                              "paperName": self._sheet.cell_value(i, 1),
+                              "paperPress": self._sheet.cell_value(i, 4),
+                              "paperAuthorSort": self._sheet.cell_value(i, 7),
+                              "paperPressDate": self._sheet.cell_value(i, 8),
+                              "paperRoleDetail": self._sheet.cell_value(i, 9)}
+                self._member["paper"].append(paper)
+
+    def member_achievements(self, row_index):
+        """
+        专业技术成果
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                achievements = {
+                              "achievementsName": self._sheet.cell_value(i, 0),
+                              "achievementsLevel": self._sheet.cell_value(i, 3),
+                              "identificationUnit": self._sheet.cell_value(i, 6),
+                              "achievementsRemark": self._sheet.cell_value(i, 8)}
+                self._member["achievements"].append(achievements)
+
+    def member_patents(self, row_index):
+        """
+        专利情况
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                patents = {
+                              "patentName": self._sheet.cell_value(i, 0),
+                              "patentDate": self._sheet.cell_value(i, 4),
+                              "patenNo": self._sheet.cell_value(i, 6)}
+                self._member["patents"].append(patents)
+
+    def member_specialized_skill(self, row_index):
+        """
+        业务专长
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                specialized_skill = {
+                              "specializedType": self._sheet.cell_value(i, 0),
+                              "specializedName": self._sheet.cell_value(i, 2),
+                              "specializedDetailName": self._sheet.cell_value(i, 5)}
+                self._member["specializedskill"].append(specialized_skill)
+
+    def member_agency_broker(self, row_index):
+        """
+        入社介绍人
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                agency_broker = {
+                              "agencyName": self._sheet.cell_value(i, 0),
+                              "agencyCompany": self._sheet.cell_value(i, 2),
+                              "agencyJob": self._sheet.cell_value(i, 5),
+                              "agencyRelationShip": self._sheet.cell_value(i, 7)}
+                self._member["agencybroker"].append(agency_broker)
+
+    def member_award(self, row_index):
+        """
+        工作获奖
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                award = {}
+                self._member["award"].append(award)
+
+    def member_professor(self, row_index):
+        """
+        专家情况
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                professor = {}
+                self._member["professor"].append(professor)
+
+    def member_former_club_office(self, row_index):
+        """
+        社内职务
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                former_club_office = {}
+                self._member["formerClubOffice"].append(former_club_office)
+
+    def member_social(self, row_index):
+        """
+        社会职务
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                social = {}
+                self._member["social"].append(social)
+
+    def member_social_duties(self, row_index):
+        """
+        其它职务
+        :param row_index:
+        :return:
+        """
+        for i in range(row_index, self._sheet.nrows):
+            self.current_row = i
+            if self._sheet.cell_value(i, 0) == "":
+                return
+            else:
+                social_duties = {}
+                self._member["socialduties"].append(social_duties)
 
     def save_member(self):
-        '''
+        """
         保存社员信息
-        '''
-        pass
+        :return:
+        """
+        couch_db.post(r'/jsmm/', self._member)
+        # response = {"success": "true"}
+        # self.write(response)
 
-if __name__ == "__main__":
-    member_info_importer = MemberInfoImporter('../inbox/示例—社员信息采集-黄某某.xls')
-    member_info_importer.get_basic_info()
-    member_info_importer.save_member()
+# if __name__ == "__main__":
+#     import sys
+#     sys.path[:0] = ['app', 'lib']
+#     from couchdb import CouchDB
+#     couch_db = CouchDB('http://127.0.0.1:5984')
+#     member_info_importer = MemberInfoImporter('inbox/殷大发的信息.xls')
+#     member_info_importer.get_basic_info()
+#     member_info_importer.main_function()
+#     member_info_importer.save_member()

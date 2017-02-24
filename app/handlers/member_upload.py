@@ -31,11 +31,12 @@ class UploadHandler(tornado.web.RequestHandler):
 
     @tornado.web.addslash
     def post(self):
-        '''
+        """
         接收多个上传文件，调用callback对上传的。
-        '''
+        :return:
+        """
         # 文件的保存路径
-        inbox_path = os.path.join(os.path.dirname(__file__), '../../inbox')
+        inbox_path = os.path.join(os.path.dirname(__file__), '../../inbox/member')
         # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
         # 'content_type': 'application/vnd.ms-excel'}]}
         file_infos = self.request.files['members']
