@@ -21,7 +21,7 @@ def format_date(date_str):
     YYYY.MM -> YYYY-MM-01
     """
     date_str = date_str.rstrip('.')  # 去除尾部的'.', 如'2010.01.'
-    if date_str == ur'至今':           # '至今'
+    if date_str == u'至今':           # '至今'
         return ''
     splited = date_str.split('.')   # 'YYYY', 'YYYY.MM'或'YYYY.MM.DD'
     if len(splited) == 1:           # ['YYYY']
@@ -70,20 +70,20 @@ class MemberInfoImporter():
             'agencybroker': []          # 入社介绍人     1
         }
         self._tabs_name = {
-            ur"学历信息": self.member_edu_degree,             # 学历信息
-            ur"工作履历": self.member_job_esumes,             # 工作履历
-            ur"专业技术工作": self.member_professional,       # 专业技术工作
-            ur"社会关系": self.member_family_relation,        # 社会关系
-            ur"主要论文著作": self.member_paper,              # 主要论文著作
-            ur"专业技术成果": self.member_achievements,       # 专业技术成果
-            ur"工作获奖": self.member_award,                  # 工作获奖
-            ur"专利情况": self.member_patents,                # 专利情况
-            ur"专家情况": self.member_professor,              # 专家情况
-            ur"业务专长": self.member_specialized_skill,      # 业务专长
-            ur"社内职务": self.member_former_club_office,     # 社内职务
-            ur"社会职务": self.member_social,                 # 社会职务
-            ur"其它职务": self.member_social_duties,          # 其它职务
-            ur"入社介绍人": self.member_agency_broker         # 入社介绍人
+            u"学历信息": self.member_edu_degree,             # 学历信息
+            u"工作履历": self.member_job_esumes,             # 工作履历
+            u"专业技术工作": self.member_professional,       # 专业技术工作
+            u"社会关系": self.member_family_relation,        # 社会关系
+            u"主要论文著作": self.member_paper,              # 主要论文著作
+            u"专业技术成果": self.member_achievements,       # 专业技术成果
+            u"工作获奖": self.member_award,                  # 工作获奖
+            u"专利情况": self.member_patents,                # 专利情况
+            u"专家情况": self.member_professor,              # 专家情况
+            u"业务专长": self.member_specialized_skill,      # 业务专长
+            u"社内职务": self.member_former_club_office,     # 社内职务
+            u"社会职务": self.member_social,                 # 社会职务
+            u"其它职务": self.member_social_duties,          # 其它职务
+            u"入社介绍人": self.member_agency_broker         # 入社介绍人
         }
        # print(r'正在处理%(path)s' % {'path': path})
 
