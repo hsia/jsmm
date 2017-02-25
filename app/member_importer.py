@@ -14,6 +14,23 @@ def make_uuid():
     return uuid.uuid4().hex
 
 
+def format_date(date_str):
+    """
+    格式化从社员信息文件中导入的日期数据：
+    YYYY.MM.DD -> YYYY-MM-DD
+    YYYY.MM -> YYYY-MM-01
+    """
+    date_str = date_str.rstrip('.') # 去除尾部的'.', 如'2010.01.'
+    if date_str == '至今':           # '至今'
+        return ''
+    splited = date_str.split('.')   # 'YYYY', 'YYYY.MM'或'YYYY.MM.DD'
+    if len(splited) == 1:           # ['YYYY']
+        splited += ['01', '01']     # ['YYYY', '01', '01']
+    elif len(splited) == 2:         # ['YYYY', 'MM']
+        splited.append('01')        # ['YYYY', 'MM', '01']
+    return '-'.join(splited)        # 'YYYY-MM-DD'
+
+
 def import_info(file_info):
     print(file_info)
     member_info_importer = MemberInfoImporter(file_info['path'])
