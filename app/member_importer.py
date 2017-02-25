@@ -20,8 +20,8 @@ def format_date(date_str):
     YYYY.MM.DD -> YYYY-MM-DD
     YYYY.MM -> YYYY-MM-01
     """
-    date_str = date_str.rstrip('.') # 去除尾部的'.', 如'2010.01.'
-    if date_str == '至今':           # '至今'
+    date_str = date_str.rstrip('.')  # 去除尾部的'.', 如'2010.01.'
+    if date_str == ur'至今':           # '至今'
         return ''
     splited = date_str.split('.')   # 'YYYY', 'YYYY.MM'或'YYYY.MM.DD'
     if len(splited) == 1:           # ['YYYY']
@@ -70,22 +70,22 @@ class MemberInfoImporter():
             'agencybroker': []          # 入社介绍人     1
         }
         self._tabs_name = {
-            "学历信息": self.member_edu_degree,             # 学历信息
-            "工作履历": self.member_job_esumes,             # 工作履历
-            "专业技术工作": self.member_professional,       # 专业技术工作
-            "社会关系": self.member_family_relation,        # 社会关系
-            "主要论文著作": self.member_paper,              # 主要论文著作
-            "专业技术成果": self.member_achievements,       # 专业技术成果
-            "工作获奖": self.member_award,                  # 工作获奖
-            "专利情况": self.member_patents,                # 专利情况
-            "专家情况": self.member_professor,              # 专家情况
-            "业务专长": self.member_specialized_skill,      # 业务专长
-            "社内职务": self.member_former_club_office,     # 社内职务
-            "社会职务": self.member_social,                 # 社会职务
-            "其它职务": self.member_social_duties,          # 其它职务
-            "入社介绍人": self.member_agency_broker         # 入社介绍人
+            ur"学历信息": self.member_edu_degree,             # 学历信息
+            ur"工作履历": self.member_job_esumes,             # 工作履历
+            ur"专业技术工作": self.member_professional,       # 专业技术工作
+            ur"社会关系": self.member_family_relation,        # 社会关系
+            ur"主要论文著作": self.member_paper,              # 主要论文著作
+            ur"专业技术成果": self.member_achievements,       # 专业技术成果
+            ur"工作获奖": self.member_award,                  # 工作获奖
+            ur"专利情况": self.member_patents,                # 专利情况
+            ur"专家情况": self.member_professor,              # 专家情况
+            ur"业务专长": self.member_specialized_skill,      # 业务专长
+            ur"社内职务": self.member_former_club_office,     # 社内职务
+            ur"社会职务": self.member_social,                 # 社会职务
+            ur"其它职务": self.member_social_duties,          # 其它职务
+            ur"入社介绍人": self.member_agency_broker         # 入社介绍人
         }
-        print(r'正在处理%(path)s' % {'path': path})
+       # print(r'正在处理%(path)s' % {'path': path})
 
     def get_basic_info(self):
         """
@@ -133,6 +133,9 @@ class MemberInfoImporter():
 
         for key in mapper.keys():
             self._member[mapper[key]] = self._sheet.cell_value(key[0], key[1])
+        self._member['branchTime'] = format_date(str(self._member['branchTime']))
+        self._member['birthday'] = format_date(str(self._member['birthday']))
+        self._member['jobTime'] = format_date(str(self._member['jobTime']))
 
     def main_function(self):
         for row_index in range(self.current_row, self._sheet.nrows):
@@ -154,12 +157,13 @@ class MemberInfoImporter():
                 [start_time, end_time] = self._sheet.cell_value(i, 2).split(' - ')
 
                 edu_degree = {"eduSchoolName": self._sheet.cell_value(i, 0),
-                             "eduStartingDate": start_time,
-                             "eduGraduateDate": end_time,
+                             "eduStartingDate": format_date(start_time),
+                             "eduGraduateDate": format_date(end_time),
                              "eduMajor": self._sheet.cell_value(i, 4),
                              "eduEducation": self._sheet.cell_value(i, 6),
                              "eduDegree": self._sheet.cell_value(i, 7),
                              "eduEducationType": self._sheet.cell_value(i, 9)}
+
                 self._member["educationDegree"].append(edu_degree)
 
     def member_job_esumes(self, row_index):
@@ -180,8 +184,8 @@ class MemberInfoImporter():
                               "jobDuties": self._sheet.cell_value(i, 4),
                               "jobTitle": self._sheet.cell_value(i, 5),
                               "jobAcademic": self._sheet.cell_value(i, 6),
-                              "jobStartTime": start_time,
-                              "jobEndTime": end_time,
+                              "jobStartTime": format_date(start_time),
+                              "jobEndTime": format_date(end_time),
                               "jobReterence": self._sheet.cell_value(i, 9)}
                 self._member["jobResumes"].append(job_esumes)
 
@@ -203,8 +207,8 @@ class MemberInfoImporter():
                               "proProjectType": self._sheet.cell_value(i, 4),
                               "proProjectCompany": self._sheet.cell_value(i, 5),
                               "proRolesInProject": self._sheet.cell_value(i, 7),
-                              "proStartDate": start_time,
-                              "porEndDate": end_time}
+                              "proStartDate": format_date(start_time),
+                              "porEndDate": format_date(end_time)}
                 self._member["professionalSkill"].append(professional_skill)
 
     def member_family_relation(self, row_index):
@@ -222,7 +226,7 @@ class MemberInfoImporter():
                               "familyName": self._sheet.cell_value(i, 0),
                               "familyRelation": self._sheet.cell_value(i, 1),
                               "familyGender": self._sheet.cell_value(i, 2),
-                              "familyBirthDay": self._sheet.cell_value(i, 3),
+                              "familyBirthDay": format_date(str(self._sheet.cell_value(i, 3))),
                               "familyCompany": self._sheet.cell_value(i, 4),
                               "familyJob": self._sheet.cell_value(i, 6),
                               "familyNationality": self._sheet.cell_value(i, 7),
@@ -245,7 +249,7 @@ class MemberInfoImporter():
                               "paperName": self._sheet.cell_value(i, 1),
                               "paperPress": self._sheet.cell_value(i, 4),
                               "paperAuthorSort": self._sheet.cell_value(i, 7),
-                              "paperPressDate": self._sheet.cell_value(i, 8),
+                              "paperPressDate": format_date(str(self._sheet.cell_value(i, 8))),
                               "paperRoleDetail": self._sheet.cell_value(i, 9)}
                 self._member["paper"].append(paper)
 
@@ -280,7 +284,7 @@ class MemberInfoImporter():
             else:
                 patents = {
                               "patentName": self._sheet.cell_value(i, 0),
-                              "patentDate": self._sheet.cell_value(i, 4),
+                              "patentDate": format_date(str(self._sheet.cell_value(i, 4))),
                               "patenNo": self._sheet.cell_value(i, 6)}
                 self._member["patents"].append(patents)
 
