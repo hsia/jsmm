@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>九三学社社员管理系统</title>
+    <title>九三学社社员信息管理系统</title>
     <link rel="stylesheet" type="text/css" href="lib/easyui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="lib/easyui/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="lib/easyui/themes/color.css">
@@ -35,15 +35,16 @@
 </head>
 <body>
 <div class="easyui-layout container" data-options="fit:true">
-    <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA">九三学社社员管理系统</div>
+    <div data-options="region:'north',border:false" class="banner">
+        <div>九三学社社员信息管理系统</div>
+    </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
         <div class="easyui-panel" style="padding:5px; height:100%;">
             <ul class="easyui-tree" id="organization-tree"
                 data-options="url:'data/organization.json',method:'get',animate:true"></ul>
         </div>
     </div>
-    <div data-options="region:'south',border:false" style="height:30px;background:#A9FACD">版权信息</div>
-    <div data-options="region:'center'" style="height:100%">
+    <div data-options="region:'center'" style="height:100%;">
         <div class="easyui-tabs" style="height:100%;">
             <div id="membersinfo" title="社员信息" data-options="fit:true">
                 <div id="members" data-options="region:'north',border:false" style="height:50%;">
