@@ -82,8 +82,8 @@ try_(couch_db.put('/jsmm/_design/documents', {
                           result.name = doc.name;
                           result.branch = doc.branch;
                           result.type = 'speech';
-                          result.fileName = doc.speechesText[j].speechesTextName;
-                          result.uploadTime = doc.speechesText[j].speechesTextTime;
+                          result.fileName = doc.speechesText[k].speechesTextName;
+                          result.uploadTime = doc.speechesText[k].speechesTextTime;
                           emit([result.type, result.fileName], result);
                           result = {};
                         }

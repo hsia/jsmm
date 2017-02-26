@@ -9,7 +9,7 @@ $(function () {
         if (!$.isEmptyObject(memberInfo)) {
             if (!$.isEmptyObject(memberInfo.jobResumes)) {
                 $jobResumes.datagrid('loadData', memberInfo.jobResumes);
-            }else{
+            } else {
                 $jobResumes.datagrid('loadData', []);
             }
         }

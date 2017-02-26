@@ -3,68 +3,59 @@ $(function () {
     var gridHeight = $('#membersinfo').height();
     var $dataGrid = $('#document-list');
 
-    $dataGrid.datagrid({
-        iconCls: 'icon-ok',
-        height: gridHeight,
-        rownumbers: true,
-        pageSize: 10,
-        nowrap: true,
-        striped: true,
-        fitColumns: true,
-        loadMsg: '数据装载中......',
-        pagination: true,
-        allowSorts: true,
-        multiSort: true,
-        singleSelect: true,
-        remoteSort: false,
-        columns: [[
-            {field: 'fileName', title: '文件名称', width: 110, sortable: true, align: 'left'},
-            {field: 'type', title: '文件类型', width: 60, sortable: true, align: 'left', formatter: changeType},
-            {field: 'name', title: '所属社员', width: 60, sortable: true, align: 'left'},
-            {field: 'branch', title: '所属支社', width: 90, sortable: true, align: 'left'},
-            {field: 'uploadTime', title: '创建时间', width: 80, sortable: true, align: 'left'},
-            {field: 'clickDownload', title: '下载', width: 60, sortable: false, align: 'left', formatter: addLink},
-        ]],
-        loader: function (param, success) {
-            var defaultUrl = '/documents';
-            $.get(defaultUrl, function (data) {
-                success(data)
-            });
-        },
-        loadFilter: function (data) {
-            if (typeof data.length == 'number' && typeof data.splice == 'function') {
-                data = {
-                    total: data.length,
-                    rows: data
-                }
+    /*$("#documents").click(function () {
+     var pp = $('#tabsinfo').tabs('getSelected');
+     var tab = pp.panel('options').tab;
+     console.log(tab);
+     })*/
+    $('#tabsAll').tabs({
+        border: false,
+        onSelect: function (title, index) {
+            if (index == 1) {
+                $dataGrid.datagrid({
+                    iconCls: 'icon-ok',
+                    height: gridHeight,
+                    rownumbers: true,
+                    pageSize: 20,
+                    nowrap: true,
+                    striped: true,
+                    fitColumns: true,
+                    loadMsg: '数据装载中......',
+                    pagination: true,
+                    allowSorts: true,
+                    multiSort: true,
+                    singleSelect: true,
+                    remoteSort: true,
+                    columns: [[
+                        {field: 'fileName', title: '文件名称', width: 110, sortable: false, align: 'left'},
+                        {
+                            field: 'type',
+                            title: '文件类型',
+                            width: 60,
+                            sortable: false,
+                            align: 'left',
+                            formatter: changeType
+                        },
+                        {field: 'name', title: '所属社员', width: 60, sortable: false, align: 'left'},
+                        {field: 'branch', title: '所属支社', width: 90, sortable: true, align: 'left'},
+                        {field: 'uploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
+                        {
+                            field: 'clickDownload',
+                            title: '下载',
+                            width: 60,
+                            sortable: false,
+                            align: 'left',
+                            formatter: addLink
+                        },
+                    ]],
+                    loader: function (param, success) {
+                        var defaultUrl = '/documents';
+                        $.post(defaultUrl, JSON.stringify(param), function (data) {
+                            success(data)
+                        }, 'json');
+                    }
+                });
             }
-            var opts = $dataGrid.datagrid('options');
-            var pager = $dataGrid.datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    $dataGrid.datagrid('loadData', data);
-                }
-            });
-            if (!data.originalRows) {
-                data.originalRows = (data.rows);
-            }
-            var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
-            var end = start + parseInt(opts.pageSize);
-            data.rows = (data.originalRows.slice(start, end));
-            return data;
-        },
-        onSelect: function (rowIndex, rowData) {
-            memberInfo(rowData);
-            var event = new CustomEvent("grid-row-selection", {
-                detail: rowData
-            });
-            window.dispatchEvent(event);
         }
     });
 
@@ -86,7 +77,7 @@ $(function () {
     }
 
     function addLink(value, row, index) {
-        return '<a href="">点击下载</a>';
+        return '<a href="#">点击下载</a>';
     }
 
     //编辑数据

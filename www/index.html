@@ -45,7 +45,7 @@
         </div>
     </div>
     <div data-options="region:'center'" style="height:100%;">
-        <div class="easyui-tabs" style="height:100%;">
+        <div id="tabsAll" class="easyui-tabs" style="height:100%;">
             <div id="membersinfo" title="社员信息" data-options="fit:true">
                 <div id="members" data-options="region:'north',border:false" style="height:50%;">
                     <table id="member-list" style="width:100%;height:100%;"></table>
@@ -380,7 +380,7 @@
             <input class="easyui-textbox" name="hobby" style="width:100%" data-options="label:'爱好:',required:true">
         </div>
         <input name="_id" hidden="true">
-        <input name="_rev" hidden="true">
+        <!--<input name="_rev" hidden="true">-->
     </form>
 </div>
 </body>

@@ -65,10 +65,20 @@ class MemberHandler(tornado.web.RequestHandler):
         '''
         修改_id为member_id的member对象。
         '''
+        # 获得前台对象#
         member = json.loads(self.request.body.decode('utf-8'))
-        member['type'] = 'member'
-        member['_id'] = member_id
-        couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, member)
+        # 根据前台对象的memeber_id，查询数据库中的memeber对象#
+        response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
+        memberInDb = json.loads(response.body.decode('utf-8'))
+        # 将前台数据赋予后台对象，然后将后台对象保存#
+
+        for key in memberInDb:
+            if member.get(key):
+                memberInDb[key] = member[key]
+
+        memberInDb['type'] = 'member'
+        memberInDb['_id'] = member_id
+        couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, memberInDb)
         response = {"success": "true"}
         self.write(response)
 
@@ -114,3 +124,29 @@ class DocumentHandlerTab(tornado.web.RequestHandler):
             documents.append(row['value'])
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documents))
+
+    def post(self):
+        '''
+        修改_id为member_id的member对象。
+        '''
+        params = json.loads(self.request.body.decode('utf-8'))
+        pageNumber = params['page']
+        pageSize = params['rows']
+        if ('order' not in params):
+            order = True
+        else:
+            order = ((params['order'] == 'desc') and True or False)
+        response = couch_db.get(
+            '/jsmm/_design/documents/_view/all?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
+                'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order})
+        documentList = json.loads(response.body.decode('utf-8'))
+        documents = []
+        documnetsResult = {}
+        for row in documentList['rows']:
+            documents.append(row['value'])
+        documnetsResult['pageSize'] = pageSize
+        documnetsResult['pageNumber'] = pageNumber
+        documnetsResult['total'] = documentList['total_rows']
+        documnetsResult['rows'] = documents
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(documnetsResult))
