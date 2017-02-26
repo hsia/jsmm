@@ -70,8 +70,8 @@ class MemberHandler(tornado.web.RequestHandler):
         # 根据前台对象的memeber_id，查询数据库中的memeber对象#
         response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
         memberInDb = json.loads(response.body.decode('utf-8'))
-        # 将前台数据赋予后台对象，然后将后台对象保存#
-
+        # 将前台数据赋予后台对象，然后将后台对象保存。#
+        # 注意，如果前台传递_rev则不能将后台对象中的_rev覆盖，在index.html的编辑页面中没有包含_rev字段,因此在此处没有添加判断_rev#
         for key in memberInDb:
             if member.get(key):
                 memberInDb[key] = member[key]
