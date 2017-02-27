@@ -218,6 +218,16 @@ $(function () {
 
         }
     });
+    //添加组织机构数的点击后触发自定义监听事件
+    $('#organTree').tree({
+        onClick: function (node) {
+            console.log(node);
+            var event = new CustomEvent("tree-row-selection", {
+                detail: node.text
+            });
+            window.dispatchEvent(event);
+        }
+    });
 
     //社员信息详情
     function memberInfo(rowData) {
