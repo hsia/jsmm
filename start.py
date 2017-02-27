@@ -11,5 +11,6 @@ if __name__ == "__main__":
     from handlers import *
     from member_importer import import_info
 
-    tornado_utils.registered_handlers += [(r'/members/upload/?', member_upload.UploadHandler, dict(callback=import_info))]
+    tornado_utils.registered_handlers += [(r'/members/upload/?', member_upload.UploadHandler, dict(callback=import_info)),
+                                          (r'/image/upload/?', member_image.UploadImage, dict(callback=member_image.imageCallBack))]
     tornado_utils.serve(2063, debug=True)

@@ -43,7 +43,6 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
-        console.log(memberInfo);
         $.ajax({
             url: '/members/' + memberInfo._id,
             type: 'PUT',
@@ -198,11 +197,25 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
-            memberInfo(rowData);
-            var event = new CustomEvent("grid-row-selection", {
-                detail: rowData
+            $.get('/members/' + rowData._id, function (data) {
+                var newData=JSON.parse(data);
+                memberInfo(newData);
+                var event = new CustomEvent("grid-row-selection", {
+                    detail: newData
+                });
+                window.dispatchEvent(event);
+                $("#create_file").change(function () {
+                    $('#member_image_upload').form('submit', {
+                        success: function (data) {
+                            var result = eval('(' + data + ')');
+                            $('#member_image').attr('src', '/image/' + result.fileName);
+                            $('#upload').val('');
+                        }
+                    });
+                });
             });
-            window.dispatchEvent(event);
+
+
         }
     });
 
@@ -210,7 +223,14 @@ $(function () {
     function memberInfo(rowData) {
         var html = `
 <div class="member-detail">
-    <div class="member-picture"><img src="/styles/th5RFQH01A.jpg" style="width:100%;"></div>
+    <div class="member-picture">
+        <img id="member_image" src="${rowData.picture || '/image/deaulf.jpg'}" style="width:100%;">
+        <form id="member_image_upload" action='/image/upload/' enctype="multipart/form-data" method='post'>
+            <input id="create_file" type="file" name="picture" accept="image/*" style="width:100%">
+            <input id="create_file" type="hidden" name="picture_id" value="${rowData._id}">
+        </form>      
+    </div>
+    
     <div class="member-column">
         <div class="member-item"><span class="member-item-title">外文姓名: </span>${rowData.foreignName || ""}</div>
         <div class="member-item"><span class="member-item-title">曾用名: </span>${rowData.usedName || ""}</div>
@@ -338,12 +358,5 @@ $(function () {
     }).click(function () {
         $('#all-tabs').tabs('select', 15);
     });
-
-    function memberUpload() {
-        $.ajax({
-            url: '/members/upload',
-            type: 'POST'
-        });
-    }
 
 });

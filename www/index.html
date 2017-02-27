@@ -122,7 +122,8 @@
     <div id="speeches-text">各种会议书面发言稿</div>
 </div>
 <div id="member-dialog" class="member-dialog">
-    <form id="member-form" class="easyui-form member-form" data-options="novalidate:true">
+    <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"
+          enctype="multipart/form-data" method='post'>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
         </div>
@@ -248,6 +249,9 @@
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="hobby" style="width:100%" data-options="label:'爱好:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-filebox" name="picture" style="width:100%" data-options="label:'照片上传:',required:true">
         </div>
     </form>
 </div>
