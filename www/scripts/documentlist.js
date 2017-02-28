@@ -3,58 +3,76 @@ $(function () {
     var gridHeight = $('#membersinfo').height();
     var $dataGrid = $('#document-list');
 
-    /*$("#documents").click(function () {
-     var pp = $('#tabsinfo').tabs('getSelected');
-     var tab = pp.panel('options').tab;
-     console.log(tab);
-     })*/
+    $dataGrid.datagrid({
+        iconCls: 'icon-ok',
+        height: gridHeight,
+        rownumbers: true,
+        pageSize: 20,
+        nowrap: true,
+        striped: true,
+        fitColumns: true,
+        loadMsg: '数据装载中......',
+        pagination: true,
+        allowSorts: true,
+        multiSort: true,
+        singleSelect: true,
+        remoteSort: true,
+        toolbar: '#tb',
+        columns: [[
+            {field: 'fileName', title: '文件名称', width: 110, sortable: false, align: 'left'},
+            {
+                field: 'type',
+                title: '文件类型',
+                width: 60,
+                sortable: false,
+                align: 'left',
+                formatter: changeType
+            },
+            {field: 'name', title: '所属社员', width: 60, sortable: false, align: 'left'},
+            {field: 'branch', title: '所属支社', width: 90, sortable: true, align: 'left'},
+            {field: 'uploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
+            {
+                field: 'clickDownload',
+                title: '下载',
+                width: 60,
+                sortable: false,
+                align: 'left',
+                formatter: addLink
+            },
+        ]]
+    });
+
+    var organName = null;
+    window.addEventListener("tree-row-selection", function (event) {
+        organName = event.detail;
+        if (organName != null) {
+            $dataGrid.datagrid({
+                loader: function (param, success) {
+                    var defaultUrl = '/documents/';
+                    param.organName = organName;
+                    $.post(defaultUrl, JSON.stringify(param), function (data) {
+                        success(data)
+                    }, 'json');
+                }
+            });
+        } else {
+            return false;
+        }
+    });
+
     $('#tabsAll').tabs({
         border: false,
         onSelect: function (title, index) {
-            if (index == 1) {
+            console.log(organName == null);
+            if (index == 1 && organName == null) {
                 $dataGrid.datagrid({
-                    iconCls: 'icon-ok',
-                    height: gridHeight,
-                    rownumbers: true,
-                    pageSize: 20,
-                    nowrap: true,
-                    striped: true,
-                    fitColumns: true,
-                    loadMsg: '数据装载中......',
-                    pagination: true,
-                    allowSorts: true,
-                    multiSort: true,
-                    singleSelect: true,
-                    remoteSort: true,
-                    columns: [[
-                        {field: 'fileName', title: '文件名称', width: 110, sortable: false, align: 'left'},
-                        {
-                            field: 'type',
-                            title: '文件类型',
-                            width: 60,
-                            sortable: false,
-                            align: 'left',
-                            formatter: changeType
-                        },
-                        {field: 'name', title: '所属社员', width: 60, sortable: false, align: 'left'},
-                        {field: 'branch', title: '所属支社', width: 90, sortable: true, align: 'left'},
-                        {field: 'uploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
-                        {
-                            field: 'clickDownload',
-                            title: '下载',
-                            width: 60,
-                            sortable: false,
-                            align: 'left',
-                            formatter: addLink
-                        },
-                    ]],
                     loader: function (param, success) {
                         var defaultUrl = '/documents';
                         $.post(defaultUrl, JSON.stringify(param), function (data) {
                             success(data)
                         }, 'json');
                     }
-                });
+                })
             }
         }
     });
@@ -80,7 +98,7 @@ $(function () {
         return '<a href="#">点击下载</a>';
     }
 
-    //编辑数据
+//编辑数据
     function editInfo() {
         //1、先判断是否有选中的数据行
         var $member = $dataGrid.datagrid('getSelected');
@@ -100,6 +118,7 @@ $(function () {
                     closed: false,
                     cache: false,
                     modal: true,
+                    toolbar: '#tb',
                     buttons: [{
                         iconCls: 'icon-ok',
                         text: '保存',
@@ -119,7 +138,7 @@ $(function () {
         })
     }
 
-    //确认删除
+//确认删除
     function confirmRemove() {
         //1、先判断是否有选中的数据行
         var member = $dataGrid.datagrid('getSelected');
@@ -138,7 +157,7 @@ $(function () {
         });
     }
 
-    //删除数据行
+//删除数据行
     function removeItem(id) {
         $.ajax({
             url: '/members/' + id,
@@ -155,4 +174,29 @@ $(function () {
         });
     }
 
-});
+    //查询
+    $('#searchButton').click(function (event) {
+        event.preventDefault();
+        var formData = $('#tb-form').serializeArray();
+        var searchInfo = {};
+        $.each(formData, function (index, element) {
+            searchInfo[element.name] = element.value;
+        });
+        console.log(searchInfo);
+        $.ajax({
+            url: '/documentSearch/',
+            type: 'POST',
+            data: JSON.stringify(searchInfo),
+            success: function (data) {
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
+                $dataGrid.datagrid('reload');
+            },
+            error: function (data) {
+                $.messager.alert('提示', '数据查询失败!', 'error');
+            }
+        });
+
+    })
+
+})
+;

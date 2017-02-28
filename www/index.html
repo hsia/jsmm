@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:prompt="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>九三学社社员信息管理系统</title>
@@ -40,8 +40,8 @@
     </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
         <div class="easyui-panel" style="padding:5px; height:100%;">
-            <ul class="easyui-tree" id="organization-tree"
-                data-options="url:'data/organization.json',method:'get',animate:true"></ul>
+            <ul id="organTree" class="easyui-tree" id="organization-tree"
+                data-options="url:'data/organization.json',method:'get'"></ul>
         </div>
     </div>
     <div data-options="region:'center'" style="height:100%;">
@@ -394,6 +394,24 @@
         </div>
         <input name="_id" hidden="true">
         <!--<input name="_rev" hidden="true">-->
+    </form>
+</div>
+<div id="tb" style="padding:2px 5px;">
+    <form id="tb-form">
+        支社: <input name="branch" class="easyui-combotree" data-options="url:'data/organization.json',method:'get'"
+                   style="width:190px">
+        类型:
+        <select name="type" class="easyui-combobox" panelHeight="auto" prompt="请选择" style="width:90px">
+            <option value="report">部门报告</option>
+            <option value="info">部门信息</option>
+            <option value="speech">部门演讲稿</option>
+        </select>
+        社员: <input name="name" class="easyui-textbox" style="width:110px">
+        文件名称: <input name="fileName" class="easyui-textbox" style="width:110px">
+        开始时间: <input name="startTime" class="easyui-datetimebox" style="width:145px">
+        结束时间: <input name="endTime" class="easyui-datetimebox" style="width:145px">
+
+        <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>
     </form>
 </div>
 </body>

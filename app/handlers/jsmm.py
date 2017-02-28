@@ -113,7 +113,7 @@ class MemberHandlerTab(tornado.web.RequestHandler):
 
 
 @tornado_utils.bind_to(r'/documents/?')
-class DocumentHandlerTab(tornado.web.RequestHandler):
+class DocumentHandler(tornado.web.RequestHandler):
     def get(self):
         '''
         修改_id为member_id的member对象。
@@ -131,15 +131,89 @@ class DocumentHandlerTab(tornado.web.RequestHandler):
         修改_id为member_id的member对象。
         '''
         params = json.loads(self.request.body.decode('utf-8'))
-        pageNumber = params['page']
-        pageSize = params['rows']
+
+        if ('page' not in params):
+            pass
+        else:
+            pageNumber = params['page']
+
+        if ('rows' not in params):
+            pass
+        else:
+            pageSize = params['rows']
+
+        if ('organName' not in params):
+            pass
+        else:  # 如果有按机构查询的操作
+            organName = params['organName']
+            postParam = {"keys": [organName]}
+
         if ('order' not in params):
             order = True
         else:
             order = ((params['order'] == 'desc') and True or False)
-        response = couch_db.get(
+
+        if ('organName' not in params):
+            response = couch_db.get(
             '/jsmm/_design/documents/_view/all?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
                 'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order})
+        else:  # 如果有按机构查询的操作
+            # 查询未分页前数据总数(根据返回的Rows获得总数据量)#
+            responseCount = couch_db.post('/jsmm/_design/documents/_view/by-branch', postParam)
+            # 查询分页数据#
+            response = couch_db.post(
+                '/jsmm/_design/documents/_view/by-branch?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
+                    'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order},
+                postParam)
+
+        documentList = json.loads(response.body.decode('utf-8'))
+        documents = []
+        documnetsResult = {}
+
+        for row in documentList['rows']:
+            documents.append(row['value'])
+
+        documnetsResult['pageSize'] = pageSize
+        documnetsResult['pageNumber'] = pageNumber
+
+        if ('organName' not in params):
+            documnetsResult['total'] = documentList['total_rows']
+        else:  # 如果有按机构查询的操作
+            documentListCount = json.loads(responseCount.body.decode('utf-8'))
+            # 将分页前查询的总数返回给前台#
+            documnetsResult['total'] = len(documentListCount['rows']);
+
+        documnetsResult['rows'] = documents
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(documnetsResult))
+
+
+@tornado_utils.bind_to(r'/documentSearch/?')
+class DocumentHandlerSearch(tornado.web.RequestHandler):
+    def post(self):
+        '''
+        修改_id为member_id的member对象。
+        '''
+        params = json.loads(self.request.body.decode('utf-8'))
+        if ('page' not in params):
+            pass
+        else:
+            pageNumber = params['page']
+
+        if ('rows' not in params):
+            pass
+        else:
+            pageSize = params['rows']
+
+        if ('order' not in params):
+            order = True
+        else:
+            order = ((params['order'] == 'desc') and True or False)
+
+        response = couch_db.post(
+            '/jsmm/_design/documents/_view/all?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
+                'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order},
+            {"keys": [organName, "", "", "", ""]})
         documentList = json.loads(response.body.decode('utf-8'))
         documents = []
         documnetsResult = {}
