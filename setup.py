@@ -92,3 +92,43 @@ try_(couch_db.put('/jsmm/_design/documents', {
         }
     }
 }))
+
+try_(couch_db.put('/jsmm/_design/documents', {
+    'views': {
+        'by-branch': {
+            'map':
+                '''function (doc) {
+                        if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
+                            var result = {};
+                            for (var i in doc.departmentReport) {
+                                result.name = doc.name;
+                                result.branch = doc.branch;
+                                result.type = 'report';
+                                result.fileName = doc.departmentReport[i].depReportName;
+                                result.uploadTime = doc.departmentReport[i].depReportTime;
+                                emit(result.branch, result);
+                                result = {};
+                            }
+                            for (var j in doc.departmentInfo) {
+                                result.name = doc.name;
+                                result.branch = doc.branch;
+                                result.type = 'info';
+                                result.fileName = doc.departmentInfo[j].depReportName;
+                                result.uploadTime = doc.departmentInfo[j].depReportTime;
+                                emit(result.branch, result);
+                                result = {};
+                            }
+                            for (var k in doc.speechesText) {
+                                result.name = doc.name;
+                                result.branch = doc.branch;
+                                result.type = 'speech';
+                                result.fileName = doc.speechesText[k].speechesTextName;
+                                result.uploadTime = doc.speechesText[k].speechesTextTime;
+                                emit(result.branch, result);
+                                result = {};
+                            }
+                        }
+                }'''
+        }
+    }
+}))

@@ -418,13 +418,14 @@
 </div>
 <div id="tb" style="padding:2px 5px;">
     <form id="tb-form">
-        类型:
-        <select name="type" class="easyui-combobox" panelHeight="auto" prompt="请选择" style="width:90px">
-            <option value="report">部门报告</option>
-            <option value="info">部门信息</option>
-            <option value="speech">部门演讲稿</option>
-        </select>
-        社员: <input name="name" class="easyui-textbox" style="width:110px">
+        类型:<input class="easyui-combobox" name="retire" style="width:110px"
+                  data-options="valueField:'value',textField:'text',url:'data/documenttype.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        <!--<select name="type" class="easyui-combobox" panelHeight="auto" prompt="请选择" style="width:90px">-->
+        <!--<option value="report">部门报告</option>-->
+        <!--<option value="info">部门信息</option>-->
+        <!--<option value="speech">演讲稿</option>-->
+        <!--</select>-->
+        社员: <input name="name" class="easyui-textbox" style="width:80px">
         文件名称: <input name="fileName" class="easyui-textbox" style="width:110px">
         开始时间: <input name="startTime" class="easyui-datetimebox" style="width:145px">
         结束时间: <input name="endTime" class="easyui-datetimebox" style="width:145px">

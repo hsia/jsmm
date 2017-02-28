@@ -3,6 +3,7 @@ $(function () {
     var gridHeight = $('#membersinfo').height();
     var $dataGrid = $('#document-list');
 
+
     $dataGrid.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
@@ -63,7 +64,8 @@ $(function () {
     $('#tabsAll').tabs({
         border: false,
         onSelect: function (title, index) {
-            console.log(organName == null);
+            $("#tb-form").form('clear');
+            ;
             if (index == 1 && organName == null) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
@@ -87,7 +89,7 @@ $(function () {
                 result = '部门信息';
                 break;
             case 'speech':
-                result = '部门演讲稿';
+                result = '演讲稿';
                 break;
         }
 

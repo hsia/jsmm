@@ -3,6 +3,7 @@
 
 import json
 
+import time, datetime
 import tornado.web
 
 import tornado_utils
@@ -43,7 +44,7 @@ class DocumentHandler(tornado.web.RequestHandler):
         else:
             order = ((params['order'] == 'desc') and True or False)
 
-        if ('organName' not in params):
+        if ('organName' not in params or params['organName'] == '北京市' or params['organName'] == '朝阳区'):
             response = couch_db.get(
                 '/jsmm/_design/documents/_view/all?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
                     'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order})
@@ -66,7 +67,7 @@ class DocumentHandler(tornado.web.RequestHandler):
         documnetsResult['pageSize'] = pageSize
         documnetsResult['pageNumber'] = pageNumber
 
-        if ('organName' not in params):
+        if ('organName' not in params or params['organName'] == '北京市' or params['organName'] == '朝阳区'):
             documnetsResult['total'] = documentList['total_rows']
         else:  # 如果有按机构查询的操作
             documentListCount = json.loads(responseCount.body.decode('utf-8'))
@@ -101,14 +102,14 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
         for row in documentList['rows']:
             # 对所有数据进行条件查询匹配，匹配成功则返回前台#
             rowValue = row['value'];
-            if (searchInfo['branch'] == ''):
+            if (searchInfo['branch'] == '' or searchInfo['branch'] == '北京市' or searchInfo['branch'] == '朝阳区'):
                 branchResult = True;
             elif (rowValue['branch'].find(searchInfo['branch']) != -1):
                 branchResult = True
             else:
                 branchResult = False
 
-            if (searchInfo['type'] == ''):
+            if ("type" not in searchInfo or searchInfo['type'] == ''):
                 typeResult = True;
             elif (rowValue['type'].find(searchInfo['type']) != -1):
                 typeResult = True
@@ -116,7 +117,7 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
                 typeResult = False
 
             if (searchInfo['name'] == ''):
-                nameResult = True;
+                nameResult = True
             elif (rowValue['name'].find(searchInfo['name']) != -1):
                 nameResult = True
             else:
@@ -128,8 +129,29 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
                 fileNameResult = True
             else:
                 nameResult = False
-            if (branchResult and typeResult and nameResult and fileNameResult):
+
+            rowValueTime = time.mktime(time.strptime(rowValue['uploadTime'], '%Y-%m-%d %H:%M:%S'))
+            if (searchInfo['startTime'] == '' and searchInfo['endTime'] == ''):
+                startTime = time.mktime(time.strptime('1980-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
+                endTime = time.mktime(time.localtime(time.time()))
+            elif (searchInfo['startTime'] != '' and searchInfo['endTime'] == ''):
+                startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d %H:%M:%S'))
+                endTime = time.mktime(time.localtime(time.time()))
+            elif (searchInfo['startTime'] == '' and searchInfo['endTime'] != ''):
+                startTime = time.mktime(time.strptime('1980-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
+                endTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d %H:%M:%S'))
+            else:
+                startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d %H:%M:%S'))
+                endTime = time.mktime(time.strptime(searchInfo['endTime'], '%Y-%m-%d %H:%M:%S'))
+
+            if (float(rowValueTime) >= float(startTime)) and (float(rowValueTime) <= float(endTime)):
+                betweenTimeResult = True
+            else:
+                betweenTimeResult = False
+
+            if (branchResult and typeResult and nameResult and fileNameResult and betweenTimeResult):
                 documents.append(rowValue)
+
 
         documnetsResult['pageSize'] = pageSize
         documnetsResult['pageNumber'] = pageNumber
@@ -140,3 +162,16 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
             documnetsResult['rows'] = documents[(pageNumber - 1) * pageSize:pageNumber * pageSize]
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documnetsResult))
+
+
+def compare_time(l_time, start_t, end_t):
+    s_time = time.mktime(time.strptime(start_t, '%Y-%m-%d %H:%M:%S'))  # get the seconds for specify date
+
+    e_time = time.mktime(time.strptime(end_t, '%Y-%m-%d %H:%M:%S'))
+
+    log_time = time.mktime(time.strptime(l_time, '%Y-%m-%d %H:%M:%S'))
+
+    if (float(log_time) >= float(s_time)) and (float(log_time) <= float(e_time)):
+        return True
+
+    return False
