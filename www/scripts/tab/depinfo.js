@@ -115,8 +115,7 @@ $(function () {
                     width: 80,
                     align: 'left',
                     editor: {type: 'datetimebox', options: {}}
-                },
-                {
+                },{
                     field: 'depReportName',
                     title: '文件名称',
                     width: 160,

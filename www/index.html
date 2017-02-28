@@ -110,14 +110,16 @@
 <div id="member_upload">
     <div style="margin: 45px 0 0 40px">
         <form id="member_upload_form" action='/members/upload/' enctype="multipart/form-data" method='post'>
-            <input class="easyui-filebox" name='members' data-options="prompt:'请选择文件'" style="width: 80%" accept=".xls,.xlsx"/><br/>
+            <input class="easyui-filebox" name='members' data-options="prompt:'请选择文件'" style="width: 80%"
+                   accept=".xls,.xlsx"/><br/>
         </form>
     </div>
 </div>
 <div id="member_doc">
     <div style="margin: 45px 0 0 40px">
         <form id="doc_upload_form" enctype="multipart/form-data" method='post'>
-            <input class="easyui-filebox" name='doc' data-options="prompt:'请选择文件'" style="width: 80%" accept=".doc,.docx,.xls,.xlsx"/><br/>
+            <input class="easyui-filebox" name='doc' data-options="prompt:'请选择文件'" style="width: 80%"
+                   accept=".doc,.docx,.xls,.xlsx"/><br/>
             <input type="hidden" name="doc_id" id="doc_id"/>
             <input type="hidden" name="doc_type" id="doc_type"/>
         </form>

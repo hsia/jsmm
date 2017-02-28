@@ -205,12 +205,11 @@ $(function () {
             $.get('/members/' + rowData._id, function (data) {
                 var newData = JSON.parse(data);
                 memberInfo(newData);
-                newData.sbRow=getRow;
-                newData.sbCurrentPage=$memberList.datagrid('options').pageNumber;
+                newData.sbRow = getRow;
+                newData.sbCurrentPage = $memberList.datagrid('options').pageNumber;
                 var event = new CustomEvent("grid-row-selection", {
                     detail: newData
-            })
-                ;
+                });
                 window.dispatchEvent(event);
                 $("#create_file").change(function () {
                     $('#member_image_upload').form('submit', {

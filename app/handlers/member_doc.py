@@ -47,7 +47,6 @@ def docCallBack(file):
 
 
 class UploadDoc(tornado.web.RequestHandler):
-
     def initialize(self, callback):
         self._callback = callback
 
@@ -75,6 +74,3 @@ class UploadDoc(tornado.web.RequestHandler):
             self._callback({'filename': filename, 'path': path,
                             'content_type': file_info['content_type'],
                             'member_id': member_id, 'doc_type': doc_type})
-
-
-
