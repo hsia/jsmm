@@ -180,23 +180,32 @@ $(function () {
         var formData = $('#tb-form').serializeArray();
         var searchInfo = {};
         $.each(formData, function (index, element) {
+            console.log(element)
             searchInfo[element.name] = element.value;
         });
-        console.log(searchInfo);
-        $.ajax({
-            url: '/documentSearch/',
-            type: 'POST',
-            data: JSON.stringify(searchInfo),
-            success: function (data) {
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $dataGrid.datagrid('reload');
-            },
-            error: function (data) {
-                $.messager.alert('提示', '数据查询失败!', 'error');
+        // $.ajax({
+        //     url: '/documentSearch/',
+        //     type: 'POST',
+        //     data: JSON.stringify(searchInfo),
+        //     success: function (data) {
+        //         //删除成功以后，重新加载数据，并将choiceRows置为空。
+        //         $dataGrid.datagrid('reload');
+        //     },
+        //     error: function (data) {
+        //         $.messager.alert('提示', '数据查询失败!', 'error');
+        //     }
+        // });
+
+        $dataGrid.datagrid({
+            loader: function (param, success) {
+                param.searchInfo = searchInfo;
+                param.searchInfo.branch = (organName == null ? '' : organName);
+                var defaultUrl = '/documentSearch';
+                $.post(defaultUrl, JSON.stringify(param), function (data) {
+                    success(data)
+                }, 'json');
             }
-        });
-
+        })
     })
-
 })
 ;
