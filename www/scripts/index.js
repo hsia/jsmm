@@ -104,6 +104,18 @@ $(function () {
             confirmRemove();
         }
     }, '-', {
+        text: '查询',
+        iconCls: 'icon-search',
+        handler: function () {
+            memberSearch();
+        }
+    }, '-', {
+        text: '重置查询条件',
+        iconCls: 'icon-reload',
+        handler: function () {
+            removeSearch();
+        }
+    }, '-', {
         text: '社员导入',
         iconCls: 'icon-import',
         handler: function () {
@@ -139,6 +151,8 @@ $(function () {
         }
     }];
 
+    var defaultUrl = '/members';
+
     $memberList.datagrid({
         iconCls: 'icon-ok',
         height: gridHeight,
@@ -167,7 +181,6 @@ $(function () {
             {field: 'branchTime', title: '入社时间', width: 120, sortable: true, align: 'left'}
         ]],
         loader: function (param, success) {
-            var defaultUrl = '/members';
             $.get(defaultUrl, function (data) {
                 success(data)
             });
@@ -375,5 +388,51 @@ $(function () {
     }).click(function () {
         $('#all-tabs').tabs('select', 15);
     });
+
+    $("#member-search-form").submit(function (event) {
+        event.preventDefault();
+        var formData = $(this).serializeArray();
+        var memberInfo = {};
+        $.each(formData, function (index, element) {
+            memberInfo[element.name] = element.value;
+        });
+        $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
+            $('#member-search').dialog('close');
+            $('#member-search-form').form('clear');
+            $memberList.datagrid('loadData', data.docs);
+
+        })
+    });
+
+    function memberSearch() {
+        $('#member-search').dialog({
+            width: 600,
+            height: 300,
+            title: '社员查询',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '查询',
+                handler: function () {
+                    $('#member-search-form').trigger('submit');
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#member-search-form').form('clear');
+                    $('#member-search').dialog('close');
+                }
+            }]
+        });
+    }
+
+    function removeSearch() {
+        $.get(defaultUrl, function (data) {
+            $memberList.datagrid('loadData', data);
+        });
+    }
 
 });

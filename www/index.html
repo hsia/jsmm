@@ -132,6 +132,24 @@
     <div id="department-info">提交给各部门的信息</div>
     <div id="speeches-text">各种会议书面发言稿</div>
 </div>
+<div id="member-search" class="member-dialog">
+    <form id="member-search-form" class="easyui-form member-form" data-options="novalidate:true">
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="gender" style="width:100%"
+                   data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-datebox" name="branchTime" style="width:100%"
+                   data-options="label:'入社时间:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="mobile" style="width:100%" data-options="label:'移动电话:',required:true">
+        </div>
+    </form>
+</div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"
           enctype="multipart/form-data" method='post'>

@@ -9,9 +9,29 @@ import tornado_utils
 from commons import couch_db, get_now, make_uuid
 
 
+@tornado_utils.bind_to(r'/members/search/?')
+class NewMemberCollectionHandler(tornado.web.RequestHandler):
+    @tornado.web.addslash
+    def post(self):
+        obj = {
+            "selector": {},
+            "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ", "branchTime"]
+        }
+        objC = obj["selector"]
+        search = json.loads(self.request.body.decode('utf-8'))
+        if search['name'] != '':
+            objC['name'] = {"$regex": search["name"]}
+        if search['gender'] != '':
+            objC['gender'] = {"$regex": search["gender"]}
+        if search['branchTime'] != '':
+            objC['branchTime'] = {"$regex": search["branchTime"]}
+        response = couch_db.post(r'/jsmm/_find/', obj)
+        members = json.loads(response.body.decode('utf-8'))
+        self.write(members)
+
+
 @tornado_utils.bind_to(r'/members/?')
 class MemberCollectionHandler(tornado.web.RequestHandler):
-
     @tornado.web.addslash
     def get(self):
         '''
@@ -54,7 +74,6 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
 
 @tornado_utils.bind_to(r'/members/([0-9a-f]+)')
 class MemberHandler(tornado.web.RequestHandler):
-
     def get(self, member_id):
         '''
         获取_id为member_id的member对象。
@@ -97,7 +116,6 @@ class MemberHandler(tornado.web.RequestHandler):
 
 @tornado_utils.bind_to(r'/members/tab/([0-9a-f]+)')
 class MemberHandlerTab(tornado.web.RequestHandler):
-
     def put(self, member_id):
         '''
         修改_id为member_id的member对象。
@@ -155,8 +173,8 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         if ('organName' not in params):
             response = couch_db.get(
-            '/jsmm/_design/documents/_view/all?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
-                'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order})
+                '/jsmm/_design/documents/_view/all?limit=%(pageSize)s&skip=%(pageNumber)s&descending=%(order)s' % {
+                    'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize, 'order': order})
         else:  # 如果有按机构查询的操作
             # 查询未分页前数据总数(根据返回的Rows获得总数据量)#
             responseCount = couch_db.post('/jsmm/_design/documents/_view/by-branch', postParam)
