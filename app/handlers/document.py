@@ -29,15 +29,8 @@ class DocumentHandler(tornado.web.RequestHandler):
         '''
         params = json.loads(self.request.body.decode('utf-8'))
 
-        if ('page' not in params):
-            pass
-        else:
-            pageNumber = params['page']
-
-        if ('rows' not in params):
-            pass
-        else:
-            pageSize = params['rows']
+        pageNumber = params['page']
+        pageSize = params['rows']
 
         if ('organName' not in params):
             pass
@@ -92,25 +85,14 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
         修改_id为member_id的member对象。
         '''
         params = json.loads(self.request.body.decode('utf-8'))
-        if ('page' not in params):
-            pass
-        else:
-            pageNumber = params['page']
+        pageNumber = params['page']
+        pageSize = params['rows']
+        searchInfo = params['searchInfo']
 
-        if ('rows' not in params):
-            pass
-        else:
-            pageSize = params['rows']
-
-        if ('order' not in params):
-            order = True
-        else:
-            order = ((params['order'] == 'desc') and True or False)
-
-        if ('searchInfo' not in params):
-            pass
-        else:
-            searchInfo = params['searchInfo']
+        # if ('order' not in params):
+        #     order = True
+        # else:
+        #     order = ((params['order'] == 'desc') and True or False)
 
         response = couch_db.get('/jsmm/_design/documents/_view/all')
         documentList = json.loads(response.body.decode('utf-8'))
@@ -151,7 +133,7 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
 
         documnetsResult['pageSize'] = pageSize
         documnetsResult['pageNumber'] = pageNumber
-        documnetsResult['total'] = documentList['total_rows']
+        documnetsResult['total'] = len(documents)
         if (documnetsResult['total'] <= pageSize):
             documnetsResult['rows'] = documents
         else:
