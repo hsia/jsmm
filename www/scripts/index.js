@@ -13,6 +13,8 @@ $(function () {
         $(this).prev().combobox("showPanel");
     });
 
+    var getRow = '';
+    var getCurrentPage = '';
     var gridHeight = ($('#members').height());
     var $memberList = $('#member-list');
 
@@ -37,7 +39,7 @@ $(function () {
     $("#memberEdit-form").submit(function (event) {
         event.preventDefault();
 
-        var currentPage = $memberList.datagrid('options').pageNumber;
+        getCurrentPage = $memberList.datagrid('options').pageNumber;
         var formData = $(this).serializeArray();
         var memberInfo = {};
         $.each(formData, function (index, element) {
@@ -50,7 +52,9 @@ $(function () {
             success: function (data) {
                 $('#memberEdit-dialog').dialog('close');
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $memberList.datagrid('gotoPage', currentPage).datagrid('reload');
+                console.log(getRow);
+                $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
+                $memberList.datagrid('selectRow', getRow);
                 $.messager.alert('提示', '数据更新成功!', 'info');
             },
             error: function (data) {
@@ -197,12 +201,16 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
+            getRow = rowIndex;
             $.get('/members/' + rowData._id, function (data) {
-                var newData=JSON.parse(data);
+                var newData = JSON.parse(data);
                 memberInfo(newData);
+                newData.sbRow=getRow;
+                newData.sbCurrentPage=$memberList.datagrid('options').pageNumber;
                 var event = new CustomEvent("grid-row-selection", {
                     detail: newData
-                });
+            })
+                ;
                 window.dispatchEvent(event);
                 $("#create_file").change(function () {
                     $('#member_image_upload').form('submit', {

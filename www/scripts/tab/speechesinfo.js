@@ -1,9 +1,14 @@
+//演讲
 $(function () {
 
     var memberInfo = null;
+    var getRow = '';
+    var getCurrentPage = '';
 
     window.addEventListener("grid-row-selection", function (event) {
         memberInfo = event.detail;
+        getRow = memberInfo.sbRow;
+        getCurrentPage = memberInfo.sbCurrentPage;
         loadD();
     });
 
@@ -26,28 +31,66 @@ $(function () {
     var $dataGrid = $("#docWord-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
-        text: '添加记录',
-        iconCls: 'icon-add',
+        text: '文档上传',
+        iconCls: 'icon-import',
         handler: function () {
-            append();
+            if (memberInfo == null) {
+                $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
+                return;
+            }
+            $('#doc_upload_form').form('clear');
+            $('#doc_id').val(memberInfo._id);
+            $('#doc_type').val('speechesText');
+            $('#member_doc').dialog({
+                width: 300,
+                height: 200,
+                title: '导入社员',
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons: [{
+                    iconCls: 'icon-import',
+                    text: '导入',
+                    handler: function () {
+                        $('#doc_upload_form').form('submit', {
+                            url: '/doc/upload/',
+                            success: function (data) {
+                                $dataGrid.datagrid({
+                                    loader: function (param, success) {
+                                        $.get('/members/' + memberInfo._id, function (data) {
+                                            var result = JSON.parse(data);
+                                            success(result.speechesText);
+                                        })
+                                    }
+                                });
+                                $('#member_doc').dialog('close');
+                                $.messager.alert('提示信息', '文档上传成功！', 'info');
+                            }
+                        });
+                    }
+                }, {
+                    iconCls: 'icon-cancel',
+                    text: '取消',
+                    handler: function () {
+                        $('#doc_upload_form').form('clear');
+                        $('#member_doc').dialog('close');
+                    }
+                }]
+            })
         }
     }, '-', {
-        text: '移除记录',
-        iconCls: 'icon-remove',
+        text: '文档删除',
+        iconCls: 'icon-cancel',
         handler: function () {
-            removeit();
-        }
-    }, '-', {
-        text: '保存记录',
-        iconCls: 'icon-save',
-        handler: function () {
-            save();
+
         }
     }];
 
     $('#speeches-text').click(function () {
         window.addEventListener("grid-row-selection", function (event) {
             memberInfo = event.detail;
+            getRow = memberInfo.sbRow;
+            getCurrentPage = memberInfo.sbCurrentPage;
             loadD()
         });
         $dataGrid.datagrid({
@@ -80,85 +123,9 @@ $(function () {
                     align: 'left',
                     editor: {type: 'textbox', options: {}}
                 }
-            ]],
-            onClickRow: function (index, row) {
-                if (editIndex != index) {
-                    if (endEditing()) {
-                        $dataGrid.datagrid('selectRow', index)
-                            .datagrid('beginEdit', index);
-                        editIndex = index;
-                    } else {
-                        $dataGrid.datagrid('selectRow', editIndex);
-                    }
-
-                }
-            },
-            onBeginEdit: function (index, row) {
-                $(".combo").click(function () {
-                    $(this).prev().combobox("showPanel");
-                });
-            }
+            ]]
         });
         loadD();
+        $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
     });
-
-    var editIndex = undefined;
-
-    function endEditing() {
-        if (editIndex == undefined) {
-            return true
-        }
-        if ($dataGrid.datagrid('validateRow', editIndex)) {
-            $dataGrid.datagrid('endEdit', editIndex);
-            editIndex = undefined;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function append() {
-        if (memberInfo == null) {
-            $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
-            return;
-        }
-        if (endEditing()) {
-            $dataGrid.datagrid('appendRow', {});
-            editIndex = $dataGrid.datagrid('getRows').length - 1;
-            $dataGrid.datagrid('selectRow', editIndex)
-                .datagrid('beginEdit', editIndex);
-        }
-    }
-
-    function removeit() {
-        if (editIndex == undefined) {
-            return
-        }
-        $dataGrid.datagrid('cancelEdit', editIndex)
-            .datagrid('deleteRow', editIndex);
-        editIndex = undefined;
-    }
-
-    function save() {
-        if (memberInfo == null) {
-            return
-        }
-        if (endEditing()) {
-            memberInfo.speechesText = $dataGrid.datagrid('getRows');
-            $.ajax({
-                url: '/members/tab/' + memberInfo._id,
-                type: 'PUT',
-                data: JSON.stringify(memberInfo),
-                success: function (data) {
-                    if (data.success) {
-                        $.messager.alert('提示', '数据保存成功!', 'info');
-                    }
-                },
-                error: function (data) {
-                    alert("success");
-                    $.messager.alert('提示', '数据更新失败!', 'error');
-                }
-            });
-        }
-    }
-})
+});
