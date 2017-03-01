@@ -4,6 +4,7 @@ $(function () {
     var memberInfo = null;
     var getRow = '';
     var getCurrentPage = '';
+    var currentRowData = null;
 
     window.addEventListener("grid-row-selection", function (event) {
         memberInfo = event.detail;
@@ -82,7 +83,16 @@ $(function () {
         text: '文档删除',
         iconCls: 'icon-cancel',
         handler: function () {
-
+            var obj = {};
+            obj.id = memberInfo._id;
+            obj.file_url = currentRowData.file_url;
+            obj.doc_type = 'departmentInfo';
+            obj.rowData = currentRowData;
+            $.post('/members/del/', JSON.stringify(obj), function () {
+                $.messager.alert('提示信息', '删除文档成功！', 'info');
+                loadD();
+                $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
+            })
         }
     }];
 
@@ -132,7 +142,10 @@ $(function () {
                         return '<a href= ' + path + ' >下载</a>';
                     }
                 }
-            ]]
+            ]],
+            onSelect: function (rowIndex, rowData) {
+                currentRowData = rowData;
+            }
         });
         loadD();
         $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
