@@ -18,7 +18,8 @@ def docCallBack(file):
     loadDb = couch_db.get(r'/jsmm/%(id)s' % {'id': file['member_id']})
     memberInDb = json.loads(loadDb.body.decode('utf-8'))
     if file['doc_type'] == 'departmentReport':
-        memberInDb['departmentReport'] = []
+        if ('departmentReport' not in memberInDb):
+            memberInDb['departmentReport'] = []
         doc = {
             'depReportTime': newTime(),
             'depReportName': file['filename'],
@@ -27,7 +28,8 @@ def docCallBack(file):
         memberInDb['departmentReport'].append(doc)
         couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
     elif file['doc_type'] == 'departmentInfo':
-        memberInDb['departmentInfo'] = []
+        if ('departmentInfo' not in memberInDb):
+            memberInDb['departmentInfo'] = []
         doc = {
             'depReportTime': newTime(),
             'depReportName': file['filename'],
@@ -36,7 +38,8 @@ def docCallBack(file):
         memberInDb['departmentInfo'].append(doc)
         couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
     elif file['doc_type'] == 'speechesText':
-        memberInDb['speechesText'] = []
+        if ('speechesText' not in memberInDb):
+            memberInDb['speechesText'] = []
         doc = {
             'speechesTextTime': newTime(),
             'speechesTextName': file['filename'],
