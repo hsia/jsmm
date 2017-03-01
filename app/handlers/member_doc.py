@@ -22,7 +22,7 @@ def docCallBack(file):
         doc = {
             'depReportTime': newTime(),
             'depReportName': file['filename'],
-            'url': file['path']
+            'file_url': file['path']
         }
         memberInDb['departmentReport'].append(doc)
         couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
@@ -31,7 +31,7 @@ def docCallBack(file):
         doc = {
             'depReportTime': newTime(),
             'depReportName': file['filename'],
-            'url': file['path']
+            'file_url': file['path']
         }
         memberInDb['departmentInfo'].append(doc)
         couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
@@ -40,7 +40,7 @@ def docCallBack(file):
         doc = {
             'speechesTextTime': newTime(),
             'speechesTextName': file['filename'],
-            'url': file['path']
+            'fiel_url': file['path']
         }
         memberInDb['speechesText'].append(doc)
         couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
