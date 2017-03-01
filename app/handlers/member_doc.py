@@ -40,7 +40,7 @@ def docCallBack(file):
         doc = {
             'speechesTextTime': newTime(),
             'speechesTextName': file['filename'],
-            'fiel_url': file['path']
+            'file_url': file['path']
         }
         memberInDb['speechesText'].append(doc)
         couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
