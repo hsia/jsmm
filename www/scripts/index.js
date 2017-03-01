@@ -239,13 +239,19 @@ $(function () {
         }
     });
     //添加组织机构数的点击后触发自定义监听事件
+    branch = null;
     $('#organTree').tree({
         onClick: function (node) {
-            console.log(node);
+            branch = node.text;
             var event = new CustomEvent("tree-row-selection", {
                 detail: node.text
             });
             window.dispatchEvent(event);
+            search = {};
+            search.branch = node.text;
+            $.post('/members/search/', JSON.stringify(search), function (data) {
+                $memberList.datagrid('loadData', data.docs);
+            })
         }
     });
 
@@ -396,6 +402,7 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
+        memberInfo.branch = (organName == null ? '' : organName);
         $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
             $('#member-search').dialog('close');
             $('#member-search-form').form('clear');

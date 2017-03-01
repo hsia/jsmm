@@ -201,7 +201,8 @@
             <input class="easyui-textbox" name="idNo" style="width:100%" data-options="label:'证件号码:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="branch" style="width:100%" data-options="label:'所属支社:',required:true">
+            <select class="easyui-combotree" name="branch" style="width:100%"
+                    data-options="label:'所属支社:',url:'data/organization.json',method:'get',required:true"></select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
@@ -334,7 +335,8 @@
             <input class="easyui-textbox" name="idNo" style="width:100%" data-options="label:'证件号码:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="branch" style="width:100%" data-options="label:'所属支社:',required:true">
+            <select class="easyui-combotree" name="branch" style="width:100%"
+                    data-options="label:'所属支社:',url:'data/organization.json',method:'get',required:true"></select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">

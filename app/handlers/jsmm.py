@@ -19,12 +19,22 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
         }
         objC = obj["selector"]
         search = json.loads(self.request.body.decode('utf-8'))
-        if search['name'] != '':
-            objC['name'] = {"$regex": search["name"]}
-        if search['gender'] != '':
-            objC['gender'] = {"$regex": search["gender"]}
-        if search['branchTime'] != '':
-            objC['branchTime'] = {"$regex": search["branchTime"]}
+        if 'name' in search:
+            if search['name'] != '':
+                objC['name'] = {"$regex": search["name"]}
+        if 'gender' in search:
+            if search['gender'] != '':
+                objC['gender'] = {"$regex": search["gender"]}
+        if 'branchTime' in search:
+            if search['branchTime'] != '':
+                objC['branchTime'] = {"$regex": search["branchTime"]}
+        if 'mobile' in search:
+            if search['mobile'] != '':
+                objC['mobile'] = {"$regex": search["mobile"]}
+        if 'branch' in search:
+            if search['branch'] != '' and search['branch'] != '北京市' and search['branch'] != '朝阳区':
+                objC['branch'] = {"$regex": search["branch"]}
+        objC['type'] = {"$regex": "member"}
         response = couch_db.post(r'/jsmm/_find/', obj)
         members = json.loads(response.body.decode('utf-8'))
         self.write(members)
