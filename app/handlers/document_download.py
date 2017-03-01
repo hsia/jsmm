@@ -10,8 +10,7 @@ import tornado_utils
 @tornado_utils.bind_to(r'/members/download/([\s\S]*)')
 class MemberHandlerTab(tornado.web.RequestHandler):
     def get(self, doc_path):
-
-        filename = "九三-074e20.docx"
+        filename = doc_path[16:len(doc_path)]
         self.set_header('Content-Type', 'application/octet-stream')
         self.set_header('Content-Disposition', 'attachment; filename=' + urllib.parse.quote(filename, "utf-8"))
         path = os.path.normpath(doc_path)
