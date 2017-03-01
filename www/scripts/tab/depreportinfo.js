@@ -31,7 +31,7 @@ $(function () {
     var $dataGrid = $("#docWord-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
-        text: '文档上传',
+        text: '各部门的报告上传',
         iconCls: 'icon-import',
         handler: function () {
             if (memberInfo == null) {
@@ -44,7 +44,7 @@ $(function () {
             $('#member_doc').dialog({
                 width: 300,
                 height: 200,
-                title: '导入社员',
+                title: '文档上传',
                 closed: false,
                 cache: false,
                 modal: true,
@@ -115,12 +115,22 @@ $(function () {
                     width: 80,
                     align: 'left',
                     editor: {type: 'datetimebox', options: {}}
-                },{
+                }, {
                     field: 'depReportName',
                     title: '文件名称',
                     width: 160,
                     align: 'left',
                     editor: {type: 'textbox', options: {}}
+                }, {
+                    field: 'clickDownload',
+                    title: '操作',
+                    width: 60,
+                    sortable: false,
+                    align: 'left',
+                    formatter: function (value, row, index) {
+                        var path = "/members/download/" + row.file_url;
+                        return '<a href= ' + path + ' >下载</a>';
+                    }
                 }
             ]]
         });

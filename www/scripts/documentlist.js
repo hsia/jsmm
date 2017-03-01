@@ -34,12 +34,15 @@ $(function () {
             {field: 'uploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
             {
                 field: 'clickDownload',
-                title: '下载',
+                title: '操作',
                 width: 60,
                 sortable: false,
                 align: 'left',
-                formatter: addLink
-            },
+                formatter: function (value, row, index) {
+                    var path="/members/download/"+row.file_url;
+                    return '<a href= '+path+' >下载</a>';
+                }
+            }
         ]]
     });
 
@@ -94,10 +97,6 @@ $(function () {
         }
 
         return result;
-    }
-
-    function addLink(value, row, index) {
-        return '<a href="#">点击下载</a>';
     }
 
 //编辑数据
