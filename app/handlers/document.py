@@ -162,16 +162,3 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
             documnetsResult['rows'] = documents[(pageNumber - 1) * pageSize:pageNumber * pageSize]
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documnetsResult))
-
-
-def compare_time(l_time, start_t, end_t):
-    s_time = time.mktime(time.strptime(start_t, '%Y-%m-%d %H:%M:%S'))  # get the seconds for specify date
-
-    e_time = time.mktime(time.strptime(end_t, '%Y-%m-%d %H:%M:%S'))
-
-    log_time = time.mktime(time.strptime(l_time, '%Y-%m-%d %H:%M:%S'))
-
-    if (float(log_time) >= float(s_time)) and (float(log_time) <= float(e_time)):
-        return True
-
-    return False
