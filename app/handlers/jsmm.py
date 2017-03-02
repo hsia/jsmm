@@ -32,7 +32,7 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
             if search['mobile'] != '':
                 objC['mobile'] = {"$regex": search["mobile"]}
         if 'branch' in search:
-            if search['branch'] != '' and search['branch'] != '北京市' and search['branch'] != '朝阳区':
+            if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
                 objC['branch'] = {"$regex": search["branch"]}
         objC['type'] = {"$regex": "member"}
         response = couch_db.post(r'/jsmm/_find/', obj)
