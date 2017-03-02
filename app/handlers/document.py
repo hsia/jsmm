@@ -132,13 +132,13 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
 
             rowValueTime = time.mktime(time.strptime(rowValue['uploadTime'], '%Y-%m-%d'))
             if (searchInfo['startTime'] == '' and searchInfo['endTime'] == ''):
-                startTime = time.mktime(time.strptime('1980-01-01', '%Y-%m-%d'))
+                startTime = time.mktime(time.strptime('1970-01-02', '%Y-%m-%d'))
                 endTime = time.mktime(time.localtime(time.time()))
             elif (searchInfo['startTime'] != '' and searchInfo['endTime'] == ''):
                 startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d'))
                 endTime = time.mktime(time.localtime(time.time()))
             elif (searchInfo['startTime'] == '' and searchInfo['endTime'] != ''):
-                startTime = time.mktime(time.strptime('1980-01-01', '%Y-%m-%d'))
+                startTime = time.mktime(time.strptime('1970-01-02', '%Y-%m-%d'))
                 endTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d'))
             else:
                 startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d'))
