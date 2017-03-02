@@ -110,12 +110,6 @@ $(function () {
             memberSearch();
         }
     }, '-', {
-        text: '重置查询条件',
-        iconCls: 'icon-reload',
-        handler: function () {
-            removeSearch();
-        }
-    }, '-', {
         text: '社员导入',
         iconCls: 'icon-import',
         handler: function () {
@@ -437,11 +431,4 @@ $(function () {
             }]
         });
     }
-
-    function removeSearch() {
-        $.get(defaultUrl, function (data) {
-            $memberList.datagrid('loadData', data);
-        });
-    }
-
 });
