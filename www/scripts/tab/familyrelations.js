@@ -22,7 +22,7 @@ $(function () {
     });
 
     window.addEventListener("tree-row-selection", function (event) {
-        $dataGrid.datagrid('loadData', []);
+        $familyList.datagrid('loadData', []);
     });
 
     var gridHeight = ($('#member-info').height());
