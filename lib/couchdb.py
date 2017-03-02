@@ -10,9 +10,9 @@ from tornado.httpclient import HTTPClient, HTTPError, HTTPRequest
 
 
 class CouchDB(object):
-    '''
-    封装访问CouchDB的GET、PUT、POST、DELETE方法。
-    '''
+    """
+    封装访问CouchDB的GET、HEAD、PUT、POST、DELETE方法。
+    """
     def __init__(self, base_uri):
         self.__base_uri = base_uri
 
@@ -45,9 +45,21 @@ class CouchDB(object):
             http_client.close()
 
     def get(self, path):
+        """
+        GET方法。
+        """
         return self.__fetch('GET', path)
 
+    def head(self, path):
+        """
+        HEAD方法。
+        """
+        return self.__fetch('HEAD', path)
+
     def put(self, path, data=None, content_type=None):
+        """
+        PUT方法。
+        """
         return self.__fetch(
             'PUT',
             path,
@@ -56,6 +68,9 @@ class CouchDB(object):
         )
 
     def post(self, path, data=None, content_type=None):
+        """
+        POST方法。
+        """
         return self.__fetch(
             'POST',
             path,
@@ -64,4 +79,7 @@ class CouchDB(object):
         )
 
     def delete(self, path):
+        """
+        DELETE方法。
+        """
         return self.__fetch('DELETE', path)
