@@ -21,6 +21,10 @@ $(function () {
         }
     });
 
+    window.addEventListener("tree-row-selection", function (event) {
+        $dataGrid.datagrid('loadData', []);
+    });
+
     var gridHeight = ($('#member-info').height());
     var $agencyBroker = $('#agencyBroker-list');
     var toolbar = [

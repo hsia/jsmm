@@ -243,6 +243,7 @@ $(function () {
                 detail: node.text
             });
             window.dispatchEvent(event);
+            memberInfo({});
             search = {};
             search.branch = node.text;
             $.post('/members/search/', JSON.stringify(search), function (data) {

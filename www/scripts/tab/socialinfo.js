@@ -18,6 +18,10 @@ $(function () {
         }
     });
 
+    window.addEventListener("tree-row-selection", function (event) {
+        $dataGrid.datagrid('loadData', []);
+    });
+
     //学位学历
     var $dataGrid = $("#social-list");
     var gridHeight = $("#member-info").height();

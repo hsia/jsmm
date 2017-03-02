@@ -29,6 +29,10 @@ $(function () {
         }
     });
 
+    window.addEventListener("tree-row-selection", function (event) {
+        $dataGrid.datagrid('loadData', []);
+    });
+
     var $dataGrid = $("#docWord-list");
     var gridHeight = $("#member-info").height();
     var toolbar = [{
