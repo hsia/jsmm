@@ -130,19 +130,19 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
             else:
                 nameResult = False
 
-            rowValueTime = time.mktime(time.strptime(rowValue['uploadTime'], '%Y-%m-%d %H:%M:%S'))
+            rowValueTime = time.mktime(time.strptime(rowValue['uploadTime'], '%Y-%m-%d'))
             if (searchInfo['startTime'] == '' and searchInfo['endTime'] == ''):
-                startTime = time.mktime(time.strptime('1980-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
+                startTime = time.mktime(time.strptime('1980-01-01', '%Y-%m-%d'))
                 endTime = time.mktime(time.localtime(time.time()))
             elif (searchInfo['startTime'] != '' and searchInfo['endTime'] == ''):
-                startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d %H:%M:%S'))
+                startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d'))
                 endTime = time.mktime(time.localtime(time.time()))
             elif (searchInfo['startTime'] == '' and searchInfo['endTime'] != ''):
-                startTime = time.mktime(time.strptime('1980-01-01 00:00:00', '%Y-%m-%d %H:%M:%S'))
-                endTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d %H:%M:%S'))
+                startTime = time.mktime(time.strptime('1980-01-01', '%Y-%m-%d'))
+                endTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d'))
             else:
-                startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d %H:%M:%S'))
-                endTime = time.mktime(time.strptime(searchInfo['endTime'], '%Y-%m-%d %H:%M:%S'))
+                startTime = time.mktime(time.strptime(searchInfo['startTime'], '%Y-%m-%d'))
+                endTime = time.mktime(time.strptime(searchInfo['endTime'], '%Y-%m-%d'))
 
             if (float(rowValueTime) >= float(startTime)) and (float(rowValueTime) <= float(endTime)):
                 betweenTimeResult = True
