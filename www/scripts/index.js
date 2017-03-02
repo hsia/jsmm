@@ -214,12 +214,14 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
+
             getRow = rowIndex;
             $.get('/members/' + rowData._id, function (data) {
                 var newData = JSON.parse(data);
                 memberInfo(newData);
                 newData.sbRow = getRow;
                 newData.sbCurrentPage = $memberList.datagrid('options').pageNumber;
+                console.log(getRow, newData.sbCurrentPage)
                 var event = new CustomEvent("grid-row-selection", {
                     detail: newData
                 });
@@ -402,7 +404,7 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
-        memberInfo.branch = (organName == null ? '' : organName);
+        memberInfo.branch = (branch == null ? '' : branch);
         $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
             $('#member-search').dialog('close');
             $('#member-search-form').form('clear');
