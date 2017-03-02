@@ -148,6 +148,10 @@ $(function () {
             }
         });
         loadD();
-        $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
+        if (getCurrentPage != '' && getRow != '') {
+            $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
+        }else{
+            $('#member-list').datagrid('reload');
+        }
     });
 });
