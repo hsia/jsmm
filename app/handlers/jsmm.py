@@ -82,48 +82,6 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
                             {'id': memberId, 'rev': member['_rev']})
 
 
-@tornado_utils.bind_to(r'/members/([0-9a-f]+)')
-class MemberHandler(tornado.web.RequestHandler):
-    def get(self, member_id):
-        '''
-        获取_id为member_id的member对象。
-        '''
-        response = couch_db.get(r'/jsmm/%(id)s' % {"id": member_id})
-        self.write(response.body.decode('utf-8'))
-
-    def put(self, member_id):
-        '''
-        修改_id为member_id的member对象。
-        '''
-        # 获得前台对象#
-        member = json.loads(self.request.body.decode('utf-8'))
-        # 根据前台对象的memeber_id，查询数据库中的memeber对象#
-        response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
-        memberInDb = json.loads(response.body.decode('utf-8'))
-        # 将前台数据赋予后台对象，然后将后台对象保存。#
-        # 注意，如果前台传递_rev则不能将后台对象中的_rev覆盖，在index.html的编辑页面中没有包含_rev字段,因此在此处没有添加判断_rev#
-        for key in memberInDb:
-            if member.get(key):
-                memberInDb[key] = member[key]
-
-        memberInDb['type'] = 'member'
-        memberInDb['_id'] = member_id
-        couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, memberInDb)
-        response = {"success": "true"}
-        self.write(response)
-
-    def delete(self, member_id):
-        '''
-        删除_id为member_id的member对象。
-        '''
-        response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
-        member = json.loads(response.body.decode('utf-8'))
-        couch_db.delete(r'/jsmm/%(id)s?rev=%(rev)s' %
-                        {'id': member_id, 'rev': member['_rev']})
-        response = {"success": "true"}
-        self.write(response)
-
-
 @tornado_utils.bind_to(r'/members/tab/([0-9a-f]+)')
 class MemberHandlerTab(tornado.web.RequestHandler):
     def put(self, member_id):
