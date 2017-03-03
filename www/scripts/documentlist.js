@@ -52,9 +52,8 @@ $(function () {
         if (organName != null) {
             $dataGrid.datagrid({
                 loader: function (param, success) {
-                    var defaultUrl = '/documents/';
                     param.organName = organName;
-                    $.post(defaultUrl, JSON.stringify(param), function (data) {
+                    $.post('/documents/', JSON.stringify(param), function (data) {
                         success(data)
                     }, 'json');
                 }
@@ -68,7 +67,7 @@ $(function () {
         border: false,
         onSelect: function (title, index) {
             $("#tb-form").form('clear');
-            ;
+            console.log(title + "," + index);
             if (index == 1 && organName == null) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
