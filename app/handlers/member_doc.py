@@ -7,7 +7,7 @@ import uuid
 import tornado.web
 import json
 import time
-from commons import couch_db
+from commons import couch_db, make_uuid
 
 
 def newTime():
@@ -17,36 +17,27 @@ def newTime():
 def docCallBack(file):
     loadDb = couch_db.get(r'/jsmm/%(id)s' % {'id': file['member_id']})
     memberInDb = json.loads(loadDb.body.decode('utf-8'))
+
+    documentInfo = {
+        '_id': make_uuid(),
+        'memberId': memberInDb['_id'],
+        # 'name' : memberInDb['name'],
+        'type': 'document',
+        # 'branch' : memberInDb['branch'],
+        # 'organ' : memberInDb['organ'],
+        'depReportTime': newTime(),
+        'depReportName': file['filename'],
+        'file_url': file['path']
+    }
+
     if file['doc_type'] == 'departmentReport':
-        if ('departmentReport' not in memberInDb):
-            memberInDb['departmentReport'] = []
-        doc = {
-            'depReportTime': newTime(),
-            'depReportName': file['filename'],
-            'file_url': file['path']
-        }
-        memberInDb['departmentReport'].append(doc)
-        couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
+        documentInfo['docType'] = 'departmentReport'
     elif file['doc_type'] == 'departmentInfo':
-        if ('departmentInfo' not in memberInDb):
-            memberInDb['departmentInfo'] = []
-        doc = {
-            'depReportTime': newTime(),
-            'depReportName': file['filename'],
-            'file_url': file['path']
-        }
-        memberInDb['departmentInfo'].append(doc)
-        couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
+        documentInfo['docType'] = 'departmentInfo'
     elif file['doc_type'] == 'speechesText':
-        if ('speechesText' not in memberInDb):
-            memberInDb['speechesText'] = []
-        doc = {
-            'speechesTextTime': newTime(),
-            'speechesTextName': file['filename'],
-            'file_url': file['path']
-        }
-        memberInDb['speechesText'].append(doc)
-        couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
+        documentInfo['docType'] = 'speechesText'
+
+    couch_db.post(r'/jsmm/', documentInfo)
 
 
 class UploadDoc(tornado.web.RequestHandler):
