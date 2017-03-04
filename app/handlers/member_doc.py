@@ -21,12 +21,12 @@ def docCallBack(file):
     documentInfo = {
         '_id': make_uuid(),
         'memberId': memberInDb['_id'],
-        # 'name' : memberInDb['name'],
+        'name': memberInDb['name'],
         'type': 'document',
-        # 'branch' : memberInDb['branch'],
-        # 'organ' : memberInDb['organ'],
-        'depReportTime': newTime(),
-        'depReportName': file['filename'],
+        'branch': memberInDb['branch'],
+        'organ': memberInDb['organ'],
+        'fileUploadTime': newTime(),
+        'fileName': file['filename'],
         'file_url': file['path']
     }
 
@@ -37,8 +37,21 @@ def docCallBack(file):
     elif file['doc_type'] == 'speechesText':
         documentInfo['docType'] = 'speechesText'
 
-    couch_db.post(r'/jsmm/', documentInfo)
+    if file['doc_type'] == 'departmentReport':
+        if ('departmentReport' not in memberInDb):
+            memberInDb['departmentReport'] = []
+        memberInDb['departmentReport'].append(documentInfo['_id'])
+    elif file['doc_type'] == 'departmentInfo':
+        if ('departmentInfo' not in memberInDb):
+            memberInDb['departmentInfo'] = []
+        memberInDb['departmentInfo'].append(documentInfo['_id'])
+    elif file['doc_type'] == 'speechesText':
+        if ('speechesText' not in memberInDb):
+            memberInDb['speechesText'] = []
+        memberInDb['speechesText'].append(documentInfo['_id'])
 
+    documentResponse = couch_db.post(r'/jsmm/', documentInfo)
+    memberResponse = couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)
 
 class UploadDoc(tornado.web.RequestHandler):
     def initialize(self, callback):
