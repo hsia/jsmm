@@ -32,6 +32,8 @@
     <script type="text/javascript" src="scripts/tab/depinfo.js"></script>
     <script type="text/javascript" src="scripts/tab/speechesinfo.js"></script>
     <script type="text/javascript" src="scripts/documentlist.js"></script>
+    <script type="text/javascript" src="scripts/tab/clienttab.js"></script>
+    <script type="text/javascript" src="scripts/tab/addtab.js"></script>
 </head>
 <body>
 <div class="easyui-layout container" data-options="fit:true">
@@ -149,6 +151,10 @@
             <input class="easyui-textbox" name="mobile" style="width:100%" data-options="label:'移动电话:',required:true">
         </div>
     </form>
+</div>
+<div id="client_add_tab" style="width:500px;height:400px;">
+    <input class="easyui-textbox" id="tab_title" style="width:90%" data-options="label:'标题:',required:true">
+    <table id="client_add_tab_table" style="width:100%;height:100%"></table>
 </div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"

@@ -6,5 +6,6 @@ __all__ = [
     'member_doc',
     'document',
     'document_download',
-    'document_del'
+    'document_del',
+    'tab'
 ]

@@ -84,6 +84,16 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
 
 @tornado_utils.bind_to(r'/members/tab/([0-9a-f]+)')
 class MemberHandlerTab(tornado.web.RequestHandler):
+
+    def get(self, member_id):
+        '''
+        通过view获取对象列表。
+        '''
+        response = couch_db.get(r'/jsmm/%(id)s' % {"id": member_id})
+        members = json.loads(response.body.decode('utf-8'))
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(members))
+
     def put(self, member_id):
         '''
         修改_id为member_id的member对象。
