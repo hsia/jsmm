@@ -19,45 +19,77 @@ if not isinstance(couch_db.get('/jsmm'), HTTPError):
     try_(couch_db.delete('/jsmm'))
 try_(couch_db.put('/jsmm'))
 
-# members = ['Ulysses Francis', 'Rolf Tel', 'Kaiden Michi', 'Dallas Billie', 'Warren Granville',
-#            '林丹娜', 'Hyram Makoto', '杨爱丽', 'Cary Cheyenne', 'Temple Colbert', 'Delroy Naoki',
-#            'Bishop Arthur', 'Yori Shiro', 'zhangsan', 'lisi', 'wangwu', 'zhaoliu', 'tianqi']
-# for member in members:
-#     try_(couch_db.post('/jsmm', {
-#         'type': 'member',
-#         '_id': make_uuid(),
-#         'name': member,
-#         'age': math.ceil(random.uniform(16, 90))
-#     }))
-
 try_(couch_db.put('/jsmm/_design/members', {
     'views': {
         'all': {
-            'map':
-                '''function(doc) {
-                  if (doc.type == 'member') {
-                    emit([doc.id, doc.name], doc);
-                  }
-                }'''
+            'map': '''
+function(doc) {
+  if (doc.type == 'member') {
+    emit([doc.id, doc.name], doc);
+  }
+}'''
         },
         'by-name': {
-            'map':
-                '''function (doc) {
-                  if (doc.type == 'member') {
-                    if(doc.name) {
-                        var name = doc.name.replace(/^(A|The) /, '');
-                        emit(name, doc);
-                    }
-                  }
-                }'''
+            'map': '''
+function (doc) {
+  if (doc.type == 'member') {
+    if(doc.name) {
+    var name = doc.name.replace(/^(A|The) /, '');
+    emit(name, doc);
+    }
+  }
+}'''
         },
         'by-memberid': {
-            'map':
-                '''function (doc) {
-                      if(doc.type == 'document'){
-                        emit(doc.memberId, doc);
-                      }
-                   }'''
+            'map': '''
+function (doc) {
+  if(doc.type == 'document'){
+    emit(doc.memberId, doc);
+  }
+}'''
+        }
+    },
+    'fulltext': {
+        'by_basic_info': {
+            'analyzer': 'chinese',
+            'index': '''
+function (doc) {
+  var result = new Document();
+  function makeIndex(obj, field, store, type) {
+    var value = null;
+    field = field || 'default';
+    store = store || 'no';
+    type = type || 'text';
+    if (field != 'default') {
+      value = obj[field];
+    }
+    switch (type) {
+      case 'date':
+        if (!value) return;
+        value = value.split('-');
+        result.add(value[0], value[1], value[2], {'field': field, 'store': store, 'type': 'date'});
+        break;
+      default:
+        result.add(value, {'field': field, 'store': store, 'type': type});
+        break;
+    }
+  }
+  if (doc.type == 'member') {
+    makeIndex(doc, 'name', 'yes');
+    makeIndex(doc, 'gender', 'yes');
+    makeIndex(doc, 'idCard', 'yes');
+    makeIndex(doc, 'nation', 'yes');
+    makeIndex(doc, 'birthPlace', 'yes');
+    makeIndex(doc, 'birthday', 'yes', 'date');
+    makeIndex(doc, 'branch', 'yes');
+    makeIndex(doc, 'branchTime', 'yes', 'date');
+    doc.agencybroker.forEach(function(introducer) {
+      makeIndex(introducer, 'agencyName', 'yes');
+    });
+  } else {
+    return null;
+  }
+}'''
         }
     }
 }))
