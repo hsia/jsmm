@@ -65,9 +65,9 @@ function (doc) {
     }
     switch (type) {
       case 'date':
-        if (!value) return;
+        if (!value) break;
         value = value.split('-');
-        result.add(value[0], value[1], value[2], {'field': field, 'store': store, 'type': 'date'});
+        result.add(new Date(value[0], value[1], value[2]), {'field': field, 'store': store, 'type': 'date'});
         break;
       default:
         result.add(value, {'field': field, 'store': store, 'type': type});
@@ -86,6 +86,7 @@ function (doc) {
     doc.agencybroker.forEach(function(introducer) {
       makeIndex(introducer, 'agencyName', 'yes');
     });
+    return result;
   } else {
     return null;
   }
