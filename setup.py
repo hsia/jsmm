@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import math
-import random
-
 from tornado.httpclient import HTTPError
 
 from commons import couch_db, make_uuid
@@ -98,84 +95,96 @@ function (doc) {
 try_(couch_db.put('/jsmm/_design/documents', {
     'views': {
         'all': {
-            'map':
-                '''
-                function (doc) {
-                    if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
-                        var result = {};
-                        for (var i in doc.departmentReport) {
-                            result.name = doc.name;
-                            result.branch = doc.branch;
-                            result.type = 'report';
-                            result.fileName = doc.departmentReport[i].depReportName;
-                            result.uploadTime = doc.departmentReport[i].depReportTime;
-                            result.file_url = doc.departmentReport[i].file_url;
-                            emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
-                            result = {};
-                        }
-                        for (var j in doc.departmentInfo) {
-                            result.name = doc.name;
-                            result.branch = doc.branch;
-                            result.type = 'info';
-                            result.fileName = doc.departmentInfo[j].depReportName;
-                            result.uploadTime = doc.departmentInfo[j].depReportTime;
-                            result.file_url = doc.departmentInfo[j].file_url;
-                            emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
-                            result = {};
-                        }
-                        for (var k in doc.speechesText) {
-                            result.name = doc.name;
-                            result.branch = doc.branch;
-                            result.type = 'speech';
-                            result.fileName = doc.speechesText[k].speechesTextName;
-                            result.uploadTime = doc.speechesText[k].speechesTextTime;
-                            result.file_url = doc.speechesText[k].file_url;
-                            emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
-                            result = {};
-                        }
-                    }
-                }
-
-                '''
+            'map': '''
+function (doc) {
+  if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
+    var result = {};
+    for (var i in doc.departmentReport) {
+      result.name = doc.name;
+      result.branch = doc.branch;
+      result.type = 'report';
+      result.fileName = doc.departmentReport[i].depReportName;
+      result.uploadTime = doc.departmentReport[i].depReportTime;
+      result.file_url = doc.departmentReport[i].file_url;
+      emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
+      result = {};
+    }
+    for (var j in doc.departmentInfo) {
+      result.name = doc.name;
+      result.branch = doc.branch;
+      result.type = 'info';
+      result.fileName = doc.departmentInfo[j].depReportName;
+      result.uploadTime = doc.departmentInfo[j].depReportTime;
+      result.file_url = doc.departmentInfo[j].file_url;
+      emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
+      result = {};
+    }
+    for (var k in doc.speechesText) {
+      result.name = doc.name;
+      result.branch = doc.branch;
+      result.type = 'speech';
+      result.fileName = doc.speechesText[k].speechesTextName;
+      result.uploadTime = doc.speechesText[k].speechesTextTime;
+      result.file_url = doc.speechesText[k].file_url;
+      emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
+      result = {};
+    }
+  }
+}'''
         },
         'by-branch': {
-            'map':
-                '''function (doc) {
-        if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
-            var result = {};
-            for (var i in doc.departmentReport) {
-                result.name = doc.name;
-                result.branch = doc.branch;
-                result.type = 'report';
-                result.fileName = doc.departmentReport[i].depReportName;
-                result.uploadTime = doc.departmentReport[i].depReportTime;
-                result.file_url = doc.departmentReport[i].file_url;
-                emit(result.branch, result);
-                result = {};
-            }
-            for (var j in doc.departmentInfo) {
-                result.name = doc.name;
-                result.branch = doc.branch;
-                result.type = 'info';
-                result.fileName = doc.departmentInfo[j].depReportName;
-                result.uploadTime = doc.departmentInfo[j].depReportTime;
-                result.file_url = doc.departmentInfo[j].file_url;
-                emit(result.branch, result);
-                result = {};
-            }
-            for (var k in doc.speechesText) {
-                result.name = doc.name;
-                result.branch = doc.branch;
-                result.type = 'speech';
-                result.fileName = doc.speechesText[k].speechesTextName;
-                result.uploadTime = doc.speechesText[k].speechesTextTime;
-                result.file_url = doc.speechesText[k].file_url;
-                emit(result.branch, result);
-                result = {};
-            }
-        }
+            'map':'''
+function (doc) {
+  if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
+    var result = {};
+    for (var i in doc.departmentReport) {
+      result.name = doc.name;
+      result.branch = doc.branch;
+      result.type = 'report';
+      result.fileName = doc.departmentReport[i].depReportName;
+      result.uploadTime = doc.departmentReport[i].depReportTime;
+      result.file_url = doc.departmentReport[i].file_url;
+      emit(result.branch, result);
+      result = {};
     }
-'''
+    for (var j in doc.departmentInfo) {
+      result.name = doc.name;
+      result.branch = doc.branch;
+      result.type = 'info';
+      result.fileName = doc.departmentInfo[j].depReportName;
+      result.uploadTime = doc.departmentInfo[j].depReportTime;
+      result.file_url = doc.departmentInfo[j].file_url;
+      emit(result.branch, result);
+      result = {};
+    }
+    for (var k in doc.speechesText) {
+      result.name = doc.name;
+      result.branch = doc.branch;
+      result.type = 'speech';
+      result.fileName = doc.speechesText[k].speechesTextName;
+      result.uploadTime = doc.speechesText[k].speechesTextTime;
+      result.file_url = doc.speechesText[k].file_url;
+      emit(result.branch, result);
+      result = {};
+    }
+  }
+}'''
+        }
+    },
+    'fullindex': {
+        'by_attachment': {
+            'index':'''
+function(doc) {
+  var result = new Document();
+  if (doc.type == 'document') {
+    for(var a in doc._attachments) {
+      result.attachment("default", a);
+    }
+    return result;
+  } else {
+    return null;
+  }
+}'''
         }
     }
 }))
