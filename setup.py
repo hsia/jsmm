@@ -50,6 +50,14 @@ try_(couch_db.put('/jsmm/_design/members', {
                     }
                   }
                 }'''
+        },
+        'by-memberid': {
+            'map':
+                '''function (doc) {
+                      if(doc.type == 'document'){
+                        emit(doc.memberId, doc);
+                      }
+                   }'''
         }
     }
 }))

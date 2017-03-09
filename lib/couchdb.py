@@ -26,6 +26,7 @@ class CouchDB(object):
                 if data is None:
                     body = ''
                 else:
+                    str(data)
                     body = json.dumps(data)
             else:
                 headers['Content-Type'] = content_type

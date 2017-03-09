@@ -63,8 +63,8 @@ $(function () {
                                 $dataGrid.datagrid({
                                     loader: function (param, success) {
                                         $.get('/members/' + memberInfo._id, function (data) {
-                                            var result = JSON.parse(data);
-                                            success(result.departmentInfo);
+                                            // var result = JSON.parse(data);
+                                            success(data.departmentInfo);
                                         })
                                     }
                                 });
@@ -124,13 +124,13 @@ $(function () {
             toolbar: toolbar,
             columns: [[
                 {
-                    field: 'depReportTime',
+                    field: 'fileUploadTime',
                     title: '上传时间',
                     width: 80,
                     align: 'left',
                     editor: {type: 'datetimebox', options: {}}
                 }, {
-                    field: 'depReportName',
+                    field: 'fileName',
                     title: '文件名称',
                     width: 160,
                     align: 'left',

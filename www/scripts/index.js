@@ -222,7 +222,7 @@ $(function () {
                 newData.sbRow = getRow;
                 newData.sbCurrentPage = $memberList.datagrid('options').pageNumber;
                 var event = new CustomEvent("grid-row-selection", {
-                    detail: newData
+                    detail: data
                 });
                 window.dispatchEvent(event);
                 $("#create_file").change(function () {
