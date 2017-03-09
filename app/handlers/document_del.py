@@ -13,6 +13,7 @@ class MemberDocsDel(tornado.web.RequestHandler):
     def post(self):
         obj = json.loads(self.request.body.decode('utf-8'))
         response = couch_db.get(r'/jsmm/%(id)s' % {"id": obj["id"]})
+        # responseMember = couch_db.get(r'/jsmm/%(id)s' % {"id": obj})
         member = json.loads(response.body.decode('utf-8'))
         doctype = obj['doc_type']
         member[doctype].remove(obj['rowData'])

@@ -4,8 +4,7 @@ __all__ = [
     'member_upload',
     'member_image',
     'member_doc',
-    'document',
-    'document_download',
-    'document_del',
-    'tab'
+    'document_collection_handler',
+    'document_handler',
+    'attachment_handler'
 ]

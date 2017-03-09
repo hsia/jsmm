@@ -217,10 +217,12 @@ $(function () {
 
             getRow = rowIndex;
             $.get('/members/' + rowData._id, function (data) {
-                var newData = JSON.parse(data);
-                memberInfo(newData);
-                newData.sbRow = getRow;
-                newData.sbCurrentPage = $memberList.datagrid('options').pageNumber;
+
+                // var newData = JSON.parse(data);
+                memberInfo(data);
+                data.sbRow = getRow;
+                data.sbCurrentPage = $memberList.datagrid('options').pageNumber;
+                console.log(getRow, data.sbCurrentPage)
                 var event = new CustomEvent("grid-row-selection", {
                     detail: data
                 });

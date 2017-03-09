@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+'''
+Copyright lixia@ccrise.com
+'''
 import json
+import os.path
+import urllib
+import uuid
+import time
 
 import tornado.web
+from tornado.httputil import HTTPHeaders
 
 import tornado_utils
-from commons import couch_db
+from commons import couch_db, make_uuid
 
 
 @tornado_utils.bind_to(r'/document/([0-9a-f]+)/(.+)')
@@ -20,9 +28,14 @@ class AttachmentHandler(tornado.web.RequestHandler):
 
         返回：(<status_code>, <content_length>, <content_type>)
         """
-        status_code = response.headers.get_list('HTTP/1.1')[0][1:-1]
-        content_length = response.headers.get_list('Content-Length')[0][1:-1]
-        content_type = response.headers.get_list('Content-Type')[0][1:-1]
+        # status_code = response.headers.get_list('HTTP/1.1')[0][1:-1]
+        print(response.code)
+        status_code = str(response.code)
+        content_length = 0
+        content_type = 0
+        if response.code == 200:
+            content_length = response.headers.get_list('Content-Length')[0][1:-1]
+            content_type = response.headers.get_list('Content-Type')[0][1:-1]
         return (status_code, content_length, content_type)
 
     def head(self, document_id, attachment_name):
@@ -61,15 +74,20 @@ class AttachmentHandler(tornado.web.RequestHandler):
         """
         response = couch_db.get(r'/jsmm/%(document_id)s/%(attachment_name)s' %
                                 {'document_id': document_id, 'attachment_name': attachment_name})
+
         (status_code, content_length, content_type) = self._parse_header(response)
         output = {'statusCode': status_code,
                   'contentLength': content_length,
                   'contentType': content_type}
         if status_code.startswith('200'):
-            output['body'] = response.body
-            self.write(output.update({'success': 'true'}))
+            self.set_header('Content-Type', content_type)
+            self.set_header('Content-Disposition',
+                            'attachment; filename=' + urllib.parse.quote(attachment_name, "utf-8"))
+            self.write(response.body)
         else:
-            self.write(output.update({'success': 'false'}))
+            self.set_header('Content-Type', 'application/json')
+            output.update({'success': 'false'})
+            self.write(json.dumps(output))
 
     def put(self, document_id, attachment_name):
         """保存附件
@@ -126,3 +144,45 @@ class AttachmentHandler(tornado.web.RequestHandler):
             self.write({'success': 'false', 'error': error})
         else:
             self.write({'success': 'true'})
+
+    def post(self, member_id, doc_type):
+
+        responseMember = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": member_id})
+        memberInDb = json.loads(responseMember.body.decode('utf-8'))
+
+        docs = self.request.files['docs']
+        docName = docs[0]['filename'];
+
+        documentInfo = {
+            '_id': make_uuid(),
+            'memberId': memberInDb['_id'],
+            'name': memberInDb['name'],
+            'type': 'document',
+            'branch': memberInDb['branch'],
+            'organ': memberInDb['organ'],
+            'fileUploadTime': time.strftime("%Y-%m-%d", time.localtime()),
+            'docType': doc_type,
+            'fileName': docName
+        }
+
+        documentResponse = couch_db.post(r'/jsmm/', documentInfo)
+
+        result = json.loads(documentResponse.body.decode('utf-8'))
+        document_id = result["id"];
+
+        if doc_type == 'departmentReport':
+            if ('departmentReport' not in memberInDb):
+                memberInDb['departmentReport'] = []
+            memberInDb['departmentReport'].append(document_id)
+        elif doc_type == 'departmentInfo':
+            if ('departmentInfo' not in memberInDb):
+                memberInDb['departmentInfo'] = []
+            memberInDb['departmentInfo'].append(document_id)
+        elif doc_type == 'speechesText':
+            if ('speechesText' not in memberInDb):
+                memberInDb['speechesText'] = []
+            memberInDb['speechesText'].append(document_id)
+
+        responseMemberPut = couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, memberInDb)
+
+        return self.put(document_id, docName);
