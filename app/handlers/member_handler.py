@@ -21,7 +21,7 @@ class MemberHandler(tornado.web.RequestHandler):
         获取_id为member_id的member对象。
         """
         query = {"keys": [member_id]};
-        responseDocuments = couch_db.post(r'/jsmm/_design/documents/_view/by-memberid', query)
+        responseDocuments = couch_db.post(r'/jsmm/_design/documents/_view/by_memberid', query)
 
         documents = json.loads(responseDocuments.body.decode("utf-8"))
         responseMemberInfo = couch_db.get(r'/jsmm/%(id)s' % {"id": member_id})
