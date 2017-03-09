@@ -48,7 +48,7 @@ class MemberHandler(tornado.web.RequestHandler):
 
         query = {'keys': [member_id]}
         documents_response = couch_db.post(
-            r'/jsmm/_design/documents/_view/by-memberid', query)
+            r'/jsmm/_design/documents/_view/by_memberid', query)
         documents = json.loads(documents_response.body.decode('utf-8'))
 
         for doc in documents['rows']:
@@ -73,7 +73,7 @@ class MemberHandler(tornado.web.RequestHandler):
         # couch_db.delete(r'/jsmm/%(id)s?rev=%(rev)s' % {'id': member_id, 'rev': rev})
         query = {'keys': [member_id]}
         documents_response = couch_db.post(
-            r'/jsmm/_design/documents/_view/by-memberid', query)
+            r'/jsmm/_design/documents/_view/by_memberid', query)
         documents = json.loads(documents_response.body.decode('utf-8'))
 
         for doc in documents['rows']:
