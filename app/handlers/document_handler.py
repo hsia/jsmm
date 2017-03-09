@@ -32,6 +32,26 @@ class DocumentHandler(tornado.web.RequestHandler):
         pass
 
     def delete(self, document_id):
-        """删除文档
+        """删除文档：
+            包括删除文档记录和更新memer中的文档id
         """
-        pass
+        responseDocument = couch_db.get(r'/jsmm/%(document_id)s' % {"document_id": document_id})
+        document = json.loads(responseDocument.body.decode('utf-8'))
+
+        responseMember = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": document["memberId"]})
+        member = json.loads(responseMember.body.decode('utf-8'))
+        if document['docType'] == 'departmentReport':
+            member['departmentReport'].remove(document['_id'])
+        elif document['docType'] == 'departmentInfo':
+            member['departmentInfo'].remove(document['_id'])
+        elif document['docType'] == 'speechesText':
+            member['speechesText'].remove(document['_id'])
+        # 删除Document记录
+        responseDelDocument = couch_db.delete(r'/jsmm/%(document_id)s?rev=%(document_rev)s' %
+                                              {'document_id': document_id, 'document_rev': document['_rev']})
+        # 更新member中的document的id
+        responseUpdateMember = couch_db.put(r'/jsmm/%(id)s' % {"id": member["_id"]}, member)
+
+        delResult = json.loads(responseDelDocument.body.decode('utf-8'))
+
+        self.write({'success': 'true'})

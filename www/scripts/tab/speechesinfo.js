@@ -58,7 +58,7 @@ $(function () {
                     text: '导入',
                     handler: function () {
                         $('#doc_upload_form').form('submit', {
-                            url: '/doc/upload/',
+                            url: '/document/' + memberInfo._id + '/' + "speechesText",
                             success: function (data) {
                                 $dataGrid.datagrid({
                                     loader: function (param, success) {
@@ -87,16 +87,19 @@ $(function () {
         text: '文档删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            var obj = {};
-            obj.id = memberInfo._id;
-            obj.file_url = currentRowData.file_url;
-            obj.doc_type = 'departmentInfo';
-            obj.rowData = currentRowData;
-            $.post('/members/del/', JSON.stringify(obj), function () {
-                $.messager.alert('提示信息', '删除文档成功！', 'info');
-                loadD();
-                $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
-            })
+            document_id = currentRowData._id;
+            $.ajax({
+                url: '/document/' + document_id,
+                type: 'DELETE',
+                success: function (data) {
+                    $.messager.alert('提示信息', '删除文档成功！', 'info');
+                    loadD();
+                    $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
+                },
+                error: function (data) {
+                    $.messager.alert('提示信息', '删除文档失败！', 'error');
+                }
+            });
         }
     }];
 
@@ -142,7 +145,7 @@ $(function () {
                     sortable: false,
                     align: 'left',
                     formatter: function (value, row, index) {
-                        var path = "/members/download/" + row.file_url;
+                        var path = "/document/" + row._id + "/" + row.fileName;
                         return '<a href= ' + path + ' >下载</a>';
                     }
                 }
@@ -154,7 +157,7 @@ $(function () {
         loadD();
         if (getCurrentPage != '' && getRow != '') {
             $('#member-list').datagrid('gotoPage', getCurrentPage).datagrid('reload').datagrid('selectRow', getRow);
-        }else{
+        } else {
             $('#member-list').datagrid('reload')
         }
     });

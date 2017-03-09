@@ -21,7 +21,7 @@ class MemberHandler(tornado.web.RequestHandler):
         """
         query = {'keys': [member_id]}
         documents_response = couch_db.post(
-            r'/jsmm/_design/documents/_view/by-memberid', query)
+            r'/jsmm/_design/documents/_view/by_memberid', query)
         documents = json.loads(documents_response.body.decode('utf-8'))
         member_response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
         member = json.loads(member_response.body.decode('utf-8'))

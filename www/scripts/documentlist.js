@@ -3,6 +3,13 @@ $(function () {
     var gridHeight = $('#membersinfo').height();
     var $dataGrid = $('#document-list');
 
+    var toolbar = [{
+        text: '高级查询',
+        iconCls: 'icon-search',
+        handler: function () {
+            documentsSearch();
+        }
+    }];
 
     $dataGrid.datagrid({
         iconCls: 'icon-ok',
@@ -18,11 +25,11 @@ $(function () {
         multiSort: true,
         singleSelect: true,
         remoteSort: true,
-        toolbar: '#tb',
+        toolbar: toolbar,
         columns: [[
             {field: 'fileName', title: '文件名称', width: 110, sortable: false, align: 'left'},
             {
-                field: 'type',
+                field: 'docType',
                 title: '文件类型',
                 width: 60,
                 sortable: false,
@@ -31,7 +38,7 @@ $(function () {
             },
             {field: 'name', title: '所属社员', width: 60, sortable: false, align: 'left'},
             {field: 'branch', title: '所属支社', width: 90, sortable: true, align: 'left'},
-            {field: 'uploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
+            {field: 'fileUploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
             {
                 field: 'clickDownload',
                 title: '操作',
@@ -39,8 +46,8 @@ $(function () {
                 sortable: false,
                 align: 'left',
                 formatter: function (value, row, index) {
-                    var path="/members/download/"+row.file_url;
-                    return '<a href= '+path+' >下载</a>';
+                    var path = "/document/" + row._id + "/" + row.fileName;
+                    return '<a href= ' + path + '>下载</a>';
                 }
             }
         ]]
@@ -52,7 +59,7 @@ $(function () {
         if (organName != null) {
             $dataGrid.datagrid({
                 loader: function (param, success) {
-                    param.organName = organName;
+                    param.branch = organName;
                     $.post('/documents/', JSON.stringify(param), function (data) {
                         success(data)
                     }, 'json');
@@ -84,13 +91,13 @@ $(function () {
     function changeType(value, row, index) {
         var result = '';
         switch (value) {
-            case 'report':
+            case 'departmentReport':
                 result = '部门报告';
                 break;
-            case 'info':
+            case 'departmentInfo':
                 result = '部门信息';
                 break;
-            case 'speech':
+            case 'speechesText':
                 result = '演讲稿';
                 break;
         }
@@ -175,37 +182,77 @@ $(function () {
     }
 
     //查询
-    $('#searchButton').click(function (event) {
-        event.preventDefault();
-        var formData = $('#tb-form').serializeArray();
-        var searchInfo = {};
-        $.each(formData, function (index, element) {
-            console.log(element)
-            searchInfo[element.name] = element.value;
-        });
-        // $.ajax({
-        //     url: '/documentSearch/',
-        //     type: 'POST',
-        //     data: JSON.stringify(searchInfo),
-        //     success: function (data) {
-        //         //删除成功以后，重新加载数据，并将choiceRows置为空。
-        //         $dataGrid.datagrid('reload');
-        //     },
-        //     error: function (data) {
-        //         $.messager.alert('提示', '数据查询失败!', 'error');
-        //     }
-        // });
+    // $('#searchButton').click(function (event) {
+    //     event.preventDefault();
+    //     var formData = $('#tb-form').serializeArray();
+    //     var searchInfo = {};
+    //     $.each(formData, function (index, element) {
+    //         console.log(element)
+    //         searchInfo[element.name] = element.value;
+    //     });
+    // $.ajax({
+    //     url: '/documentSearch/',
+    //     type: 'POST',
+    //     data: JSON.stringify(searchInfo),
+    //     success: function (data) {
+    //         //删除成功以后，重新加载数据，并将choiceRows置为空。
+    //         $dataGrid.datagrid('reload');
+    //     },
+    //     error: function (data) {
+    //         $.messager.alert('提示', '数据查询失败!', 'error');
+    //     }
+    // });
 
-        $dataGrid.datagrid({
-            loader: function (param, success) {
-                param.searchInfo = searchInfo;
-                param.searchInfo.branch = (organName == null ? '' : organName);
-                var defaultUrl = '/documentSearch';
-                $.post(defaultUrl, JSON.stringify(param), function (data) {
-                    success(data)
-                }, 'json');
-            }
+    //     $dataGrid.datagrid({
+    //         loader: function (param, success) {
+    //             param.searchInfo = searchInfo;
+    //             param.searchInfo.branch = (organName == null ? '' : organName);
+    //             var defaultUrl = '/documentSearch';
+    //             $.post(defaultUrl, JSON.stringify(param), function (data) {
+    //                 success(data)
+    //             }, 'json');
+    //         }
+    //     })
+    //
+    //
+    // });
+    $("#document-search-form").submit(function (event) {
+        var formData = $(this).serializeArray();
+        var documentInfo = {};
+        $.each(formData, function (index, element) {
+            documentInfo[element.name] = element.value;
+        });
+        documentInfo.branch = (branch == null ? '' : branch);
+        $.post('/documentSearch', JSON.stringify(documentInfo), function (data) {
+            $('#document-search').dialog('close');
+            $('#document-search-form').form('clear');
+            $dataGrid.datagrid('loadData', data.docs);
+
         })
-    })
-})
-;
+    });
+
+    function documentsSearch() {
+        $('#document-search').dialog({
+            width: 600,
+            height: 300,
+            title: '社员查询',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '查询',
+                handler: function () {
+                    $('#document-search-form').trigger('submit');
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#document-search-form').form('clear');
+                    $('#document-search').dialog('close');
+                }
+            }]
+        });
+    }
+});

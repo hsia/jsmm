@@ -20,30 +20,30 @@ try_(couch_db.put('/jsmm/_design/members', {
     'views': {
         'all': {
             'map': '''
-function(doc) {
-  if (doc.type == 'member') {
-    emit([doc.id, doc.name], doc);
-  }
-}'''
+                    function(doc) {
+                      if (doc.type == 'member') {
+                        emit([doc.id, doc.name], doc);
+                      }
+                    }'''
         },
         'by-name': {
             'map': '''
-function (doc) {
-  if (doc.type == 'member') {
-    if(doc.name) {
-    var name = doc.name.replace(/^(A|The) /, '');
-    emit(name, doc);
-    }
-  }
-}'''
+                    function (doc) {
+                      if (doc.type == 'member') {
+                        if(doc.name) {
+                        var name = doc.name.replace(/^(A|The) /, '');
+                        emit(name, doc);
+                        }
+                      }
+                    }'''
         },
         'by-memberid': {
             'map': '''
-function (doc) {
-  if(doc.type == 'document'){
-    emit(doc.memberId, doc);
-  }
-}'''
+                    function (doc) {
+                      if(doc.type == 'document'){
+                        emit(doc.memberId, doc);
+                      }
+                    }'''
         }
     },
     'fulltext': {
@@ -94,97 +94,38 @@ function (doc) {
 
 try_(couch_db.put('/jsmm/_design/documents', {
     'views': {
-        'all': {
+        'by_branch': {
             'map': '''
 function (doc) {
-  if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
-    var result = {};
-    for (var i in doc.departmentReport) {
-      result.name = doc.name;
-      result.branch = doc.branch;
-      result.type = 'report';
-      result.fileName = doc.departmentReport[i].depReportName;
-      result.uploadTime = doc.departmentReport[i].depReportTime;
-      result.file_url = doc.departmentReport[i].file_url;
-      emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
-      result = {};
-    }
-    for (var j in doc.departmentInfo) {
-      result.name = doc.name;
-      result.branch = doc.branch;
-      result.type = 'info';
-      result.fileName = doc.departmentInfo[j].depReportName;
-      result.uploadTime = doc.departmentInfo[j].depReportTime;
-      result.file_url = doc.departmentInfo[j].file_url;
-      emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
-      result = {};
-    }
-    for (var k in doc.speechesText) {
-      result.name = doc.name;
-      result.branch = doc.branch;
-      result.type = 'speech';
-      result.fileName = doc.speechesText[k].speechesTextName;
-      result.uploadTime = doc.speechesText[k].speechesTextTime;
-      result.file_url = doc.speechesText[k].file_url;
-      emit([result.branch,result.name,result.type,result.uploadTime,result.fileName], result);
-      result = {};
-    }
+  if(doc.type == 'document'){
+    emit(doc.branch, doc);
   }
 }'''
         },
-        'by-branch': {
-            'map':'''
+        'by_memberid': {
+            'map': '''
 function (doc) {
-  if (doc.departmentReport != null || doc.departmentInfo != null || doc.speechesText != null) {
-    var result = {};
-    for (var i in doc.departmentReport) {
-      result.name = doc.name;
-      result.branch = doc.branch;
-      result.type = 'report';
-      result.fileName = doc.departmentReport[i].depReportName;
-      result.uploadTime = doc.departmentReport[i].depReportTime;
-      result.file_url = doc.departmentReport[i].file_url;
-      emit(result.branch, result);
-      result = {};
-    }
-    for (var j in doc.departmentInfo) {
-      result.name = doc.name;
-      result.branch = doc.branch;
-      result.type = 'info';
-      result.fileName = doc.departmentInfo[j].depReportName;
-      result.uploadTime = doc.departmentInfo[j].depReportTime;
-      result.file_url = doc.departmentInfo[j].file_url;
-      emit(result.branch, result);
-      result = {};
-    }
-    for (var k in doc.speechesText) {
-      result.name = doc.name;
-      result.branch = doc.branch;
-      result.type = 'speech';
-      result.fileName = doc.speechesText[k].speechesTextName;
-      result.uploadTime = doc.speechesText[k].speechesTextTime;
-      result.file_url = doc.speechesText[k].file_url;
-      emit(result.branch, result);
-      result = {};
-    }
+  if(doc.type == 'document'){
+    emit(doc.memberId, doc);
   }
 }'''
         }
     },
-    'fullindex': {
+    'fulltext': {
         'by_attachment': {
-            'index':'''
-function(doc) {
-  var result = new Document();
-  if (doc.type == 'document') {
-    for(var a in doc._attachments) {
-      result.attachment("default", a);
-    }
-    return result;
-  } else {
-    return null;
-  }
-}'''
+            'index': '''
+                function(doc) {
+                  var result = new Document();
+                  if (doc.type == 'document') {
+                    for(var a in doc._attachments) {
+                      result.attachment("default", a);
+                    }
+                    return result;
+                  } else {
+                    return null;
+                  }
+                }
+            }'''
         }
     }
 }))

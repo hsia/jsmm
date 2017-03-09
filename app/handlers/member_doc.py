@@ -27,7 +27,8 @@ def docCallBack(file):
         'organ': memberInDb['organ'],
         'fileUploadTime': newTime(),
         'fileName': file['filename'],
-        'file_url': file['path']
+        'file_url': file['path'],
+        'fileType': file['filename'].split('.')[-1]
     }
 
     if file['doc_type'] == 'departmentReport':
@@ -67,7 +68,7 @@ class UploadDoc(tornado.web.RequestHandler):
         inbox_path = os.path.join(os.path.dirname(__file__), '../../inbox/documents')
         # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
         # 'content_type': 'application/vnd.ms-excel'}]}
-        file_infos = self.request.files['doc']
+        file_infos = self.request.files['docs']
         member_id = self.get_argument('doc_id')
         doc_type = self.get_argument('doc_type')
         for file_info in file_infos:
