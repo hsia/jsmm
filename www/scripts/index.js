@@ -104,7 +104,7 @@ $(function () {
             confirmRemove();
         }
     }, '-', {
-        text: '查询',
+        text: '高级查询',
         iconCls: 'icon-search',
         handler: function () {
             memberSearch();
@@ -142,6 +142,12 @@ $(function () {
                     }
                 }]
             })
+        }
+    }, '-', {
+        text: '添加tab',
+        iconCls: 'icon-add',
+        handler: function () {
+            client_add_tab();
         }
     }];
 
@@ -433,4 +439,17 @@ $(function () {
             }]
         });
     }
+
+
+    //添加tab页
+    function client_add_tab() {
+        $('#client_add_tab').dialog({
+            title: 'tab添加',
+            closed: false,
+            cache: false,
+            modal: true
+        })
+    }
+
+
 });
