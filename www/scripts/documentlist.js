@@ -223,11 +223,17 @@ $(function () {
             documentInfo[element.name] = element.value;
         });
         documentInfo.branch = (branch == null ? '' : branch);
-        $.post('/documentSearch', JSON.stringify(documentInfo), function (data) {
-            $('#document-search').dialog('close');
-            $('#document-search-form').form('clear');
-            $dataGrid.datagrid('loadData', data.docs);
-
+        $('#document-search').dialog('close');
+        $('#document-search-form').form('clear');
+        $dataGrid.datagrid({
+            loader: function (param, success) {
+                param.documentInfo = documentInfo;
+                param.documentInfo.branch = (organName == null ? '' : organName);
+                var defaultUrl = '/documentSearch';
+                $.post(defaultUrl, JSON.stringify(param), function (data) {
+                    success(data)
+                }, 'json');
+            }
         })
     });
 

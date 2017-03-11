@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 import json
 import time
+import urllib
+
 import tornado.web
 import tornado_utils
 from tornado.httpclient import HTTPClient, HTTPError, HTTPRequest
 
-from commons import couch_db, make_uuid
+from commons import couch_db, make_uuid, couchLucene_db
+from lib.couchdb import CouchDB
 
 
 @tornado_utils.bind_to(r'/documents/?')
@@ -77,16 +80,63 @@ class DocumentHandler(tornado.web.RequestHandler):
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documnetsResult))
 
-# @tornado_utils.bind_to(r'/documentSearch/?')
-# class DocumentHandlerSearch(tornado.web.RequestHandler):
-#     def post(self):
-#         '''
-#         修改_id为member_id的member对象。
-#         '''
-#         params = json.loads(self.request.body.decode('utf-8'))
-#         pageNumber = params['page']
-#         pageSize = params['rows']
-#         searchInfo = params['searchInfo']
+
+@tornado_utils.bind_to(r'/documentSearch/?')
+class DocumentHandlerSearch(tornado.web.RequestHandler):
+    def post(self):
+        '''
+        修改_id为member_id的member对象。
+        '''
+        params = json.loads(self.request.body.decode('utf-8'))
+
+        pageNumber = params['page']
+        pageSize = params['rows']
+
+        docType = params["documentInfo"]["docType"]
+        name = params["documentInfo"]["name"]
+        fileName = params["documentInfo"]["fileName"]
+        startDate = params["documentInfo"]["startDate"]
+        endDate = params["documentInfo"]["endDate"]
+        branch = params["documentInfo"]["branch"]
+
+        paramsStr = ""
+        if docType != '':
+            paramsStr += 'docType:"' + docType + '"'
+        if name != '':
+            paramsStr += ' AND name:"' + name + '"'
+        if fileName != '':
+            paramsStr += ' AND fileName:"' + fileName + '"'
+        if branch != '':
+            branch += ' And branch:"' + branch + '"'
+        response = couchLucene_db.get(
+            r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(paramsStr)s&limit=%(limit)s&skip=%(skip)s' % {
+                "paramsStr": urllib.parse.quote(paramsStr, "utf-8"), 'limit': pageSize,
+                'skip': (pageNumber - 1) * pageSize})
+        documentList = json.loads(response.body.decode('utf-8'))
+
+        documentsResult = {};
+        documents = []
+
+        for row in documentList['rows']:
+            documents.append(row['fields'])
+
+        documentsResult['pageSize'] = pageSize
+        documentsResult['pageNumber'] = pageNumber
+        documentsResult['total'] = documentList['total_rows'];
+        documentsResult['rows'] = documents
+
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(documentsResult))
+
+
+        # urllib.parse.quote
+        # pass
+
+        # params = json.loads(self.request.body.decode('utf-8'))
+        # pageNumber = params['page']
+        # pageSize = params['rows']
+
+# searchInfo = params['searchInfo']
 #
 #         # if ('order' not in params):
 #         #     order = True
