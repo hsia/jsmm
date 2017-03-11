@@ -1,0 +1,78 @@
+/**
+ * Created by S on 2017/2/21.
+ */
+
+// 社会职务
+$(function () {
+
+    var data_grid = $("#social-list");
+
+    var columns = [
+        {
+            field: 'socialOrgType',
+            title: '社会组织类别',
+            width: 60,
+            align: 'left',
+            editor: {type: 'textbox', options: {}}
+        },
+        {
+            field: 'socialOrgName',
+            title: '社会组织名称',
+            width: 100,
+            align: 'left',
+            editor: {
+                type: 'textbox',
+                options: {}
+            }
+        },
+        {
+            field: 'socialPositionLevel',
+            title: '社会职务级别',
+            width: 60,
+            align: 'left',
+            editor: {type: 'textbox', options: {}}
+        },
+        {
+            field: 'socialPositionName',
+            title: '社会职务名称',
+            width: 100,
+            align: 'left',
+            editor: {
+                type: 'textbox',
+                options: {}
+            }
+        },
+        {
+            field: 'socialPeriod',
+            title: '届次',
+            width: 30,
+            align: 'left',
+            editor: {type: 'textbox', options: {}}
+        },
+        {field: 'socialBeginDate', title: '开始时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
+        {field: 'socialEndDate', title: '结束时间', width: 60, align: 'left', editor: {type: 'datebox', options: {}}},
+    ];
+    var toolbar = [
+        {
+            text: '添加记录',
+            iconCls: 'icon-add',
+            handler: function () {
+                addRow(data_grid);
+            }
+        }, '-', {
+            text: '移除记录',
+            iconCls: 'icon-remove',
+            handler: function () {
+                removeit(data_grid);
+            }
+        }, '-', {
+            text: '保存记录',
+            iconCls: 'icon-save',
+            handler: function () {
+                save(data_grid, "social");
+            }
+        }
+    ];
+    buildGrid(data_grid, toolbar, columns);
+    addSelectListener(data_grid, "social");
+});

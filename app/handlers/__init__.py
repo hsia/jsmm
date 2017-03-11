@@ -6,5 +6,6 @@ __all__ = [
     'member_doc',
     'document_collection_handler',
     'document_handler',
-    'attachment_handler'
+    'attachment_handler',
+    'tab'
 ]

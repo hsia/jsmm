@@ -214,19 +214,9 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
-
-            getRow = rowIndex;
-            $.get('/members/' + rowData._id, function (data) {
-
-                // var newData = JSON.parse(data);
+            var id = rowData._id;
+            $.get('/members/tab/' + rowData._id, function (data) {
                 memberInfo(data);
-                data.sbRow = getRow;
-                data.sbCurrentPage = $memberList.datagrid('options').pageNumber;
-                console.log(getRow, data.sbCurrentPage)
-                var event = new CustomEvent("grid-row-selection", {
-                    detail: data
-                });
-                window.dispatchEvent(event);
                 $("#create_file").change(function () {
                     $('#member_image_upload').form('submit', {
                         success: function (data) {
@@ -236,11 +226,14 @@ $(function () {
                         }
                     });
                 });
+                var event = new CustomEvent("grid-row-selection", {
+                    detail: id
+                });
+                window.dispatchEvent(event);
             });
-
-
         }
     });
+
     //添加组织机构数的点击后触发自定义监听事件
     branch = null;
     $('#organTree').tree({
@@ -258,6 +251,7 @@ $(function () {
             })
         }
     });
+
 
     //社员信息详情
     function memberInfo(rowData) {
@@ -391,14 +385,6 @@ $(function () {
         });
     }
 
-    var p = $('#all-tabs').tabs().tabs('tabs')[15];
-    var mb = p.panel('options').tab.find('a.tabs-inner');
-    mb.menubutton({
-        menu: '#doc-menuButtion'
-    }).click(function () {
-        $('#all-tabs').tabs('select', 15);
-    });
-
     $("#member-search-form").submit(function (event) {
         event.preventDefault();
         var formData = $(this).serializeArray();
@@ -443,11 +429,13 @@ $(function () {
 
     //添加tab页
     function client_add_tab() {
+        var gridHeight = ($("#member-info").height())+ 77;
         $('#client_add_tab').dialog({
             title: 'tab添加',
             closed: false,
             cache: false,
-            modal: true
+            modal: true,
+            height: gridHeight
         })
     }
 
