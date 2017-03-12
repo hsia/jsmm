@@ -216,7 +216,7 @@ $(function () {
         onSelect: function (rowIndex, rowData) {
             var id = rowData._id;
             $.get('/members/tab/' + rowData._id, function (data) {
-                memberInfo(data);
+                buildMemberDetails(data);
                 $("#create_file").change(function () {
                     $('#member_image_upload').form('submit', {
                         success: function (data) {
@@ -243,7 +243,7 @@ $(function () {
                 detail: node.text
             });
             window.dispatchEvent(event);
-            memberInfo({});
+            buildMemberDetails({});
             search = {};
             search.branch = node.text;
             $.post('/members/search/', JSON.stringify(search), function (data) {
@@ -254,7 +254,7 @@ $(function () {
 
 
     //社员信息详情
-    function memberInfo(rowData) {
+    function buildMemberDetails(rowData) {
         var html = `
 <div class="member-detail">
     <div class="member-picture">
@@ -375,7 +375,7 @@ $(function () {
                 });
                 window.dispatchEvent(eventDelete);
 
-                memberInfo({});
+                buildMemberDetails({});
 
                 $.messager.alert('提示', '数据删除成功!', 'info');
             },
