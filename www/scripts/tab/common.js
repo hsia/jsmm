@@ -1,6 +1,8 @@
-var common_member_id = null;
-var common_document_id = null;
-var editIndex = undefined;
+// var common_member_id = null;
+// var common_document_id = null;
+// var editIndex = undefined;
+var selectedTabId = null; // 当前被选中的Tab的ID
+var currentDocumentId = null; // 当前选中的文档ID
 
 $(function () {
     $("#documents_tab").tabs({

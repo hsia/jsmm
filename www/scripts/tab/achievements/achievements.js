@@ -4,9 +4,9 @@
 
 // 技术成果
 $(function () {
-
-    var data_grid = $("#achievements-list");
-
+    var tabId = 'achievements';
+    var $grid = $('#achievements-list');
+    var gridTab = new GridTab(tabId, $grid);
     var columns = [
         {field: 'achievementsName', title: '成果名称', width: 110, align: 'left', editor: 'textbox'},
         {
@@ -34,22 +34,22 @@ $(function () {
             text: '添加记录',
             iconCls: 'icon-add',
             handler: function () {
-                addRow(data_grid);
+                gridTab.addRow();
             }
         }, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {
-                removeit(data_grid);
+                gridTab.removeRow();
             }
         }, '-', {
             text: '保存记录',
             iconCls: 'icon-save',
             handler: function () {
-                save(data_grid, "achievements");
+                gridTab.saveRow();
             }
         }
     ];
-    buildGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, "achievements");
+    gridTab.buildGrid(toolbar, columns);
+    gridTab.registerListeners();
 });
