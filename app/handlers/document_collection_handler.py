@@ -135,8 +135,8 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
                     'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize})
 
         documentsResult = {};
-        documents = []
         if response.code == 200:
+            documents = []
             documentList = json.loads(response.body.decode('utf-8'))
 
             if paramsStr != '':
