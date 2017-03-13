@@ -133,23 +133,28 @@ class DocumentHandlerSearch(tornado.web.RequestHandler):
             response = couch_db.get(
                 '/jsmm/_design/documents/_view/by_memberid?limit=%(pageSize)s&skip=%(pageNumber)s' % {
                     'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize})
-        documentList = json.loads(response.body.decode('utf-8'))
 
         documentsResult = {};
         documents = []
+        if response.code == 200:
+            documentList = json.loads(response.body.decode('utf-8'))
 
-        if paramsStr != '':
-            for row in documentList['rows']:
-                row['fields']['_id'] = row['id']
-                documents.append(row['fields'])
+            if paramsStr != '':
+                for row in documentList['rows']:
+                    row['fields']['_id'] = row['id']
+                    documents.append(row['fields'])
+            else:
+                for row in documentList['rows']:
+                    documents.append(row['value'])
+
+            documentsResult['total'] = documentList['total_rows']
+            documentsResult['rows'] = documents
         else:
-            for row in documentList['rows']:
-                documents.append(row['value'])
+            documentsResult['total'] = 0
+            documentsResult['rows'] = []
 
         documentsResult['pageSize'] = pageSize
         documentsResult['pageNumber'] = pageNumber
-        documentsResult['total'] = documentList['total_rows'];
-        documentsResult['rows'] = documents
 
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documentsResult))
