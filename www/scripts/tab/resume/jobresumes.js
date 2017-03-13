@@ -4,9 +4,9 @@
 
 // 工作履历
 $(function () {
-
-    var data_grid = $("#job-resumes");
-
+    var tabId = 'jobResumes';
+    var $grid = $("#job-resumes");
+    var gridTab = new GridTab(tabId, $grid);
     var columns = [
         {field: 'jobCompanyName', title: '单位名称', width: 110, align: 'left', editor: 'textbox'},
         {field: 'jobDep', title: '工作部门', width: 50, align: 'left', editor: 'textbox'},
@@ -22,22 +22,22 @@ $(function () {
             text: '添加记录',
             iconCls: 'icon-add',
             handler: function () {
-                addRow(data_grid);
+                gridTab.addRow();
             }
         }, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {
-                removeit(data_grid);
+                gridTab.removeRow();
             }
         }, '-', {
             text: '保存记录',
             iconCls: 'icon-save',
             handler: function () {
-                save(data_grid, "jobResumes");
+                gridTab.saveRow();
             }
         }
     ];
-    buildGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, "jobResumes");
+    gridTab.buildGrid(toolbar, columns);
+    gridTab.registerListeners();
 });

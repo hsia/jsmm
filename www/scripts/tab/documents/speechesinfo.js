@@ -4,10 +4,9 @@
 
 // 发言稿
 $(function () {
-
-    var data_grid = $("#speeches-text");
-    var docType = "speechesText";
-
+    var tabId = 'speechesText';
+    var $grid = $("#speeches-text");
+    var gridTab = new GridTab(tabId, $grid);
     var columns = [
         {
             field: 'fileUploadTime',
@@ -34,18 +33,18 @@ $(function () {
         }
     ];
     var toolbar = [{
-        text: '信息上传',
+        text: '发言稿上传',
         iconCls: 'icon-import',
         handler: function () {
-            docUpload(data_grid, docType)
+            gridTab.docUpload()
         }
     }, '-', {
         text: '文档删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            docDelete(data_grid, docType)
+            gridTab.docDelete()
         }
     }];
-    buildDocGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, docType);
+    gridTab.buildDocGrid(toolbar, columns);
+    gridTab.registerListeners();
 });

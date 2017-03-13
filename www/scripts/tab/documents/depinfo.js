@@ -4,10 +4,9 @@
 
 // 部门信息
 $(function () {
-
-    var data_grid = $("#department-info");
-    var docType = "departmentInfo";
-
+    var tabId = 'departmentInfo';
+    var $grid = $("#department-info");
+    var gridTab = new GridTab(tabId, $grid);
     var columns = [
         {
             field: 'fileUploadTime',
@@ -37,15 +36,15 @@ $(function () {
         text: '信息上传',
         iconCls: 'icon-import',
         handler: function () {
-            docUpload(data_grid, docType)
+            gridTab.docUpload()
         }
     }, '-', {
         text: '文档删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            docDelete(data_grid, docType)
+            gridTab.docDelete()
         }
     }];
-    buildDocGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, docType);
+    gridTab.buildDocGrid(toolbar, columns);
+    gridTab.registerListeners();
 });

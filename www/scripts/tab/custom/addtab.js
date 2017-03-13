@@ -14,34 +14,35 @@ $(function () {
 
         $('#custom_tab').tabs({
             onSelect: function (title, index) {
-
                 var tab = $('#custom_tab').tabs('getTab', index);
                 var id = $('table', $(tab))[0].id;
                 var columns = $('table', $(tab)).data('columns');
-                var $dataGrid = $('#' + id);
+                var $grid = $('#' + id);
+                var gridTab = new GridTab(id, $grid);
 
-                var toolbar = [{
-                    text: '添加记录',
-                    iconCls: 'icon-add',
-                    handler: function () {
-                        addRow($dataGrid);
+                var toolbar = [
+                    {
+                        text: '添加记录',
+                        iconCls: 'icon-add',
+                        handler: function () {
+                            gridTab.addRow();
+                        }
+                    }, '-', {
+                        text: '移除记录',
+                        iconCls: 'icon-remove',
+                        handler: function () {
+                            gridTab.removeRow();
+                        }
+                    }, '-', {
+                        text: '保存记录',
+                        iconCls: 'icon-save',
+                        handler: function () {
+                            gridTab.saveRow();
+                        }
                     }
-                }, '-', {
-                    text: '移除记录',
-                    iconCls: 'icon-remove',
-                    handler: function () {
-                        removeit($dataGrid);
-                    }
-                }, '-', {
-                    text: '保存记录',
-                    iconCls: 'icon-save',
-                    handler: function () {
-                        save($dataGrid,id);
-                    }
-                }];
-
-                buildGrid($dataGrid, toolbar, columns);
-                addSelectListener($dataGrid, id);
+                ];
+                gridTab.buildGrid(toolbar, columns);
+                gridTab.registerListeners();
             }
         });
     });

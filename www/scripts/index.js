@@ -214,23 +214,42 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
-            var id = rowData._id;
-            $.get('/members/tab/' + rowData._id, function (data) {
-                buildMemberDetails(data);
-                $("#create_file").change(function () {
-                    $('#member_image_upload').form('submit', {
-                        success: function (data) {
-                            var result = eval('(' + data + ')');
-                            $('#member_image').attr('src', '/image/' + result.fileName);
-                            $('#upload').val('');
-                        }
-                    });
+            var memberId = rowData._id;
+            $.get('/members/' + memberId)
+                .done(function (data) {
+                    if (!$.isEmptyObject(data)) {
+                        buildMemberDetails(data);
+                        $("#create_file").change(function () {
+                            $('#member_image_upload').form('submit', {
+                                success: function (data) {
+                                    var result = eval('(' + data + ')');
+                                    $('#member_image').attr('src', '/image/' + result.fileName);
+                                    $('#upload').val('');
+                                }
+                            });
+                        });
+                        var event = new CustomEvent("grid-row-selection", {
+                            detail: data
+                        });
+                        window.dispatchEvent(event);
+                    }
                 });
-                var event = new CustomEvent("grid-row-selection", {
-                    detail: id
-                });
-                window.dispatchEvent(event);
-            });
+            // $.get('/members/tab/' + rowData._id, function (data) {
+            //     buildMemberDetails(data);
+            //     $("#create_file").change(function () {
+            //         $('#member_image_upload').form('submit', {
+            //             success: function (data) {
+            //                 var result = eval('(' + data + ')');
+            //                 $('#member_image').attr('src', '/image/' + result.fileName);
+            //                 $('#upload').val('');
+            //             }
+            //         });
+            //     });
+            //     var event = new CustomEvent("grid-row-selection", {
+            //         detail: id
+            //     });
+            //     window.dispatchEvent(event);
+            // });
         }
     });
 
@@ -429,7 +448,7 @@ $(function () {
 
     //添加tab页
     function client_add_tab() {
-        var gridHeight = ($("#member-info").height())+ 77;
+        var gridHeight = ($("#member-info").height()) + 77;
         $('#client_add_tab').dialog({
             title: 'tab添加',
             closed: false,
@@ -438,6 +457,12 @@ $(function () {
             height: gridHeight
         })
     }
+
+    $(".request_once").tabs({
+        onSelect: function (title, index) {
+            console.log(title, index);
+        }
+    });
 
 
 });

@@ -6,7 +6,9 @@
 // 参政议政履职情况
 $(function () {
 
-    var data_grid = $("#participate-performance");
+    var $grid = $("#participate-performance");
+    var tabId = 'participatePerformance';
+    var gridTab = new GridTab(tabId, $grid);
 
     var columns = [
         {
@@ -36,22 +38,22 @@ $(function () {
             text: '添加记录',
             iconCls: 'icon-add',
             handler: function () {
-                addRow(data_grid);
+                gridTab.addRow();
             }
         }, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {
-                removeit(data_grid);
+                gridTab.removeRow();
             }
         }, '-', {
             text: '保存记录',
             iconCls: 'icon-save',
             handler: function () {
-                save(data_grid, "participatePerformance");
+                gridTab.saveRow();
             }
         }
     ];
-    buildGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, "participatePerformance");
+    gridTab.buildGrid(toolbar, columns);
+    gridTab.registerListeners();
 });

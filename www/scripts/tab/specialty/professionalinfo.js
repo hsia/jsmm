@@ -5,7 +5,9 @@
 //专业技术
 $(function () {
 
-    var data_grid = $("#professional-list");
+    var $grid = $("#professional-list");
+    var tabId = 'professionalSkill';
+    var gridTab = new GridTab(tabId, $grid);
 
     var columns = [
             {
@@ -68,22 +70,22 @@ $(function () {
             text: '添加记录',
             iconCls: 'icon-add',
             handler: function () {
-                addRow(data_grid);
+                gridTab.addRow();
             }
         }, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {
-                removeit(data_grid);
+                gridTab.removeRow();
             }
         }, '-', {
             text: '保存记录',
             iconCls: 'icon-save',
             handler: function () {
-                save(data_grid, "professionalSkill");
+                gridTab.saveRow();
             }
         }
     ];
-    buildGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, "professionalSkill");
+    gridTab.buildGrid(toolbar, columns);
+    gridTab.registerListeners();
 });

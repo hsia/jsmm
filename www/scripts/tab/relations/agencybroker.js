@@ -5,7 +5,9 @@
 //介绍人
 $(function () {
 
-    var data_grid = $("#agencyBroker-list");
+    var $grid = $("#agencyBroker-list");
+    var tabId = 'agencybroker';
+    var gridTab = new GridTab(tabId, $grid);
 
     var columns = [
         {field: 'agencyName', title: '姓名', width: 110, align: 'left', editor: 'textbox'},
@@ -18,22 +20,22 @@ $(function () {
             text: '添加记录',
             iconCls: 'icon-add',
             handler: function () {
-                addRow(data_grid);
+                gridTab.addRow();
             }
         }, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {
-                removeit(data_grid);
+                gridTab.removeRow();
             }
         }, '-', {
             text: '保存记录',
             iconCls: 'icon-save',
             handler: function () {
-                save(data_grid, "agencybroker");
+                gridTab.saveRow();
             }
         }
     ];
-    buildGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, "agencybroker");
+    gridTab.buildGrid(toolbar, columns);
+    gridTab.registerListeners();
 });

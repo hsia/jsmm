@@ -4,10 +4,10 @@
 
 // 部门报告
 $(function () {
-
-    var data_grid = $("#department-report");
-    var docType = "departmentReport";
-
+    var tabId = 'departmentReport';
+    var $grid = $("#department-report");
+    var docType = "departmentInfo";
+    var gridTab = new GridTab(tabId, $grid, docType);
     var columns = [
         {
             field: 'fileUploadTime',
@@ -37,15 +37,15 @@ $(function () {
         text: '报告上传',
         iconCls: 'icon-import',
         handler: function () {
-            docUpload(data_grid, docType)
+            gridTab.docUpload()
         }
     }, '-', {
         text: '文档删除',
         iconCls: 'icon-cancel',
         handler: function () {
-            docDelete(data_grid, docType)
+            gridTab.docDelete()
         }
     }];
-    buildDocGrid(data_grid, toolbar, columns);
-    addSelectListener(data_grid, docType);
+    gridTab.buildDocGrid(toolbar, columns);
+    gridTab.registerListeners();
 });
