@@ -60,7 +60,7 @@ $(function () {
             $dataGrid.datagrid({
                 loader: function (param, success) {
                     param.branch = organName;
-                    $.post('/documents/', JSON.stringify(param), function (data) {
+                    $.post('/documents', JSON.stringify(param), function (data) {
                         success(data)
                     }, 'json');
                 }
@@ -202,8 +202,8 @@ $(function () {
         $dataGrid.datagrid({
             loader: function (param, success) {
                 param.documentInfo = documentInfo;
-                param.documentInfo.branch = (organName == null ? '' : organName);
-                var defaultUrl = '/documentSearch';
+                param.branch = (organName == null ? '' : organName);
+                var defaultUrl = '/documents';
                 $.post(defaultUrl, JSON.stringify(param), function (data) {
                     success(data)
                 }, 'json');
