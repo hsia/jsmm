@@ -37,7 +37,7 @@ $(function () {
                 formatter: changeType
             },
             {field: 'name', title: '所属社员', width: 60, sortable: false, align: 'left'},
-            {field: 'branch', title: '所属支社', width: 90, sortable: true, align: 'left'},
+            {field: 'branch', title: '所属支社', width: 90, sortable: false, align: 'left'},
             {field: 'fileUploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
             {
                 field: 'clickDownload',
@@ -74,7 +74,7 @@ $(function () {
         border: false,
         onSelect: function (title, index) {
             $("#tb-form").form('clear');
-            console.log(title + "," + index);
+            // console.log(title + "," + index);
             if (index == 1 && organName == null) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
@@ -181,41 +181,6 @@ $(function () {
         });
     }
 
-    //查询
-    // $('#searchButton').click(function (event) {
-    //     event.preventDefault();
-    //     var formData = $('#tb-form').serializeArray();
-    //     var searchInfo = {};
-    //     $.each(formData, function (index, element) {
-    //         console.log(element)
-    //         searchInfo[element.name] = element.value;
-    //     });
-    // $.ajax({
-    //     url: '/documentSearch/',
-    //     type: 'POST',
-    //     data: JSON.stringify(searchInfo),
-    //     success: function (data) {
-    //         //删除成功以后，重新加载数据，并将choiceRows置为空。
-    //         $dataGrid.datagrid('reload');
-    //     },
-    //     error: function (data) {
-    //         $.messager.alert('提示', '数据查询失败!', 'error');
-    //     }
-    // });
-
-    //     $dataGrid.datagrid({
-    //         loader: function (param, success) {
-    //             param.searchInfo = searchInfo;
-    //             param.searchInfo.branch = (organName == null ? '' : organName);
-    //             var defaultUrl = '/documentSearch';
-    //             $.post(defaultUrl, JSON.stringify(param), function (data) {
-    //                 success(data)
-    //             }, 'json');
-    //         }
-    //     })
-    //
-    //
-    // });
     $("#document-search-form").submit(function (event) {
         var formData = $(this).serializeArray();
         var documentInfo = {};
@@ -223,6 +188,15 @@ $(function () {
             documentInfo[element.name] = element.value;
         });
         documentInfo.branch = (branch == null ? '' : branch);
+        if (documentInfo.startDate != '' || documentInfo.endDate == '') {
+            var mydate = new Date();
+            currYear = mydate.getFullYear();
+            currMonth = mydate.getMonth() + 1;
+            currDay = mydate.getDate();
+            documentInfo.endDate = currYear + "-" + ((currMonth < 10) ? ("0" + currMonth) : currMonth) + "-" + ((currDay < 10) ? ("0" + currDay) : currDay);
+        } else if (documentInfo.startDate == '' || documentInfo.endDate != '') {
+            documentInfo.startDate = '1970-01-01';
+        }
         $('#document-search').dialog('close');
         $('#document-search-form').form('clear');
         $dataGrid.datagrid({
