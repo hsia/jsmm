@@ -1,7 +1,7 @@
 $(function () {
 
     var $dataGrid = $('#client_add_tab_table');
-    var tabGridHeight = ($('#client_add_tab').height());
+
     var toolbar = [{
         text: '添加记录',
         iconCls: 'icon-add',
@@ -24,7 +24,7 @@ $(function () {
 
     $dataGrid.datagrid({
         iconCls: 'icon-ok',
-        height: tabGridHeight,
+        height: 280,
         rownumbers: true,
         nowrap: true,
         striped: true,

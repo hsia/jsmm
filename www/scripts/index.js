@@ -214,31 +214,45 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
-
-            getRow = rowIndex;
-            $.get('/members/' + rowData._id, function (data) {
-                var newData = JSON.parse(data);
-                memberInfo(newData);
-                newData.sbRow = getRow;
-                newData.sbCurrentPage = $memberList.datagrid('options').pageNumber;
-                var event = new CustomEvent("grid-row-selection", {
-                    detail: newData
+            var memberId = rowData._id;
+            $.get('/members/' + memberId)
+                .done(function (data) {
+                    if (!$.isEmptyObject(data)) {
+                        buildMemberDetails(data);
+                        $("#create_file").change(function () {
+                            $('#member_image_upload').form('submit', {
+                                success: function (data) {
+                                    var result = eval('(' + data + ')');
+                                    $('#member_image').attr('src', '/image/' + result.fileName);
+                                    $('#upload').val('');
+                                }
+                            });
+                        });
+                        var event = new CustomEvent("grid-row-selection", {
+                            detail: data
+                        });
+                        window.dispatchEvent(event);
+                    }
                 });
-                window.dispatchEvent(event);
-                $("#create_file").change(function () {
-                    $('#member_image_upload').form('submit', {
-                        success: function (data) {
-                            var result = eval('(' + data + ')');
-                            $('#member_image').attr('src', '/image/' + result.fileName);
-                            $('#upload').val('');
-                        }
-                    });
-                });
-            });
-
-
+            // $.get('/members/tab/' + rowData._id, function (data) {
+            //     buildMemberDetails(data);
+            //     $("#create_file").change(function () {
+            //         $('#member_image_upload').form('submit', {
+            //             success: function (data) {
+            //                 var result = eval('(' + data + ')');
+            //                 $('#member_image').attr('src', '/image/' + result.fileName);
+            //                 $('#upload').val('');
+            //             }
+            //         });
+            //     });
+            //     var event = new CustomEvent("grid-row-selection", {
+            //         detail: id
+            //     });
+            //     window.dispatchEvent(event);
+            // });
         }
     });
+
     //添加组织机构数的点击后触发自定义监听事件
     branch = null;
     $('#organTree').tree({
@@ -248,7 +262,7 @@ $(function () {
                 detail: node.text
             });
             window.dispatchEvent(event);
-            memberInfo({});
+            buildMemberDetails({});
             search = {};
             search.branch = node.text;
             $.post('/members/search/', JSON.stringify(search), function (data) {
@@ -257,8 +271,9 @@ $(function () {
         }
     });
 
+
     //社员信息详情
-    function memberInfo(rowData) {
+    function buildMemberDetails(rowData) {
         var html = `
 <div class="member-detail">
     <div class="member-picture">
@@ -379,7 +394,7 @@ $(function () {
                 });
                 window.dispatchEvent(eventDelete);
 
-                memberInfo({});
+                buildMemberDetails({});
 
                 $.messager.alert('提示', '数据删除成功!', 'info');
             },
@@ -388,14 +403,6 @@ $(function () {
             }
         });
     }
-
-    var p = $('#all-tabs').tabs().tabs('tabs')[15];
-    var mb = p.panel('options').tab.find('a.tabs-inner');
-    mb.menubutton({
-        menu: '#doc-menuButtion'
-    }).click(function () {
-        $('#all-tabs').tabs('select', 15);
-    });
 
     $("#member-search-form").submit(function (event) {
         event.preventDefault();
@@ -441,13 +448,21 @@ $(function () {
 
     //添加tab页
     function client_add_tab() {
+        var gridHeight = ($("#member-info").height()) + 77;
         $('#client_add_tab').dialog({
             title: 'tab添加',
             closed: false,
             cache: false,
-            modal: true
+            modal: true,
+            height: gridHeight
         })
     }
+
+    $(".request_once").tabs({
+        onSelect: function (title, index) {
+            console.log(title, index);
+        }
+    });
 
 
 });

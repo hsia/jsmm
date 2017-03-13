@@ -11,29 +11,30 @@
     <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="lib/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="lib/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="scripts/grid_tab.js"></script>
     <script type="text/javascript" src="scripts/index.js"></script>
-    <script type="text/javascript" src="scripts/tab/jobresumes.js"></script>
-    <script type="text/javascript" src="scripts/tab/edudegreeinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/professionalinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/paperinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/awardinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/familyrelations.js"></script>
-    <script type="text/javascript" src="scripts/tab/achievements.js"></script>
-    <script type="text/javascript" src="scripts/tab/formercluboffice.js"></script>
-    <script type="text/javascript" src="scripts/tab/socialduties.js"></script>
-    <script type="text/javascript" src="scripts/tab/agencybroker.js"></script>
-    <script type="text/javascript" src="scripts/tab/patentsinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/professorinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/specializedskillinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/socialinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/politicsresume.js"></script>
-    <script type="text/javascript" src="scripts/tab/participateperformance.js"></script>
-    <script type="text/javascript" src="scripts/tab/depreportinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/depinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/speechesinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/resume/jobresumes.js"></script>
+    <script type="text/javascript" src="scripts/tab/resume/edudegreeinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/specialty/professionalinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/achievements/paperinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/achievements/awardinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/relations/familyrelations.js"></script>
+    <script type="text/javascript" src="scripts/tab/achievements/achievements.js"></script>
+    <script type="text/javascript" src="scripts/tab/duties/formercluboffice.js"></script>
+    <script type="text/javascript" src="scripts/tab/duties/socialduties.js"></script>
+    <script type="text/javascript" src="scripts/tab/relations/agencybroker.js"></script>
+    <script type="text/javascript" src="scripts/tab/achievements/patentsinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/specialty/professorinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/specialty/specializedskillinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/duties/socialinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/political/politicsresume.js"></script>
+    <script type="text/javascript" src="scripts/tab/political/participateperformance.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/depreportinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/depinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/speechesinfo.js"></script>
     <script type="text/javascript" src="scripts/documentlist.js"></script>
-    <script type="text/javascript" src="scripts/tab/clienttab.js"></script>
-    <script type="text/javascript" src="scripts/tab/addtab.js"></script>
+    <script type="text/javascript" src="scripts/tab/custom/clienttab.js"></script>
+    <script type="text/javascript" src="scripts/tab/custom/addtab.js"></script>
 </head>
 <body>
 <div class="easyui-layout container" data-options="fit:true">
@@ -53,52 +54,97 @@
                     <table id="member-list" style="width:100%;height:100%;"></table>
                 </div>
                 <div data-options="region:'south',border:false" style="height:50%;">
-                    <div id="all-tabs" class="easyui-tabs" style="height:100%;">
-                        <div id="member-info" title="社员详情" style="height:100%;"></div>
-                        <div title="学历学位" style="height:100%;">
-                            <table id="edudegree-list" style="width:100%;height:100%"></table>
+                    <div class="easyui-tabs" data-options="tabPosition:'right',narrow:true,headerWidth:80,tabWidth:80"
+                         style="width:100%;height:100%;">
+                        <div id="member-info" title="详情" style="padding:0;"></div>
+                        <div title="履历" data-options="plain:true" style="padding:0;">
+                            <div class="easyui-tabs request_once" data-options="fit:true,plain:true">
+                                <div  title="学历学位">
+                                    <table id="edudegree-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div  title="工作履历">
+                                    <table id="job-resumes" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="工作履历" style="height:100%;">
-                            <table id="job-resumes" style="width:100%;height:100%;"></table>
+                        <div title="关系" data-options="fit:true,plain:true" style="padding:0;">
+                            <div class="easyui-tabs request_once" data-options="fit:true,plain:true">
+                                <div title="社会关系">
+                                    <table id="familyRelation-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="介绍人">
+                                    <table id="agencyBroker-list" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="专业技术" style="height:100%;">
-                            <table id="professional-list" style="width:100%;height:100%"></table>
+                        <div title="成果" data-options="fit:true,plain:true" style="padding:0;">
+                            <div class="easyui-tabs request_once" data-options="fit:true,plain:true">
+                                <div title="论文著作">
+                                    <table id="paper-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="技术成果">
+                                    <table id="achievements-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="工作获奖">
+                                    <table id="award-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="专利情况">
+                                    <table id="patents-list" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="社会关系" style="height:100%;">
-                            <table id="familyRelation-list" style="width:100%;height: 100%"></table>
+                        <div title="专长" data-options="fit:true,plain:true" style="padding:0;">
+                            <div class="easyui-tabs" data-options="fit:true,plain:true">
+                                <div title="专业技术">
+                                    <table id="professional-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="专家情况">
+                                    <table id="professor-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="业务专长">
+                                    <table id="specializedskill-list" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="论文著作" style="height:100%;">
-                            <table id="paper-list" style="width:100%;height:100%"></table>
+                        <div title="职务" data-options="fit:true,plain:true" style="padding:0;">
+                            <div class="easyui-tabs" data-options="fit:true,plain:true">
+                                <div title="社内职务">
+                                    <table id="formerClubOffice-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="社会职务">
+                                    <table id="social-list" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="其他职务">
+                                    <table id="socialDuties-list" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="技术成果" style="height:100%;">
-                            <table id="achievements-list" style="width:100%;height: 100%"></table>
+                        <div title="参政" data-options="fit:true,plain:true" style="padding:0;">
+                            <div class="easyui-tabs" data-options="fit:true,plain:true">
+                                <div title="参政议政履职情况">
+                                    <table id="politics-resume" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="参政议政业绩">
+                                    <table id="participate-performance" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="工作获奖" style="height:100%;">
-                            <table id="award-list" style="width:100%;height:100%"></table>
+                        <div  title="文档" data-options="fit:true,plain:true" style="padding:0;">
+                            <div id="documents_tab" class="easyui-tabs" data-options="fit:true,plain:true">
+                                <div title="部门报告">
+                                    <table id="department-report" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="部门信息">
+                                    <table id="department-info" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="发言稿">
+                                    <table id="speeches-text" style="width:100%;height:100%"></table>
+                                </div>
+                            </div>
                         </div>
-                        <div title="专利情况" style="height:100%;">
-                            <table id="patents-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div title="专家情况" style="height:100%;">
-                            <table id="professor-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div title="业务专长" style="height:100%;">
-                            <table id="specializedskill-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div title="社内职务" style="height:100%;">
-                            <table id="formerClubOffice-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div title="社会职务" style="height:100%;">
-                            <table id="social-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div title="其它职务" style="height:100%;">
-                            <table id="socialDuties-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div title="介绍人" style="height:100%;">
-                            <table id="agencyBroker-list" style="width:100%;height:100%"></table>
-                        </div>
-                        <div id="docWord" title="文档" style="height:100%;">
-                            <table id="docWord-list" style="width:100%;height:100%"></table>
+                        <div title="自定义" data-options="fit:true,plain:true" style="padding:0;">
+                            <div id="custom_tab" class="easyui-tabs" data-options="fit:true,plain:true">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,6 +154,10 @@
             </div>
         </div>
     </div>
+</div>
+<div id="client_add_tab" style="width:500px;height:500px;">
+    <input class="easyui-textbox" id="tab_title" style="width:90%" data-options="label:'标题:',required:true">
+    <table id="client_add_tab_table" style="width:100%;height:100%"></table>
 </div>
 <div id="member_upload">
     <div style="margin: 45px 0 0 40px">
@@ -120,19 +170,10 @@
 <div id="member_doc">
     <div style="margin: 45px 0 0 40px">
         <form id="doc_upload_form" enctype="multipart/form-data" method='post'>
-            <input class="easyui-filebox" name='doc' data-options="prompt:'请选择文件'" style="width: 80%"
+            <input class="easyui-filebox" name='docs' data-options="prompt:'请选择文件'" style="width: 80%"
                    accept=".doc,.docx,.xls,.xlsx"/><br/>
-            <input type="hidden" name="doc_id" id="doc_id"/>
-            <input type="hidden" name="doc_type" id="doc_type"/>
         </form>
     </div>
-</div>
-<div id="doc-menuButtion">
-    <div id="politics-resume">参政议政履职表</div>
-    <div id="participate-performance">参政议政业绩表</div>
-    <div id="department-report">提交给各部门的报告</div>
-    <div id="department-info">提交给各部门的信息</div>
-    <div id="speeches-text">各种会议书面发言稿</div>
 </div>
 <div id="member-search" class="member-dialog">
     <form id="member-search-form" class="easyui-form member-form" data-options="novalidate:true">
@@ -152,9 +193,29 @@
         </div>
     </form>
 </div>
-<div id="client_add_tab" style="width:500px;height:400px;">
-    <input class="easyui-textbox" id="tab_title" style="width:90%" data-options="label:'标题:',required:true">
-    <table id="client_add_tab_table" style="width:100%;height:100%"></table>
+<div id="document-search" class="member-dialog">
+    <form id="document-search-form" class="easyui-form member-form" data-options="novalidate:true">
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="type" style="width:100%"
+                   data-options="label:'类型:',required:true,valueField:'value',textField:'text',url:'data/documenttype.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="name" style="width:100%"
+                   data-options="label:'社员:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-datebox" name="startTime" style="width:100%"
+                   data-options="label:'开始时间:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-datebox" name="endTime" style="width:100%"
+                   data-options="label:'结束时间:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="fileName" style="width:100%"
+                   data-options="label:'文件名称:',required:true">
+        </div>
+    </form>
 </div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"
@@ -422,23 +483,6 @@
         </div>
         <input name="_id" hidden="true">
         <!--<input name="_rev" hidden="true">-->
-    </form>
-</div>
-<div id="tb" style="padding:2px 5px;">
-    <form id="tb-form">
-        类型:<input class="easyui-combobox" name="type" style="width:110px"
-                  data-options="valueField:'value',textField:'text',url:'data/documenttype.json',method:'get',prompt:'请选择',panelHeight:'auto'">
-        <!--<select name="type" class="easyui-combobox" panelHeight="auto" prompt="请选择" style="width:90px">-->
-        <!--<option value="report">部门报告</option>-->
-        <!--<option value="info">部门信息</option>-->
-        <!--<option value="speech">演讲稿</option>-->
-        <!--</select>-->
-        社员: <input name="name" class="easyui-textbox" style="width:80px">
-        文件名称: <input name="fileName" class="easyui-textbox" style="width:110px">
-        开始时间: <input name="startTime" class="easyui-datebox" style="width:145px">
-        结束时间: <input name="endTime" class="easyui-datebox" style="width:145px">
-
-        <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>
     </form>
 </div>
 </body>
