@@ -188,14 +188,16 @@ $(function () {
             documentInfo[element.name] = element.value;
         });
         documentInfo.branch = (branch == null ? '' : branch);
-        if (documentInfo.startDate != '' || documentInfo.endDate == '') {
+        if (documentInfo.startDate != '' && documentInfo.endDate == '') {
             var mydate = new Date();
             currYear = mydate.getFullYear();
             currMonth = mydate.getMonth() + 1;
             currDay = mydate.getDate();
             documentInfo.endDate = currYear + "-" + ((currMonth < 10) ? ("0" + currMonth) : currMonth) + "-" + ((currDay < 10) ? ("0" + currDay) : currDay);
-        } else if (documentInfo.startDate == '' || documentInfo.endDate != '') {
+        } else if (documentInfo.startDate == '' && documentInfo.endDate != '') {
             documentInfo.startDate = '1970-01-01';
+        } else {
+
         }
         $('#document-search').dialog('close');
         $('#document-search-form').form('clear');
