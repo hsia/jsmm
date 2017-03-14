@@ -14,6 +14,7 @@ sys.path[:0] = ['app', 'lib']
 
 from couchdb import CouchDB
 couch_db = CouchDB('http://127.0.0.1:5984')
+couchLucene_db = CouchDB('http://127.0.0.1:5986')
 
 
 def make_uuid():

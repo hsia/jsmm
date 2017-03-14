@@ -1,14 +1,14 @@
 [
   {
-    "value": "report",
+    "value": "departmentReport",
     "text": "部门报告"
   },
   {
-    "value": "info",
+    "value": "departmentInfo",
     "text": "部门信息"
   },
   {
-    "value": "speech",
+    "value": "speechesText",
     "text": "演讲稿"
   }
 ]

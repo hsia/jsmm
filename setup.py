@@ -93,39 +93,21 @@ function (doc) {
 }))
 
 try_(couch_db.put('/jsmm/_design/documents', {
-    'views': {
-        'by_branch': {
-            'map': '''
-function (doc) {
-  if(doc.type == 'document'){
-    emit(doc.branch, doc);
-  }
-}'''
+    "views": {
+        "by_branch": {
+            "map": "\nfunction (doc) {\n  if(doc.type == 'document'){\n    emit(doc.branch, doc);\n  }\n}"
         },
-        'by_memberid': {
-            'map': '''
-function (doc) {
-  if(doc.type == 'document'){
-    emit(doc.memberId, doc);
-  }
-}'''
+        "by_memberid": {
+            "map": "\nfunction (doc) {\n  if(doc.type == 'document'){\n    emit(doc.memberId, doc);\n  }\n}"
         }
     },
-    'fulltext': {
-        'by_attachment': {
-            'index': '''
-                function(doc) {
-                  var result = new Document();
-                  if (doc.type == 'document') {
-                    for(var a in doc._attachments) {
-                      result.attachment("default", a);
-                    }
-                    return result;
-                  } else {
-                    return null;
-                  }
-                }
-            }'''
+    "fulltext": {
+        "by_attachment": {
+            "index": "\n                function(doc) {\n                  var result = new Document();\n                  if (doc.type == 'document') {\n                    for(var a in doc._attachments) {\n                      result.attachment(\"default\", a);\n                    }\n                    return result;\n                  } else {\n                    return null;\n                  }\n                }\n"
+        },
+        "by_doc_info": {
+            "analyzer": "chinese",
+            "index": "\nfunction (doc) {\n        var result = new Document();\n        function makeIndex(obj, field, store, type) {\n            var value = null;\n            field = field || 'default';\n            store = store || 'no';\n            type = type || 'text';\n            if (field != 'default') {\n                value = obj[field];\n            }\n                    result.add(value, {'field': field, 'store': store, 'type': type});}\n        if (doc.type == 'document') {\n            makeIndex(doc, 'fileName', 'yes');\n            makeIndex(doc, 'name', 'yes');\n            makeIndex(doc, 'branch', 'yes');\n            makeIndex(doc, 'fileUploadTime', 'yes', 'date');\n            makeIndex(doc, 'fileUploadTime', 'yes');\n            makeIndex(doc, 'docType', 'yes');\n            return result;\n        } else {\n            return null;\n        }\n    }"
         }
     }
 }))
