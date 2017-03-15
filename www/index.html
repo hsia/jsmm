@@ -11,6 +11,8 @@
     <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="lib/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="lib/easyui/locale/easyui-lang-zh_CN.js"></script>
+    <script src="lib/jquery/sonic.js"></script>
+    <script src="lib/jquery/moment.js"></script>
     <script src="scripts/grid_tab.js"></script>
     <script type="text/javascript" src="scripts/index.js"></script>
     <script type="text/javascript" src="scripts/tab/resume/jobresumes.js"></script>
@@ -38,8 +40,11 @@
 </head>
 <body>
 <div class="easyui-layout container" data-options="fit:true">
-    <div data-options="region:'north',border:false" class="banner">
-        <div>九三学社社员信息管理系统</div>
+    <div data-options="region:'north',border:false">
+        <div class="banner">
+            <div class="title">九三学社社员信息管理系统</div>
+            <div id="reminder_birthday" class="reminder bell" title="七天内过生日的社员，请点击查询"></div>
+        </div>
     </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
         <div class="easyui-panel" style="padding:5px; height:100%;">
@@ -59,10 +64,10 @@
                         <div id="member-info" title="详情" style="padding:0;"></div>
                         <div title="履历" data-options="plain:true" style="padding:0;">
                             <div class="easyui-tabs request_once" data-options="fit:true,plain:true">
-                                <div  title="学历学位">
+                                <div title="学历学位">
                                     <table id="edudegree-list" style="width:100%;height:100%"></table>
                                 </div>
-                                <div  title="工作履历">
+                                <div title="工作履历">
                                     <table id="job-resumes" style="width:100%;height:100%"></table>
                                 </div>
                             </div>
@@ -129,7 +134,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div  title="文档" data-options="fit:true,plain:true" style="padding:0;">
+                        <div title="文档" data-options="fit:true,plain:true" style="padding:0;">
                             <div id="documents_tab" class="easyui-tabs" data-options="fit:true,plain:true">
                                 <div title="部门报告">
                                     <table id="department-report" style="width:100%;height:100%"></table>
@@ -154,6 +159,9 @@
             </div>
         </div>
     </div>
+</div>
+<div id="sonic-dialog" style="width: 100%;height: 100%;display: block; background-color: rgba(0,0,0,50); z-index: 1000;">
+    <div style="width: 100px;height: 100px; margin: auto;" id="sonic-canvas"></div>
 </div>
 <div id="client_add_tab" style="width:500px;height:500px;">
     <input class="easyui-textbox" id="tab_title" style="width:90%" data-options="label:'标题:',required:true">
@@ -216,6 +224,14 @@
                    data-options="label:'文件名称:',required:true">
         </div>
     </form>
+</div>
+<div id="reminder_dialog">
+    <div style="padding:5px 0;">
+		<a class="easyui-linkbutton" style="width:100%">生日提醒</a>
+		<a class="easyui-linkbutton" style="width:100%">Print</a>
+		<a class="easyui-linkbutton" style="width:100%">Reload</a>
+		<a class="easyui-linkbutton" style="width:100%">Help</a>
+	</div>
 </div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"

@@ -125,10 +125,15 @@ $(function () {
                     iconCls: 'icon-import',
                     text: '导入',
                     handler: function () {
+                        $('#member_upload').dialog('close');
+                        $.messager.progress({
+                            title:'Please waiting',
+                            msg:'Loading data...'
+                        });
                         $('#member_upload_form').form('submit', {
                             success: function (data) {
                                 $memberList.datagrid('reload');
-                                $('#member_upload').dialog('close');
+                                $.messager.progress('close');
                                 $.messager.alert('提示信息', '导入社员成功！', 'info');
                             }
                         });
@@ -149,6 +154,13 @@ $(function () {
         handler: function () {
             client_add_tab();
         }
+    }, '-', {
+        text: '提醒',
+        iconCls: '',
+        handler: function () {
+            reminderBirthday();
+        }
+
     }];
 
     var defaultUrl = '/members';
@@ -215,41 +227,24 @@ $(function () {
         },
         onSelect: function (rowIndex, rowData) {
             var memberId = rowData._id;
-            $.get('/members/' + memberId)
-                .done(function (data) {
-                    if (!$.isEmptyObject(data)) {
-                        buildMemberDetails(data);
-                        $("#create_file").change(function () {
-                            $('#member_image_upload').form('submit', {
-                                success: function (data) {
-                                    var result = eval('(' + data + ')');
-                                    $('#member_image').attr('src', '/image/' + result.fileName);
-                                    $('#upload').val('');
-                                }
-                            });
+            $.get('/members/' + memberId).done(function (data) {
+                if (!$.isEmptyObject(data)) {
+                    buildMemberDetails(data);
+                    $("#create_file").change(function () {
+                        $('#member_image_upload').form('submit', {
+                            success: function (data) {
+                                var result = eval('(' + data + ')');
+                                $('#member_image').attr('src', '/image/' + result.fileName);
+                                $('#upload').val('');
+                            }
                         });
-                        var event = new CustomEvent("grid-row-selection", {
-                            detail: data
-                        });
-                        window.dispatchEvent(event);
-                    }
-                });
-            // $.get('/members/tab/' + rowData._id, function (data) {
-            //     buildMemberDetails(data);
-            //     $("#create_file").change(function () {
-            //         $('#member_image_upload').form('submit', {
-            //             success: function (data) {
-            //                 var result = eval('(' + data + ')');
-            //                 $('#member_image').attr('src', '/image/' + result.fileName);
-            //                 $('#upload').val('');
-            //             }
-            //         });
-            //     });
-            //     var event = new CustomEvent("grid-row-selection", {
-            //         detail: id
-            //     });
-            //     window.dispatchEvent(event);
-            // });
+                    });
+                    var event = new CustomEvent("grid-row-selection", {
+                        detail: data
+                    });
+                    window.dispatchEvent(event);
+                }
+            });
         }
     });
 
@@ -458,11 +453,23 @@ $(function () {
         })
     }
 
-    $(".request_once").tabs({
-        onSelect: function (title, index) {
-            console.log(title, index);
-        }
-    });
+    function reminderBirthday() {
+        $('#reminder_dialog').dialog({
+            title: '提醒',
+            closed: false,
+            cache: false,
+            modal: true,
+            height: 200,
+            width: 200
+        })
+    }
 
+    $('#reminder_birthday').click(function () {
+        var now = moment().format("M-DD");
+        var end = moment().add(7, 'd').format("M-DD");
+        $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
+            $memberList.datagrid('loadData', data);
+        });
+    })
 
 });

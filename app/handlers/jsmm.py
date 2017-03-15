@@ -13,24 +13,19 @@ from commons import couch_db, get_now, make_uuid
 class NewMemberCollectionHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def post(self):
+        keys = ['name', 'gender', 'branchTime', 'mobile']
         obj = {
             "selector": {},
             "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ", "branchTime"]
         }
         objC = obj["selector"]
         search = json.loads(self.request.body.decode('utf-8'))
-        if 'name' in search:
-            if search['name'] != '':
-                objC['name'] = {"$regex": search["name"]}
-        if 'gender' in search:
-            if search['gender'] != '':
-                objC['gender'] = {"$regex": search["gender"]}
-        if 'branchTime' in search:
-            if search['branchTime'] != '':
-                objC['branchTime'] = {"$regex": search["branchTime"]}
-        if 'mobile' in search:
-            if search['mobile'] != '':
-                objC['mobile'] = {"$regex": search["mobile"]}
+
+        for key in keys:
+            if key in search:
+                if search[key] != '':
+                    objC[key] = {'$regex': search[key]}
+
         if 'branch' in search:
             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
                 objC['branch'] = {"$regex": search["branch"]}
@@ -44,16 +39,32 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
 class MemberCollectionHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self):
-        '''
+        """
         通过view获取对象列表。
-        '''
-        response = couch_db.get(r'/jsmm/_design/members/_view/all')
-        members = json.loads(response.body.decode('utf-8'))
-        docs = []
-        for row in members['rows']:
-            docs.append(row['value'])
-        self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(docs))
+        """
+        if self.request.arguments == {}:
+            response = couch_db.get(r'/jsmm/_design/members/_view/all')
+            members = json.loads(response.body.decode('utf-8'))
+            docs = []
+            for row in members['rows']:
+                docs.append(row['value'])
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(docs))
+        else:
+            startTime = self.get_argument('startTime').split('-')
+            endTime = self.get_argument('endTime').split('-')
+            start = '[' + ','.join(startTime) + ']'
+            end = '[' + ','.join(endTime) + ']'
+            memberInfo = couch_db.get(r'/jsmm/_design/members/_view/by-birthday?startkey=%(startTime)s&endkey=%(endTime)s' % {'startTime': start, 'endTime': end})
+            self.write(json.loads(memberInfo.body.decode('utf-8')))
+
+
+
+
+
+
+
+
 
     @tornado.web.addslash
     def post(self):
