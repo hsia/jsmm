@@ -84,11 +84,15 @@ GridTab.prototype.docUpload = function () {
             iconCls: 'icon-import',
             text: '导入',
             handler: function () {
+                $('#member_doc').dialog('close');
+                $.messager.progress({
+                    title: 'Please waiting',
+                    msg: 'Loading data...'
+                });
                 $('#doc_upload_form').form('submit', {
                     url: '/document/' + that.memberId + '/' + that.tabId,
                     success: function (data) {
                         that.reloadGridRemote();
-                        $('#member_doc').dialog('close');
                         $.messager.alert('提示信息', '文档上传成功！', 'info');
                     }
                 });
