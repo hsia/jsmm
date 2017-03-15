@@ -74,8 +74,8 @@ $(function () {
         border: false,
         onSelect: function (title, index) {
             $("#tb-form").form('clear');
-            // console.log(title + "," + index);
-            if (index == 1 && organName == null) {
+            console.log(title + "," + index);
+            if (index == 1) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
                         var defaultUrl = '/documents';
