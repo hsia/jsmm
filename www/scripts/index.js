@@ -465,8 +465,8 @@ $(function () {
     }
 
     $('#reminder_birthday').click(function () {
-        var now = moment().format("M-DD");
-        var end = moment().add(7, 'd').format("M-DD");
+        var now = moment().format("M-D");
+        var end = moment().add(7, 'd').format("M-D");
         $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
             $memberList.datagrid('loadData', data);
         });

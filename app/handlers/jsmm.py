@@ -56,15 +56,12 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
             start = '[' + ','.join(startTime) + ']'
             end = '[' + ','.join(endTime) + ']'
             memberInfo = couch_db.get(r'/jsmm/_design/members/_view/by-birthday?startkey=%(startTime)s&endkey=%(endTime)s' % {'startTime': start, 'endTime': end})
-            self.write(json.loads(memberInfo.body.decode('utf-8')))
-
-
-
-
-
-
-
-
+            members = json.loads(memberInfo.body.decode('utf-8'))
+            docs = []
+            for row in members['rows']:
+                docs.append(row['value'])
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(docs))
 
     @tornado.web.addslash
     def post(self):
