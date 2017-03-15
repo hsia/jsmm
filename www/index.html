@@ -196,12 +196,12 @@
 <div id="document-search" class="member-dialog">
     <form id="document-search-form" class="easyui-form member-form" data-options="novalidate:true">
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="docType" style="width:100%"
-                   data-options="label:'类型:',required:true,valueField:'value',textField:'text',url:'data/documenttype.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-textbox" name="keyWord" style="width:100%"
+                   data-options="label:'检索关键字:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="name" style="width:100%"
-                   data-options="label:'社员:',required:true">
+            <input class="easyui-textbox" name="keyWordAttachment" style="width:100%"
+                   data-options="label:'文本内容检索:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="startDate" style="width:100%"
@@ -212,8 +212,8 @@
                    data-options="label:'结束时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="fileName" style="width:100%"
-                   data-options="label:'文件名称:',required:true">
+            <input class="easyui-combobox" name="docType" style="width:100%"
+                   data-options="label:'类型:',required:true,valueField:'value',textField:'text',url:'data/documenttype.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
     </form>
 </div>

@@ -37,35 +37,51 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         paramsStr = ""
         if "documentInfo" in params:
-            docType = params["documentInfo"]["docType"]
-            name = params["documentInfo"]["name"]
-            fileName = params["documentInfo"]["fileName"]
+            # name = params["documentInfo"]["name"]
+            # fileName = params["documentInfo"]["fileName"]
+            keyWorld = params["documentInfo"]["keyWord"]
+            keyWordAttachment = params["documentInfo"]["keyWordAttachment"]
             startDate = params["documentInfo"]["startDate"]
             endDate = params["documentInfo"]["endDate"]
+            docType = params["documentInfo"]["docType"]
 
-            if docType != '':
-                paramsStr += 'docType:"' + docType + '"'
+            if keyWordAttachment != '':
+                paramsStr += '"' + keyWordAttachment + '"'
             else:
                 pass
 
-            if name != '' and paramsStr != '':
-                paramsStr += ' AND name:"' + name + '"'
-            elif name != '' and paramsStr == '':
-                paramsStr += 'name:"' + name + '"'
+            # if name != '' and paramsStr != '':
+            #     paramsStr += ' AND name:"' + name + '"'
+            # elif name != '' and paramsStr == '':
+            #     paramsStr += 'name:"' + name + '"'
+            # else:
+            #     pass
+            #
+            # if fileName != '' and paramsStr != '':
+            #     paramsStr += ' AND fileName:"' + fileName + '"'
+            # elif fileName != '' and paramsStr == '':
+            #     paramsStr += 'fileName:"' + fileName + '"'
+            # else:
+            #     pass
+            if keyWorld != '' and paramsStr != '':
+                paramsStr += ' AND (fileName:"' + keyWorld + '" OR name:"' + keyWorld + '")'
+            elif keyWorld != '' and paramsStr == '':
+                paramsStr += '(fileName:"' + keyWorld + '" OR name:"' + keyWorld + '")'
             else:
                 pass
 
-            if fileName != '' and paramsStr != '':
-                paramsStr += ' AND fileName:"' + fileName + '"'
-            elif fileName != '' and paramsStr == '':
-                paramsStr += 'fileName:"' + fileName + '"'
-            else:
-                pass
 
             if startDate != '' and endDate != '' and paramsStr != '':
                 paramsStr += ' AND fileUploadTime<date>:[' + startDate + ' TO ' + endDate + ']'
             elif startDate != '' and endDate != '' and paramsStr == '':
                 paramsStr += 'fileUploadTime<date>:[' + startDate + ' TO ' + endDate + ']'
+            else:
+                pass
+
+            if docType != '' and paramsStr != '':
+                paramsStr += ' AND docType:"' + docType + '"'
+            elif docType != '' and paramsStr == '':
+                paramsStr += 'docType:"' + docType + '"'
             else:
                 pass
 
