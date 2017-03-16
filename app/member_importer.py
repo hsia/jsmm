@@ -6,6 +6,8 @@ Copyright lixia@ccrise.com
 import uuid
 from xlrd import open_workbook
 from commons import couch_db
+import json
+
 
 def make_uuid():
     '''
@@ -32,11 +34,11 @@ def format_date(date_str):
 
 
 def import_info(file_info):
-    print(file_info)
     member_info_importer = MemberInfoImporter(file_info['path'])
     member_info_importer.get_basic_info()
     member_info_importer.main_function()
-    member_info_importer.save_member()
+    return member_info_importer.save_member()
+
 
 
 class MemberInfoImporter():
@@ -398,7 +400,25 @@ class MemberInfoImporter():
         保存社员信息
         :return:
         """
-        couch_db.post(r'/jsmm/', self._member)
+        query_name = self._member["name"]
+        query_id_card = self._member["idCard"]
+        obj = {
+            "selector": {
+                "name": {"$eq": query_name},
+                "idCard": {"$eq": query_id_card}
+            },
+            "fields": ["_id", "name", "idCard"]
+        }
+        request = couch_db.post(r'/jsmm/_find/', obj)
+        member = json.loads(request.body.decode('utf-8'))
+        if len(member["docs"]):
+            memberInfo = member["docs"]
+            msg = {"success": False, "name": memberInfo[0]["name"], "idCard": memberInfo[0]["idCard"]}
+            return msg
+        else:
+            couch_db.post(r'/jsmm/', self._member)
+            return {"success": True}
+
         # response = {"success": "true"}
         # self.write(response)
 

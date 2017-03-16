@@ -127,14 +127,25 @@ $(function () {
                     handler: function () {
                         $('#member_upload').dialog('close');
                         $.messager.progress({
-                            title:'Please waiting',
-                            msg:'Loading data...'
+                            title: 'Please waiting',
+                            msg: 'Loading data...'
                         });
                         $('#member_upload_form').form('submit', {
                             success: function (data) {
-                                $memberList.datagrid('reload');
-                                $.messager.progress('close');
-                                $.messager.alert('提示信息', '导入社员成功！', 'info');
+                                var member = JSON.parse(data);
+                                if (member.success == false) {
+                                    var error_members = "以下社员导入失败：<br/>";
+                                    member.msg.forEach(function (obj) {
+                                        error_members += obj.name+"【"+obj.idCard+"】<br/>"
+                                    });
+                                    $memberList.datagrid('reload');
+                                    $.messager.progress('close');
+                                    $.messager.alert('提示信息', error_members);
+                                } else {
+                                    $memberList.datagrid('reload');
+                                    $.messager.progress('close');
+                                    $.messager.alert('提示信息', '导入社员成功！', 'info');
+                                }
                             }
                         });
                     }

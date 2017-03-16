@@ -5,6 +5,7 @@
 import os.path
 import uuid
 import tornado.web
+import json
 
 import tornado_utils
 
@@ -44,6 +45,7 @@ class UploadHandler(tornado.web.RequestHandler):
         # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
         # 'content_type': 'application/vnd.ms-excel'}]}
         file_infos = self.request.files['members']
+        error_message = []
         for file_info in file_infos:
             filename = file_info['filename']
             upload_path = os.path.join(inbox_path, filename)
@@ -52,5 +54,8 @@ class UploadHandler(tornado.web.RequestHandler):
             path = root + '-' + uuid.uuid4().hex[0:6] + ext
             with open(path, 'wb') as file:
                 file.write(file_info['body'])
-            self._callback({'filename': filename, 'path': path, 'content_type': file_info['content_type']})
+            msgs = self._callback({'filename': filename, 'path': path, 'content_type': file_info['content_type']})
+            if not msgs["success"]:
+                error_message.append({"name": msgs["name"], "idCard": msgs["idCard"]})
+        self.write({"success":False, "msg":error_message})
 
