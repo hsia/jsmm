@@ -5,7 +5,7 @@ Copyright lixia@ccrise.com
 '''
 import uuid
 from xlrd import open_workbook
-from commons import couch_db
+from commons import couch_db, get_retire_time
 import json
 
 
@@ -416,11 +416,10 @@ class MemberInfoImporter():
             msg = {"success": False, "name": memberInfo[0]["name"], "idCard": memberInfo[0]["idCard"]}
             return msg
         else:
+            self._member["retireTime"] = get_retire_time(self._member["birthday"], self._member["gender"])
             couch_db.post(r'/jsmm/', self._member)
             return {"success": True}
 
-        # response = {"success": "true"}
-        # self.write(response)
 
 # if __name__ == "__main__":
 #     import sys

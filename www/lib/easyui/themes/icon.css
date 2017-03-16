@@ -97,3 +97,9 @@
 .icon-import{
 	background:url('icons/import-icon.png') no-repeat center center;
 }
+.icon-clock{
+	background:url('icons/clock-icon.png') no-repeat center center;
+}
+.icon-old{
+	background:url('icons/old-icon.png') no-repeat center center;
+}

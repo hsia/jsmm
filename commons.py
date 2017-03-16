@@ -8,6 +8,8 @@ import os
 import sys
 import uuid
 from datetime import datetime
+from dateutil.relativedelta import *
+
 
 os.chdir(os.path.dirname(__file__))
 sys.path[:0] = ['app', 'lib']
@@ -29,3 +31,11 @@ def get_now():
     返回当前日期时间的ISO 8601格式字符串，格式为：YYYY-MM-DDTHH:MM:SS.mmmmmm
     '''
     return datetime.now().isoformat()
+
+
+def get_retire_time(birthday, gender):
+    start_date = datetime.strptime(birthday, "%Y-%m-%d")
+    if gender == '男':
+        return (start_date + relativedelta(years=+65)).strftime('%Y-%m-%d')
+    else:
+        return (start_date + relativedelta(years=+60)).strftime('%Y-%m-%d')

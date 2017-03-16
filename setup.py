@@ -44,6 +44,17 @@ try_(couch_db.put('/jsmm/_design/members', {
                         emit(doc.memberId, doc);
                       }
                     }'''
+        },
+        "by-birthday": {
+            "map": '''
+                    function (doc) {
+                      if (doc.type == 'member') {
+                        var birthday = doc.birthday.split('-');
+                        if (birthday.length == 3) {
+                          emit([parseInt(birthday[1], 10), parseInt(birthday[2], 10)], doc);
+                        }
+                      }
+                    }'''
         }
     },
     'fulltext': {

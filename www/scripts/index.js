@@ -167,7 +167,7 @@ $(function () {
         }
     }, '-', {
         text: '提醒',
-        iconCls: '',
+        iconCls: 'icon-clock',
         handler: function () {
             reminderBirthday();
         }
@@ -481,6 +481,14 @@ $(function () {
         $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
             $memberList.datagrid('loadData', data);
         });
-    })
+    });
+
+    $('#reminder_retire').click(function () {
+       var now = moment().format("YYYY-MM-DD");
+        $.get('/members/reminder/' + now,function (data) {
+            $memberList.datagrid('loadData', data.docs);
+            $('#reminder_dialog').dialog("close")
+        })
+    });
 
 });
