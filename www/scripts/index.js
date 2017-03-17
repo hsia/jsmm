@@ -480,6 +480,7 @@ $(function () {
         var end = moment().add(7, 'd').format("M-D");
         $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
             $memberList.datagrid('loadData', data);
+            $('#reminder_dialog').dialog("close")
         });
     });
 
