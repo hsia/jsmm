@@ -6,7 +6,7 @@ import json
 import tornado.web
 
 import tornado_utils
-from commons import couch_db, get_now, make_uuid
+from commons import couch_db, get_retire_time, make_uuid
 
 
 @tornado_utils.bind_to(r'/members/search/?')
@@ -72,7 +72,7 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
         member = json.loads(self.request.body.decode('utf-8'))
         member['type'] = 'member'
         member['_id'] = make_uuid()
-        print(member)
+        member["retireTime"] = get_retire_time(member["birthday"], member["gender"])
         couch_db.post(r'/jsmm/', member)
         response = {"success": "true"}
         self.write(response)
