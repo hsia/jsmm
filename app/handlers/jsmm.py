@@ -24,12 +24,12 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
         for key in keys:
             if key in search:
                 if search[key] != '':
-                    objC[key] = {'$regex': search[key]}
+                    objC[key] = {'$eq': search[key]}
 
         if 'branch' in search:
             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
-                objC['branch'] = {"$regex": search["branch"]}
-        objC['type'] = {"$regex": "member"}
+                objC['branch'] = {"$eq": search["branch"]}
+        objC['type'] = {"$eq": "member"}
         response = couch_db.post(r'/jsmm/_find/', obj)
         members = json.loads(response.body.decode('utf-8'))
         self.write(members)
