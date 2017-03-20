@@ -13,7 +13,7 @@ from commons import couch_db, get_retire_time, make_uuid
 class NewMemberCollectionHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def post(self):
-        keys = ['name', 'gender', 'branchTime', 'mobile']
+        keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'titleLevel', 'highestEducation']
         obj = {
             "selector": {},
             "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ", "branchTime"]
@@ -25,6 +25,10 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
             if key in search:
                 if search[key] != '':
                     objC[key] = {'$eq': search[key]}
+
+        if 'retireTime' in search:
+            if search['retireTime'] != '':
+                objC['retireTime'] = {"$lt": search["retireTime"]}
 
         if 'branch' in search:
             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':

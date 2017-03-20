@@ -300,6 +300,8 @@ $(function () {
         <div class="member-item"><span class="member-item-title">有效证件类别: </span>${rowData.idType || ""}</div>
         <div class="member-item"><span class="member-item-title">证件号码: </span>${rowData.idNo || ""}</div>
         <div class="member-item"><span class="member-item-title">移动电话: </span>${rowData.mobile || ""}</div>
+        <div class="member-item"><span class="member-item-title">界别: </span>${rowData.sector || ""}</div>
+        <div class="member-item"><span class="member-item-title">职务级别: </span>${rowData.jobLevel || ""}</div>
     </div>
     <div class="member-column">
         <div class="member-item"><span class="member-item-title">党派交叉: </span>${rowData.partyCross || ""}</div>
@@ -311,6 +313,8 @@ $(function () {
         <div class="member-item"><span class="member-item-title">职称: </span>${rowData.jobTitle || ""}</div>
         <div class="member-item"><span class="member-item-title">学术职务: </span>${rowData.academic || ""}</div>
         <div class="member-item"><span class="member-item-title">电子邮箱: </span>${rowData.email || ""}</div>
+        <div class="member-item"><span class="member-item-title">是否失联: </span>${rowData.lost || ""}</div>
+        <div class="member-item"><span class="member-item-title">职称级别: </span>${rowData.titleLevel || ""}</div>
     </div>
     <div class="member-column">
         <div class="member-item"><span class="member-item-title">家庭地址: </span>${rowData.homeAddress || ""}</div>
@@ -322,6 +326,8 @@ $(function () {
         <div class="member-item"><span class="member-item-title">通信地址: </span>${rowData.commAddress || ""}</div>
         <div class="member-item"><span class="member-item-title">通信地址邮编: </span>${rowData.commPost || ""}</div>
         <div class="member-item"><span class="member-item-title">爱好: </span>${rowData.hobby || ""}</div>
+        <div class="member-item"><span class="member-item-title">新阶层: </span>${rowData.stratum || ""}</div>
+        <div class="member-item"><span class="member-item-title">最高学历: </span>${rowData.highestEducation || ""}</div>
     </div>
 </div>
 `;
@@ -417,6 +423,9 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
+        if(memberInfo['retireTime'] == '是'){
+            memberInfo.retireTime = moment().format("YYYY-MM-DD");
+        }
         memberInfo.branch = (branch == null ? '' : branch);
         $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
             $('#member-search').dialog('close');
@@ -490,6 +499,11 @@ $(function () {
             $memberList.datagrid('loadData', data.docs);
             $('#reminder_dialog').dialog("close")
         })
+    });
+
+    $('#retire_time').click(function () {
+        var now = moment().format("YYYY-MM-DD");
+        $('#retire_time_input').val(now);
     });
 
 });

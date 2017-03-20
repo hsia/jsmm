@@ -43,7 +43,7 @@
     <div data-options="region:'north',border:false">
         <div class="banner">
             <div class="title">九三学社社员信息管理系统</div>
-            <div class="reminder bell" ></div>
+            <div class="reminder bell"></div>
         </div>
     </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
@@ -160,7 +160,8 @@
         </div>
     </div>
 </div>
-<div id="sonic-dialog" style="width: 100%;height: 100%;display: block; background-color: rgba(0,0,0,50); z-index: 1000;">
+<div id="sonic-dialog"
+     style="width: 100%;height: 100%;display: block; background-color: rgba(0,0,0,50); z-index: 1000;">
     <div style="width: 100px;height: 100px; margin: auto;" id="sonic-canvas"></div>
 </div>
 <div id="client_add_tab" style="width:500px;height:500px;">
@@ -193,11 +194,26 @@
                    data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-datebox" name="branchTime" style="width:100%"
-                   data-options="label:'入社时间:',required:true">
+            <input class="easyui-combobox" name="sector" style="width:100%"
+                   data-options="label:'界别:',url:'data/sector.json',method:'get',prompt:'请选择',panelHeight:'auto',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="mobile" style="width:100%" data-options="label:'移动电话:',required:true">
+            <input class="easyui-textbox" name="jobTitle" style="width:100%" data-options="label:'职称:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="highestEducation" style="width:100%"
+                   data-options="label:'最高学历:',required:true,valueField:'value',textField:'text',url:'data/highestEducation.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="retireTime" style="width:100%" data-options="label:'退休:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="lost" style="width:100%"
+                   data-options="label:'是否失联:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="stratum" style="width:100%"
+                   data-options="label:'新阶层:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
     </form>
 </div>
@@ -227,11 +243,12 @@
 </div>
 <div id="reminder_dialog">
     <div style="padding:5px 0;">
-        <a id="reminder_birthday" class="easyui-linkbutton" data-options="iconCls:'icon-birthday'" style="width:100%" title="七天内过生日的社员，请点击查询" >生日提醒</a>
-		<a id="reminder_retire" class="easyui-linkbutton" data-options="iconCls:'icon-old'" style="width:100%">退休提醒</a>
-		<a class="easyui-linkbutton" style="width:100%">Reload</a>
-		<a class="easyui-linkbutton" style="width:100%">Help</a>
-	</div>
+        <a id="reminder_birthday" class="easyui-linkbutton" data-options="iconCls:'icon-birthday'" style="width:100%"
+           title="七天内过生日的社员，请点击查询">生日提醒</a>
+        <a id="reminder_retire" class="easyui-linkbutton" data-options="iconCls:'icon-old'" style="width:100%">退休提醒</a>
+        <a class="easyui-linkbutton" style="width:100%">Reload</a>
+        <a class="easyui-linkbutton" style="width:100%">Help</a>
+    </div>
 </div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"
@@ -362,6 +379,30 @@
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="hobby" style="width:100%" data-options="label:'爱好:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="sector" style="width:100%"
+                   data-options="label:'界别:',url:'data/sector.json',method:'get',prompt:'请选择',panelHeight:'auto',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="lost" style="width:100%"
+                   data-options="label:'是否失联:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="stratum" style="width:100%"
+                   data-options="label:'新阶层:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="jobLevel" style="width:100%"
+                   data-options="label:'职务级别:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="titleLevel" style="width:100%"
+                   data-options="label:'职称级别:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="highestEducation" style="width:100%"
+                   data-options="label:'最高学历:',required:true,valueField:'value',textField:'text',url:'data/highestEducation.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-filebox" name="picture" style="width:100%" data-options="label:'照片上传:',required:true">
@@ -496,6 +537,32 @@
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="hobby" style="width:100%" data-options="label:'爱好:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <select class="easyui-combobox" name="sector" style="width:100%"
+                    data-options="label:'界别:',url:'data/sector.json',method:'get',prompt:'请选择',panelHeight:'auto',required:true"></select>
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="lost" style="width:100%"
+                   data-options="label:'是否失联:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-combobox" name="stratum" style="width:100%"
+                   data-options="label:'新阶层:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="jobLevel" style="width:100%"
+                   data-options="label:'职务级别:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="titleLevel" style="width:100%"
+                   data-options="label:'职称级别:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <div style="margin-bottom:20px" class="member-property">
+                <input class="easyui-combobox" name="highestEducation" style="width:100%"
+                       data-options="label:'最高学历:',required:true,valueField:'value',textField:'text',url:'data/highestEducation.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            </div>
         </div>
         <input name="_id" hidden="true">
         <!--<input name="_rev" hidden="true">-->

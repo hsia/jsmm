@@ -12,7 +12,21 @@ $(function () {
     var columns = [
         {field: 'formeOrganizationCategory', title: '社内组织类别', width: 110, align: 'left', editor: 'textbox'},
         {field: 'formeOrganizationName', title: '社内组织名称', width: 110, align: 'left', editor: 'textbox'},
-        {field: 'formeOrganizationLevel', title: '社会组织级别', width: 120, align: 'left', editor: 'textbox'},
+        {
+            field: 'formeOrganizationLevel',
+            title: '社内组织级别',
+            width: 120, align: 'left',
+            editor: {
+                type: 'combobox',
+                options: {
+                    valueField: 'value',
+                    textField: 'text',
+                    method: 'get',
+                    url: 'data/formeOrganizationLevel.json',
+                    prompt: '请选择'
+                }
+            }
+        },
         {field: 'formeOrganizationJob', title: '社内职务名称', width: 120, align: 'left', editor: 'textbox'},
         {field: 'formeTheTime', title: '届次', width: 120, align: 'left', editor: 'textbox'},
         {field: 'formeStartTime', title: '开始时间', width: 120, align: 'left', editor: 'datebox'},

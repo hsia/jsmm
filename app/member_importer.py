@@ -417,6 +417,8 @@ class MemberInfoImporter():
             return msg
         else:
             self._member["retireTime"] = get_retire_time(self._member["birthday"], self._member["gender"])
+            self._member["lost"] = "否"
+            self._member["stratum"] = "否"
             couch_db.post(r'/jsmm/', self._member)
             return {"success": True}
 
