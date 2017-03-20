@@ -205,7 +205,7 @@
                    data-options="label:'最高学历:',required:true,valueField:'value',textField:'text',url:'data/highestEducation.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
         <div id="retire_time_div" style="margin-bottom:20px" class="member-property">
-            <input id="retire_time_input" class="easyui-textbox" name="retireTime" style="width:100%" data-options="label:'退休:',required:true">
+            <input id="retire_time_input" class="easyui-textbox" name="retireTime" style="width:100%" data-options="label:'退休:',required:true,readonly:true,prompt:'请单击'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="lost" style="width:100%"
@@ -220,9 +220,6 @@
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="titleLevel" style="width:100%" data-options="label:'职称级别:',required:true">
-        </div>
-        <div id="member_input_div" style="margin-bottom:20px" class="member-property">
-            <input id="member_input" readonly>
         </div>
     </form>
 </div>
