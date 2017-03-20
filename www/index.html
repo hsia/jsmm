@@ -215,6 +215,12 @@
             <input class="easyui-combobox" name="stratum" style="width:100%"
                    data-options="label:'新阶层:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="jobLevel" style="width:100%" data-options="label:'职务级别:',required:true">
+        </div>
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="titleLevel" style="width:100%" data-options="label:'职称级别:',required:true">
+        </div>
     </form>
 </div>
 <div id="document-search" class="member-dialog">
@@ -404,9 +410,9 @@
             <input class="easyui-combobox" name="highestEducation" style="width:100%"
                    data-options="label:'最高学历:',required:true,valueField:'value',textField:'text',url:'data/highestEducation.json',method:'get',prompt:'请选择',panelHeight:'auto'">
         </div>
-        <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-filebox" name="picture" style="width:100%" data-options="label:'照片上传:',required:true">
-        </div>
+        <!--<div style="margin-bottom:20px" class="member-property">-->
+            <!--<input class="easyui-filebox" name="picture" style="width:100%" data-options="label:'照片上传:',required:true">-->
+        <!--</div>-->
     </form>
 </div>
 <div id="memberEdit-dialog" class="member-dialog">
