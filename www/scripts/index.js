@@ -423,9 +423,6 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
-        if(memberInfo['retireTime'] == '是'){
-            memberInfo.retireTime = moment().format("YYYY-MM-DD");
-        }
         memberInfo.branch = (branch == null ? '' : branch);
         $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
             $('#member-search').dialog('close');
@@ -501,9 +498,9 @@ $(function () {
         })
     });
 
-    $('#retire_time').click(function () {
+    $('#retire_time_div').click(function () {
         var now = moment().format("YYYY-MM-DD");
-        $('#retire_time_input').val(now);
+        $('#retire_time_input').textbox("setValue",now);
     });
 
 });
