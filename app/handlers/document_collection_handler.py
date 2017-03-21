@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import json
-import time
 import urllib
 
 import tornado.web
 import tornado_utils
-from tornado.httpclient import HTTPClient, HTTPError, HTTPRequest
 
-from commons import couch_db, make_uuid, couchLucene_db
-from lib.couchdb import CouchDB
+from commons import couch_db, couchLucene_db
 
 
 @tornado_utils.bind_to(r'/documents/?')

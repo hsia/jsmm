@@ -31,25 +31,31 @@ def docCallBack(file):
         'fileType': file['filename'].split('.')[-1]
     }
 
-    if file['doc_type'] == 'departmentReport':
-        documentInfo['docType'] = 'departmentReport'
-    elif file['doc_type'] == 'departmentInfo':
-        documentInfo['docType'] = 'departmentInfo'
-    elif file['doc_type'] == 'speechesText':
-        documentInfo['docType'] = 'speechesText'
+    # if file['doc_type'] == 'researchReport':
+    #     documentInfo['docType'] = 'researchReport'
+    # elif file['doc_type'] == 'departmentInfo':
+    #     documentInfo['docType'] = 'departmentInfo'
+    # elif file['doc_type'] == 'speechesText':
+    #     documentInfo['docType'] = 'speechesText'
+    # elif file['doc_type'] == 'speechesText':
+    #     documentInfo['docType'] = 'speechesText'
 
-    if file['doc_type'] == 'departmentReport':
-        if ('departmentReport' not in memberInDb):
-            memberInDb['departmentReport'] = []
-        memberInDb['departmentReport'].append(documentInfo['_id'])
-    elif file['doc_type'] == 'departmentInfo':
-        if ('departmentInfo' not in memberInDb):
-            memberInDb['departmentInfo'] = []
-        memberInDb['departmentInfo'].append(documentInfo['_id'])
-    elif file['doc_type'] == 'speechesText':
-        if ('speechesText' not in memberInDb):
-            memberInDb['speechesText'] = []
-        memberInDb['speechesText'].append(documentInfo['_id'])
+    if file['doc_type'] == 'researchReport':
+        if ('researchReport' not in memberInDb):
+            memberInDb['researchReport'] = []
+        memberInDb['researchReport'].append(documentInfo['_id'])
+    elif file['doc_type'] == 'unitedTheory':
+        if ('unitedTheory' not in memberInDb):
+            memberInDb['unitedTheory'] = []
+        memberInDb['unitedTheory'].append(documentInfo['_id'])
+    elif file['doc_type'] == 'politicsInfo':
+        if ('politicsInfo' not in memberInDb):
+            memberInDb['politicsInfo'] = []
+        memberInDb['politicsInfo'].append(documentInfo['_id'])
+    elif file['doc_type'] == 'propaganda':
+        if ('propaganda' not in memberInDb):
+            memberInDb['propaganda'] = []
+        memberInDb['propaganda'].append(documentInfo['_id'])
 
     documentResponse = couch_db.post(r'/jsmm/', documentInfo)
     memberResponse = couch_db.put(r'/jsmm/%(id)s' % {"id": file['member_id']}, memberInDb)

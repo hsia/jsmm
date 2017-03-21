@@ -1,14 +1,18 @@
 [
   {
-    "value": "departmentReport",
-    "text": "部门报告"
+    "value": "researchReport",
+    "text": "调研报告"
   },
   {
-    "value": "departmentInfo",
-    "text": "部门信息"
+    "value": "politicsInfo",
+    "text": "参政议政信息"
   },
   {
-    "value": "speechesText",
-    "text": "演讲稿"
+    "value": "unitedTheory",
+    "text": "统战理论"
+  },
+  {
+    "value": "propaganda",
+    "text": "宣传稿"
   }
 ]

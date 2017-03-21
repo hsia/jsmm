@@ -31,9 +31,10 @@
     <script type="text/javascript" src="scripts/tab/duties/socialinfo.js"></script>
     <script type="text/javascript" src="scripts/tab/political/politicsresume.js"></script>
     <script type="text/javascript" src="scripts/tab/political/participateperformance.js"></script>
-    <script type="text/javascript" src="scripts/tab/documents/depreportinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/documents/depinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/documents/speechesinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/researchinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/politicsinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/unitedtheory.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/propaganda.js"></script>
     <script type="text/javascript" src="scripts/documentlist.js"></script>
     <script type="text/javascript" src="scripts/tab/custom/clienttab.js"></script>
     <script type="text/javascript" src="scripts/tab/custom/addtab.js"></script>
@@ -43,13 +44,19 @@
     <div data-options="region:'north',border:false">
         <div class="banner">
             <div class="title">九三学社社员信息管理系统</div>
-            <div class="reminder bell" ></div>
+            <div class="reminder bell"></div>
         </div>
     </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
+
         <div class="easyui-panel" style="padding:5px; height:100%;">
-            <ul id="organTree" class="easyui-tree" id="organization-tree"
-                data-options="url:'data/organization.json',method:'get'"></ul>
+            <div style="padding-bottom: 10px;">
+                <a class="easyui-linkbutton" id="newOrgan">新建</a>
+                <a class="easyui-linkbutton" id="editOrgan">编辑</a>
+                <a class="easyui-linkbutton" id="mergeOrgan">合并</a>
+                <a class="easyui-linkbutton" id="deleteOrgan">删除</a>
+            </div>
+            <ul id="organTree" class="easyui-tree"></ul>
         </div>
     </div>
     <div data-options="region:'center'" style="height:100%;">
@@ -136,14 +143,17 @@
                         </div>
                         <div title="文档" data-options="fit:true,plain:true" style="padding:0;">
                             <div id="documents_tab" class="easyui-tabs" data-options="fit:true,plain:true">
-                                <div title="部门报告">
-                                    <table id="department-report" style="width:100%;height:100%"></table>
+                                <div title="调研报告">
+                                    <table id="research-report" style="width:100%;height:100%"></table>
                                 </div>
-                                <div title="部门信息">
-                                    <table id="department-info" style="width:100%;height:100%"></table>
+                                <div title="参政议政信息">
+                                    <table id="politics-info" style="width:100%;height:100%"></table>
                                 </div>
-                                <div title="发言稿">
-                                    <table id="speeches-text" style="width:100%;height:100%"></table>
+                                <div title="统战理论">
+                                    <table id="united-theory" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="宣传稿">
+                                    <table id="propaganda" style="width:100%;height:100%"></table>
                                 </div>
                             </div>
                         </div>
@@ -160,7 +170,8 @@
         </div>
     </div>
 </div>
-<div id="sonic-dialog" style="width: 100%;height: 100%;display: block; background-color: rgba(0,0,0,50); z-index: 1000;">
+<div id="sonic-dialog"
+     style="width: 100%;height: 100%;display: block; background-color: rgba(0,0,0,50); z-index: 1000;">
     <div style="width: 100px;height: 100px; margin: auto;" id="sonic-canvas"></div>
 </div>
 <div id="client_add_tab" style="width:500px;height:500px;">
@@ -182,6 +193,30 @@
                    accept=".doc,.docx,.xls,.xlsx"/><br/>
         </form>
     </div>
+</div>
+<div id="organ-add" class="member-dialog">
+    <form id="organ-add-form" class="easyui-form member-form" data-options="validate:true">
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="organName" style="width:100%"
+                   data-options="label:'组织机构名称:',required:true">
+        </div>
+    </form>
+</div>
+<div id="organ-edit" class="member-dialog">
+    <form id="organ-edit-form" class="easyui-form member-form" data-options="validate:true">
+        <div style="margin-bottom:20px" class="member-property">
+            <input class="easyui-textbox" name="organName" style="width:100%"
+                   data-options="label:'组织机构名称:',required:true">
+        </div>
+    </form>
+</div>
+<div id="organ-merge" class="member-dialog">
+    <form id="organ-merge-form" class="easyui-form member-form" data-options="validate:true">
+        <div style="margin-bottom:20px" class="member-property">
+            <select id="mergeBranch" class="easyui-combotree" name="organName" style="width:100%"
+                    data-options="label:'目标支社:',url:'/organ',method:'get',required:true"></select>
+        </div>
+    </form>
 </div>
 <div id="member-search" class="member-dialog">
     <form id="member-search-form" class="easyui-form member-form" data-options="novalidate:true">
@@ -227,11 +262,12 @@
 </div>
 <div id="reminder_dialog">
     <div style="padding:5px 0;">
-        <a id="reminder_birthday" class="easyui-linkbutton" data-options="iconCls:'icon-birthday'" style="width:100%" title="七天内过生日的社员，请点击查询" >生日提醒</a>
-		<a id="reminder_retire" class="easyui-linkbutton" data-options="iconCls:'icon-old'" style="width:100%">退休提醒</a>
-		<a class="easyui-linkbutton" style="width:100%">Reload</a>
-		<a class="easyui-linkbutton" style="width:100%">Help</a>
-	</div>
+        <a id="reminder_birthday" class="easyui-linkbutton" data-options="iconCls:'icon-birthday'" style="width:100%"
+           title="七天内过生日的社员，请点击查询">生日提醒</a>
+        <a id="reminder_retire" class="easyui-linkbutton" data-options="iconCls:'icon-old'" style="width:100%">退休提醒</a>
+        <a class="easyui-linkbutton" style="width:100%">Reload</a>
+        <a class="easyui-linkbutton" style="width:100%">Help</a>
+    </div>
 </div>
 <div id="member-dialog" class="member-dialog">
     <form id="member-form" class="easyui-form member-form" data-options="novalidate:true"
@@ -284,8 +320,8 @@
             <input class="easyui-textbox" name="idNo" style="width:100%" data-options="label:'证件号码:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <select class="easyui-combotree" name="branch" style="width:100%"
-                    data-options="label:'所属支社:',url:'data/organization.json',method:'get',required:true"></select>
+            <select id="newBranch" class="easyui-combotree" name="branch" style="width:100%"
+                    data-options="label:'所属支社:',url:'/organ',method:'get',required:true"></select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
@@ -418,8 +454,8 @@
             <input class="easyui-textbox" name="idNo" style="width:100%" data-options="label:'证件号码:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <select class="easyui-combotree" name="branch" style="width:100%"
-                    data-options="label:'所属支社:',url:'data/organization.json',method:'get',required:true"></select>
+            <select id="editBranch" class="easyui-combotree" name="branch" style="width:100%"
+                    data-options="label:'所属支社:',url:'/organ',method:'get',required:true"></select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">

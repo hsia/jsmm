@@ -4,15 +4,12 @@
 Copyright lixia@ccrise.com
 '''
 import json
-import os.path
-import urllib
-import uuid
 import time
+import urllib
 
 import tornado.web
-from tornado.httputil import HTTPHeaders
-
 import tornado_utils
+
 from commons import couch_db, make_uuid
 
 
@@ -170,18 +167,22 @@ class AttachmentHandler(tornado.web.RequestHandler):
         result = json.loads(documentResponse.body.decode('utf-8'))
         document_id = result["id"];
 
-        if doc_type == 'departmentReport':
-            if ('departmentReport' not in memberInDb):
-                memberInDb['departmentReport'] = []
-            memberInDb['departmentReport'].append(document_id)
-        elif doc_type == 'departmentInfo':
-            if ('departmentInfo' not in memberInDb):
-                memberInDb['departmentInfo'] = []
-            memberInDb['departmentInfo'].append(document_id)
-        elif doc_type == 'speechesText':
-            if ('speechesText' not in memberInDb):
-                memberInDb['speechesText'] = []
-            memberInDb['speechesText'].append(document_id)
+        if doc_type == 'researchReport':
+            if ('researchReport' not in memberInDb):
+                memberInDb['researchReport'] = []
+            memberInDb['researchReport'].append(document_id)
+        elif doc_type == 'unitedTheory':
+            if ('unitedTheory' not in memberInDb):
+                memberInDb['unitedTheory'] = []
+            memberInDb['unitedTheory'].append(document_id)
+        elif doc_type == 'politicsInfo':
+            if ('politicsInfo' not in memberInDb):
+                memberInDb['politicsInfo'] = []
+            memberInDb['politicsInfo'].append(document_id)
+        elif doc_type == 'propaganda':
+            if ('propaganda' not in memberInDb):
+                memberInDb['propaganda'] = []
+            memberInDb['propaganda'].append(document_id)
 
         responseMemberPut = couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, memberInDb)
 

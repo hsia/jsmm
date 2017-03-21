@@ -3,14 +3,11 @@
 
 
 import json
-import os.path
-import time
-import uuid
 
 import tornado.web
-
 import tornado_utils
-from commons import couch_db, make_uuid
+
+from commons import couch_db
 
 
 @tornado_utils.bind_to(r'/document/([0-9a-f]+)')
@@ -40,12 +37,14 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         responseMember = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": document["memberId"]})
         member = json.loads(responseMember.body.decode('utf-8'))
-        if document['docType'] == 'departmentReport':
-            member['departmentReport'].remove(document['_id'])
-        elif document['docType'] == 'departmentInfo':
-            member['departmentInfo'].remove(document['_id'])
-        elif document['docType'] == 'speechesText':
-            member['speechesText'].remove(document['_id'])
+        if document['docType'] == 'researchReport':
+            member['researchReport'].remove(document['_id'])
+        elif document['docType'] == 'unitedTheory':
+            member['unitedTheory'].remove(document['_id'])
+        elif document['docType'] == 'politicsInfo':
+            member['politicsInfo'].remove(document['_id'])
+        elif document['docType'] == 'propaganda':
+            member['propaganda'].remove(document['_id'])
         # 删除Document记录
         responseDelDocument = couch_db.delete(r'/jsmm/%(document_id)s?rev=%(document_rev)s' %
                                               {'document_id': document_id, 'document_rev': document['_rev']})

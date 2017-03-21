@@ -2,11 +2,12 @@
  * Created by S on 2017/2/21.
  */
 
-// 发言稿
+// 调研报告
 $(function () {
-    var tabId = 'speechesText';
-    var $grid = $("#speeches-text");
-    var gridTab = new GridTab(tabId, $grid);
+    var tabId = 'researchReport';
+    var $grid = $("#research-report");
+    var docType = "researchReport";
+    var gridTab = new GridTab(tabId, $grid, docType);
     var columns = [
         {
             field: 'fileUploadTime',
@@ -33,7 +34,7 @@ $(function () {
         }
     ];
     var toolbar = [{
-        text: '发言稿上传',
+        text: '调研报告上传',
         iconCls: 'icon-import',
         handler: function () {
             gridTab.docUpload()
