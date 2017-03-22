@@ -165,13 +165,21 @@ $(function () {
         handler: function () {
             client_add_tab();
         }
-    }, '-', {
-        text: '提醒',
-        iconCls: 'icon-clock',
+    }
+    // , '-', {
+    //     text: '提醒',
+    //     iconCls: 'icon-clock',
+    //     handler: function () {
+    //         reminderBirthday();
+    //     }
+    //
+    // }
+    ,'-',{
+        text: '社员导出',
+        iconCls: 'save-excel',
         handler: function () {
-            reminderBirthday();
+            exportMembersExcel();
         }
-
     }];
 
     var defaultUrl = '/members';
@@ -470,37 +478,48 @@ $(function () {
         })
     }
 
-    function reminderBirthday() {
-        $('#reminder_dialog').dialog({
-            title: '提醒',
-            closed: false,
-            cache: false,
-            modal: true,
-            height: 200,
-            width: 200
-        })
-    }
-
-    $('#reminder_birthday').click(function () {
-        var now = moment().format("M-D");
-        var end = moment().add(7, 'd').format("M-D");
-        $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
-            $memberList.datagrid('loadData', data);
-            $('#reminder_dialog').dialog("close")
-        });
-    });
-
-    $('#reminder_retire').click(function () {
-       var now = moment().format("YYYY-MM-DD");
-        $.get('/members/reminder/' + now,function (data) {
-            $memberList.datagrid('loadData', data.docs);
-            $('#reminder_dialog').dialog("close")
-        })
-    });
+    // function reminderBirthday() {
+    //     $('#reminder_dialog').dialog({
+    //         title: '提醒',
+    //         closed: false,
+    //         cache: false,
+    //         modal: true,
+    //         height: 200,
+    //         width: 200
+    //     })
+    // }
+    //
+    // $('#reminder_birthday').click(function () {
+    //     var now = moment().format("M-D");
+    //     var end = moment().add(7, 'd').format("M-D");
+    //     $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
+    //         $memberList.datagrid('loadData', data);
+    //         $('#reminder_dialog').dialog("close")
+    //     });
+    // });
+    //
+    // $('#reminder_retire').click(function () {
+    //    var now = moment().format("YYYY-MM-DD");
+    //     $.get('/members/reminder/' + now,function (data) {
+    //         $memberList.datagrid('loadData', data.docs);
+    //         $('#reminder_dialog').dialog("close")
+    //     })
+    // });
 
     $('#retire_time_div').click(function () {
         var now = moment().format("YYYY-MM-DD");
         $('#retire_time_input').textbox("setValue",now);
     });
+
+    function exportMembersExcel(){
+        $('#members_export_excel').dialog({
+            title: '社员导出',
+            closed: false,
+            cache: false,
+            modal: true,
+            height: 100,
+            width: 200
+        })
+    }
 
 });
