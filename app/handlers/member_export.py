@@ -1,33 +1,97 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import xlwt
-import tornado.web
-import tornado_utils
+import json
 import urllib
 from io import BytesIO
 
-@tornado_utils.bind_to(r'/member/export/')
-class memberExport(tornado.web.RequestHandler):
+import time
+import tornado.web
+import tornado_utils
+import xlwt
 
+from commons import couch_db
+
+
+@tornado_utils.bind_to(r'/member/simpleinfo/?')
+class membersExport(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self):
+        selector = {
+            "selector": {
+                "type": {"$eq": "member"}
+            },
+            "fields": ["name", "gender", "highestEducation", "jobTitle", "duty", "mobile",
+                       "email", "companyName", "companyTel", "commAddress", "commPost"]
+        }
+        response = couch_db.post(r'/jsmm/_find/', selector)
+        membersSimpleInfo = json.loads(response.body.decode('utf-8'))["docs"]
 
-        style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on')
+        titles = {u'姓名': 10, u'性别': 6, u'最高学历': 10, u'职称': 12, u'职务': 12, u'移动电话': 13, u'邮箱': 25, u'单位名称': 26,
+                  u'单位电话': 15, u'单位地址': 40, u'邮编': 10}
 
-        pattern = xlwt.Pattern()
-        pattern.pattern = xlwt.Pattern.SOLID_PATTERN
-        pattern.pattern_fore_colour = 22
-        style = xlwt.XFStyle()
-        style.pattern = pattern
+        style_heading = xlwt.easyxf("""
+                font:
+                    name 微软雅黑,
+                    colour_index black,
+                    bold on,
+                    height 200;
+                align:
+                    wrap off,
+                    vert center,
+                    horiz centre;
+                pattern:
+                    pattern solid,
+                    fore-colour 22;
+                borders:
+                    left THIN,
+                    right THIN,
+                    top THIN,
+                    bottom THIN;
+                """)
+        style_data = xlwt.easyxf("""
+                        font:
+                            name 微软雅黑,
+                            colour_index black,
+                            bold off,
+                            height 180;
+                        align:
+                            wrap off,
+                            vert center,
+                            horiz left;
+                        pattern:
+                            pattern solid,
+                            fore-colour 1;
+                        borders:
+                            left thin,
+                            right thin,
+                            top thin,
+                            bottom thin;
+                        """)
 
-        wb = xlwt.Workbook()
-        ws = wb.add_sheet('A Test Sheet', cell_overwrite_ok=True)
+        workBook = xlwt.Workbook(encoding='utf-8')
+        workSheet = workBook.add_sheet('会员信息简表')
 
-        # ws.write(0, 0, 'dfa', style)
-        ws.write_merge(0, 0, 0, 3, 'First Merge')
+        row = 0
+        column = 0
+        for title in titles:
+            workSheet.write(row, column, title, style_heading)
+            workSheet.col(column).width = titles[title] * 256
+            column += 1
+
+        if len(membersSimpleInfo) > 1:
+            row = 1
+            for member in membersSimpleInfo:
+                column = 0
+                for key in member:
+                    workSheet.write(row, column, member[key], style_data)
+                    column += 1
+                row += 1
+        else:
+            pass
+
         sio = BytesIO()
-        wb.save(sio)
+        workBook.save(sio)
         self.set_header('Content-Type', 'application/vnd.ms-excel')
-        self.set_header('Content-Disposition', 'attachment; filename=student_info.xls')
+        self.set_header('Content-Disposition', 'attachment; filename=' + urllib.parse.quote('会员信息简表.xls', "utf-8"))
         self.write(sio.getvalue())
+        self.finish()
