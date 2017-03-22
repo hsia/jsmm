@@ -13,12 +13,19 @@ class memberExport(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self):
 
-        # style0 = xlwt.easyxf('font: name Times New Roman', 'pattern_fore_colour Blue', 'font: bold 1')
+        style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on')
+
+        pattern = xlwt.Pattern()
+        pattern.pattern = xlwt.Pattern.SOLID_PATTERN
+        pattern.pattern_fore_colour = 22
+        style = xlwt.XFStyle()
+        style.pattern = pattern
 
         wb = xlwt.Workbook()
-        ws = wb.add_sheet('A Test Sheet')
+        ws = wb.add_sheet('A Test Sheet', cell_overwrite_ok=True)
 
-        ws.write(0, 0, 'dfa')
+        # ws.write(0, 0, 'dfa', style)
+        ws.write_merge(0, 0, 0, 3, 'First Merge')
         sio = BytesIO()
         wb.save(sio)
         self.set_header('Content-Type', 'application/vnd.ms-excel')
