@@ -71,8 +71,8 @@ class membersExport(tornado.web.RequestHandler):
         workBook = xlwt.Workbook(encoding='utf-8')
         workSheet = workBook.add_sheet('会员信息简表')
 
-        row = 0
         column = 0
+        row = 0
         for title in titles:
             workSheet.write(row, column, title, style_heading)
             workSheet.col(column).width = titles[title] * 256
