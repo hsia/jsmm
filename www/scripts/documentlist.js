@@ -86,7 +86,7 @@ $(function () {
         onSelect: function (title, index) {
             $("#tb-form").form('clear');
             console.log(title + "," + index);
-            if (index == 1) {
+            if (index == 1 && organName == null) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
                         var defaultUrl = '/documents';
