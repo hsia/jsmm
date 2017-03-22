@@ -128,14 +128,35 @@ class memberInfoExport(tornado.web.RequestHandler):
 @tornado_utils.bind_to(r'/member/simpleinfo/?')
 class membersExport(tornado.web.RequestHandler):
     @tornado.web.addslash
-    def get(self):
+    def post(self):
+        keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'titleLevel', 'highestEducation']
         selector = {
-            "selector": {
-                "type": {"$eq": "member"}
-            },
-            "fields": ["name", "gender", "highestEducation", "jobTitle", "duty", "mobile",
-                       "email", "companyName", "companyTel", "commAddress", "commPost"]
+            "selector": {},
+            "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ", "branchTime"]
         }
+        objC = selector["selector"]
+        search = json.loads(self.request.body.decode('utf-8'))
+
+        for key in keys:
+            if key in search:
+                if search[key] != '':
+                    objC[key] = {'$eq': search[key]}
+
+        if 'retireTime' in search:
+            if search['retireTime'] != '':
+                objC['retireTime'] = {"$lt": search["retireTime"]}
+
+        if 'branch' in search:
+            if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
+                objC['branch'] = {"$eq": search["branch"]}
+        objC['type'] = {"$eq": "member"}
+        # selector = {
+        #     "selector": {
+        #         "type": {"$eq": "member"}
+        #     },
+        #     "fields": ["name", "gender", "highestEducation", "jobTitle", "duty", "mobile",
+        #                "email", "companyName", "companyTel", "commAddress", "commPost"]
+        # }
         response = couch_db.post(r'/jsmm/_find/', selector)
         membersSimpleInfo = json.loads(response.body.decode('utf-8'))["docs"]
 
@@ -182,7 +203,7 @@ class membersExport(tornado.web.RequestHandler):
                         """)
 
         workBook = xlwt.Workbook(encoding='utf-8')
-        workSheet = workBook.add_sheet('会员信息简表')
+        workSheet = workBook.add_sheet('社员信息简表')
 
         column = 0
         row = 0
@@ -205,6 +226,6 @@ class membersExport(tornado.web.RequestHandler):
         sio = BytesIO()
         workBook.save(sio)
         self.set_header('Content-Type', 'application/vnd.ms-excel')
-        self.set_header('Content-Disposition', 'attachment; filename=' + urllib.parse.quote('会员信息简表.xls', "utf-8"))
+        self.set_header('Content-Disposition', 'attachment; filename=' + urllib.parse.quote('社员信息简表.xls', "utf-8"))
         self.write(sio.getvalue())
         self.finish()
