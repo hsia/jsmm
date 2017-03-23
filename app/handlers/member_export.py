@@ -119,189 +119,199 @@ class memberInfoExport(tornado.web.RequestHandler):
         for obj in dict(member):
             for case in switch(obj):
                 if case('specializedskill'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'业务专长', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'专业分类', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'专业名称', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 5, 9, u'专业详细名称', memberInfoStyle)
-                    for i in range(0, len(member['specializedskill'])):
-                        obj = member['specializedskill'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['specializedType'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4, obj['specializedName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 9, obj['specializedDetailName'], memberInfoStyle)
-                    obj_row = 3 + len(member['specializedskill'])
-                    current_row += obj_row
-                    break
+                    if len(member['specializedskill']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'业务专长', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'专业分类', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'专业名称', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 5, 9, u'专业详细名称', memberInfoStyle)
+                        for i in range(0, len(member['specializedskill'])):
+                            obj = member['specializedskill'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['specializedType'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4, obj['specializedName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 9, obj['specializedDetailName'], memberInfoStyle)
+                        obj_row = 3 + len(member['specializedskill'])
+                        current_row += obj_row
+                        break
                 if case('educationDegree'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'学历信息', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'学校名称', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 2, 3, u'起止时间', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'所学专业', memberInfoStyle)
-                    ws.write(current_row + 2, 6, u'取得学历', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 7, 8, u'所获学位', memberInfoStyle)
-                    ws.write(current_row + 2, 9, u'教育类别', memberInfoStyle)
-                    for i in range(0, len(member['educationDegree'])):
-                        obj = member['educationDegree'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['eduSchoolName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3, obj['eduStartingDate'] + ' - ' + obj['eduGraduateDate'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['eduMajor'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 6, obj['eduEducation'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8, obj['eduDegree'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 9, obj['eduEducationType'], memberInfoStyle)
-                    obj_row = 3 + len(member['educationDegree'])
-                    current_row += obj_row
-                    break
+                    if len(member['educationDegree']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'学历信息', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'学校名称', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 2, 3, u'起止时间', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'所学专业', memberInfoStyle)
+                        ws.write(current_row + 2, 6, u'取得学历', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 7, 8, u'所获学位', memberInfoStyle)
+                        ws.write(current_row + 2, 9, u'教育类别', memberInfoStyle)
+                        for i in range(0, len(member['educationDegree'])):
+                            obj = member['educationDegree'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['eduSchoolName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3, obj['eduStartingDate'] + ' - ' + obj['eduGraduateDate'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['eduMajor'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 6, obj['eduEducation'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8, obj['eduDegree'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 9, obj['eduEducationType'], memberInfoStyle)
+                        obj_row = 3 + len(member['educationDegree'])
+                        current_row += obj_row
+                        break
                 if case('familyRelations'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'社会关系', style)
-                    ws.write(current_row + 2, 0, u'姓名', memberInfoStyle)
-                    ws.write(current_row + 2, 1, u'与本人关系', memberInfoStyle)
-                    ws.write(current_row + 2, 2, u'性别', memberInfoStyle)
-                    ws.write(current_row + 2, 3, u'出生年月', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'工作单位', memberInfoStyle)
-                    ws.write(current_row + 2, 6, u'职务', memberInfoStyle)
-                    ws.write(current_row + 2, 7, u'国籍', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'政治面貌', memberInfoStyle)
-                    for i in range(0, len(member['familyRelations'])):
-                        obj = member['familyRelations'][i]
-                        ws.write(current_row + 3 + i, 0, obj['familyName'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 1, obj['familyRelation'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 2, obj['familyGender'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 3, obj['familyBirthDay'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['familyCompany'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 6, obj['familyJob'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 7, obj['familyNationality'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['familyPolitical'], memberInfoStyle)
-                    obj_row = 3 + len(member['familyRelations'])
-                    current_row += obj_row
-                    break
+                    if len(member['familyRelations']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'社会关系', style)
+                        ws.write(current_row + 2, 0, u'姓名', memberInfoStyle)
+                        ws.write(current_row + 2, 1, u'与本人关系', memberInfoStyle)
+                        ws.write(current_row + 2, 2, u'性别', memberInfoStyle)
+                        ws.write(current_row + 2, 3, u'出生年月', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'工作单位', memberInfoStyle)
+                        ws.write(current_row + 2, 6, u'职务', memberInfoStyle)
+                        ws.write(current_row + 2, 7, u'国籍', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'政治面貌', memberInfoStyle)
+                        for i in range(0, len(member['familyRelations'])):
+                            obj = member['familyRelations'][i]
+                            ws.write(current_row + 3 + i, 0, obj['familyName'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 1, obj['familyRelation'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 2, obj['familyGender'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 3, obj['familyBirthDay'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['familyCompany'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 6, obj['familyJob'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 7, obj['familyNationality'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['familyPolitical'], memberInfoStyle)
+                        obj_row = 3 + len(member['familyRelations'])
+                        current_row += obj_row
+                        break
                 if case('jobResumes'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'工作履历', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'单位名称', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 2, 3, u'工作部门', memberInfoStyle)
-                    ws.write(current_row + 2, 4, u'职务', memberInfoStyle)
-                    ws.write(current_row + 2, 5, u'职称', memberInfoStyle)
-                    ws.write(current_row + 2, 6, u'学术职务', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 7, 8, u'起止时间', memberInfoStyle)
-                    ws.write(current_row + 2, 9, u'证明人', memberInfoStyle)
-                    for i in range(0, len(member['jobResumes'])):
-                        obj = member['jobResumes'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['jobCompanyName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3, obj['jobDep'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 4, obj['jobDuties'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 5, obj['jobTitle'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 6, obj['jobAcademic'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8, obj['jobStartTime']+' - '+obj['jobEndTime'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 9, obj['jobReterence'], memberInfoStyle)
-                    obj_row = 3 + len(member['jobResumes'])
-                    current_row += obj_row
-                    break
+                    if len(member['jobResumes']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'工作履历', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'单位名称', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 2, 3, u'工作部门', memberInfoStyle)
+                        ws.write(current_row + 2, 4, u'职务', memberInfoStyle)
+                        ws.write(current_row + 2, 5, u'职称', memberInfoStyle)
+                        ws.write(current_row + 2, 6, u'学术职务', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 7, 8, u'起止时间', memberInfoStyle)
+                        ws.write(current_row + 2, 9, u'证明人', memberInfoStyle)
+                        for i in range(0, len(member['jobResumes'])):
+                            obj = member['jobResumes'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['jobCompanyName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3, obj['jobDep'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 4, obj['jobDuties'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 5, obj['jobTitle'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 6, obj['jobAcademic'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8, obj['jobStartTime']+' - '+obj['jobEndTime'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 9, obj['jobReterence'], memberInfoStyle)
+                        obj_row = 3 + len(member['jobResumes'])
+                        current_row += obj_row
+                        break
                 if case('award'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'获奖情况', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 2, u'获奖项目名称', memberInfoStyle)
-                    ws.write(current_row + 2, 3, u'获奖时间', memberInfoStyle)
-                    ws.write(current_row + 2, 4, u'获奖级别', memberInfoStyle)
-                    ws.write(current_row + 2, 5, u'项目中角色', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 6, 7, u'授予单位', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'备注', memberInfoStyle)
-                    for i in range(0, len(member['award'])):
-                        obj = member['award'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['awardProjectName'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 3, obj['awardDate'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 4, obj['awardNameAndLevel'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 5, obj['awardRoleInProject'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['awardCompany'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['awardMemo'], memberInfoStyle)
-                    obj_row = 3 + len(member['award'])
-                    current_row += obj_row
-                    break
+                    if len(member['award']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'获奖情况', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 2, u'获奖项目名称', memberInfoStyle)
+                        ws.write(current_row + 2, 3, u'获奖时间', memberInfoStyle)
+                        ws.write(current_row + 2, 4, u'获奖级别', memberInfoStyle)
+                        ws.write(current_row + 2, 5, u'项目中角色', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 6, 7, u'授予单位', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'备注', memberInfoStyle)
+                        for i in range(0, len(member['award'])):
+                            obj = member['award'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['awardProjectName'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 3, obj['awardDate'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 4, obj['awardNameAndLevel'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 5, obj['awardRoleInProject'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['awardCompany'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['awardMemo'], memberInfoStyle)
+                        obj_row = 3 + len(member['award'])
+                        current_row += obj_row
+                        break
                 if case('patents'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专利情况', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 3, u'获专利名称', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'获专利时间', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 6, 9, u'专利号', memberInfoStyle)
-                    for i in range(0, len(member['patents'])):
-                        obj = member['patents'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['patentName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['patentDate'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 9, obj['patenNo'], memberInfoStyle)
-                    obj_row = 3 + len(member['patents'])
-                    current_row += obj_row
-                    break
+                    if len(member['patents']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专利情况', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 3, u'获专利名称', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'获专利时间', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 6, 9, u'专利号', memberInfoStyle)
+                        for i in range(0, len(member['patents'])):
+                            obj = member['patents'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['patentName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['patentDate'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 9, obj['patenNo'], memberInfoStyle)
+                        obj_row = 3 + len(member['patents'])
+                        current_row += obj_row
+                        break
                 if case('paper'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'主要论文著作', style)
-                    ws.write(current_row + 2, 0, u'论文/著作', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 1, 3, u'作品名称', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 4, 6, u'刊物/出版社', memberInfoStyle)
-                    ws.write(current_row + 2, 7, u'第几作者', memberInfoStyle)
-                    ws.write(current_row + 2, 8, u'发行时间', memberInfoStyle)
-                    ws.write(current_row + 2, 9, u'角色说明', memberInfoStyle)
-                    for i in range(0, len(member['paper'])):
-                        obj = member['paper'][i]
-                        ws.write(current_row + 3 + i, 0, obj['paperPublications'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 1, 3, obj['paperName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 6, obj['paperPress'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 7, obj['paperAuthorSort'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 8, obj['paperPressDate'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 9, obj['paperRoleDetail'], memberInfoStyle)
-                    obj_row = 3 + len(member['paper'])
-                    current_row += obj_row
-                    break
+                    if len(member['paper']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'主要论文著作', style)
+                        ws.write(current_row + 2, 0, u'论文/著作', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 1, 3, u'作品名称', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 4, 6, u'刊物/出版社', memberInfoStyle)
+                        ws.write(current_row + 2, 7, u'第几作者', memberInfoStyle)
+                        ws.write(current_row + 2, 8, u'发行时间', memberInfoStyle)
+                        ws.write(current_row + 2, 9, u'角色说明', memberInfoStyle)
+                        for i in range(0, len(member['paper'])):
+                            obj = member['paper'][i]
+                            ws.write(current_row + 3 + i, 0, obj['paperPublications'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 1, 3, obj['paperName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 6, obj['paperPress'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 7, obj['paperAuthorSort'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 8, obj['paperPressDate'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 9, obj['paperRoleDetail'], memberInfoStyle)
+                        obj_row = 3 + len(member['paper'])
+                        current_row += obj_row
+                        break
                 if case('professionalSkill'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专业技术工作', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 3, u'项目名称', memberInfoStyle)
-                    ws.write(current_row + 2, 4, u'项目类别', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 5, 6, u'项目下达单位', memberInfoStyle)
-                    ws.write(current_row + 2, 7, u'项目中所任角色', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'起止时间', memberInfoStyle)
-                    for i in range(0, len(member['professionalSkill'])):
-                        obj = member['professionalSkill'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['proProjectName'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 4, obj['proProjectType'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 6, obj['proProjectCompany'], memberInfoStyle)
-                        ws.write(current_row + 3 + i, 7, obj['proRolesInProject'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['proStartDate']+' - '+obj['porEndDate'], memberInfoStyle)
-                    obj_row = 3 + len(member['professionalSkill'])
-                    current_row += obj_row
-                    break
+                    if len(member['professionalSkill']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专业技术工作', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 3, u'项目名称', memberInfoStyle)
+                        ws.write(current_row + 2, 4, u'项目类别', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 5, 6, u'项目下达单位', memberInfoStyle)
+                        ws.write(current_row + 2, 7, u'项目中所任角色', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'起止时间', memberInfoStyle)
+                        for i in range(0, len(member['professionalSkill'])):
+                            obj = member['professionalSkill'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['proProjectName'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 4, obj['proProjectType'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 6, obj['proProjectCompany'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 7, obj['proRolesInProject'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['proStartDate']+' - '+obj['porEndDate'], memberInfoStyle)
+                        obj_row = 3 + len(member['professionalSkill'])
+                        current_row += obj_row
+                        break
                 if case('achievements'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专业技术成果', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 2, u'成果名称', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 3, 5, u'成果水平', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 6, 7, u'鉴定单位', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'备注', memberInfoStyle)
-                    for i in range(0, len(member['achievements'])):
-                        obj = member['achievements'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['achievementsName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 3, 5, obj['achievementsLevel'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['identificationUnit'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['achievementsRemark'], memberInfoStyle)
-                    obj_row = 3 + len(member['achievements'])
-                    current_row += obj_row
-                    break
+                    if len(member['achievements']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专业技术成果', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 2, u'成果名称', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 3, 5, u'成果水平', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 6, 7, u'鉴定单位', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'备注', memberInfoStyle)
+                        for i in range(0, len(member['achievements'])):
+                            obj = member['achievements'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['achievementsName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 3, 5, obj['achievementsLevel'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['identificationUnit'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['achievementsRemark'], memberInfoStyle)
+                        obj_row = 3 + len(member['achievements'])
+                        current_row += obj_row
+                        break
                 if case('agencybroker'):
-                    ws.write_merge(current_row, current_row, 0, 9, u'')
-                    ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'入社介绍人', style)
-                    ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'姓名', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'单位', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 5, 6, u'职务', memberInfoStyle)
-                    ws.write_merge(current_row + 2, current_row + 2, 7, 9, u'与本人关系', memberInfoStyle)
-                    for i in range(0, len(member['agencybroker'])):
-                        obj = member['agencybroker'][i]
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['agencyName'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4, obj['agencyCompany'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 6, obj['agencyJob'], memberInfoStyle)
-                        ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 9, obj['agencyRelationShip'], memberInfoStyle)
-                    obj_row = 3 + len(member['agencybroker'])
-                    current_row += obj_row
-                    break
+                    if len(member['agencybroker']) > 0:
+                        ws.write_merge(current_row, current_row, 0, 9, u'')
+                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'入社介绍人', style)
+                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'姓名', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'单位', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 5, 6, u'职务', memberInfoStyle)
+                        ws.write_merge(current_row + 2, current_row + 2, 7, 9, u'与本人关系', memberInfoStyle)
+                        for i in range(0, len(member['agencybroker'])):
+                            obj = member['agencybroker'][i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['agencyName'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4, obj['agencyCompany'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 6, obj['agencyJob'], memberInfoStyle)
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 9, obj['agencyRelationShip'], memberInfoStyle)
+                        obj_row = 3 + len(member['agencybroker'])
+                        current_row += obj_row
+                        break
 
         tall_style = xlwt.easyxf('font:height 360;')
         for i in range(0, current_row):
