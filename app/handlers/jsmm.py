@@ -24,7 +24,7 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
         for key in keys:
             if key in search:
                 if search[key] != '':
-                    objC[key] = {'$eq': search[key]}
+                    objC[key] = {'$regex': search[key]}
 
         if 'retireTime' in search:
             if search['retireTime'] != '':
@@ -33,6 +33,29 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
         if 'branch' in search:
             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
                 objC['branch'] = {"$eq": search["branch"]}
+
+        if 'socialPositionName' in search:
+            if search['socialPositionName'] != '':
+                objC['social'] = {"$elemMatch": {"socialPositionName": {"$regex": search['socialPositionName']}}}
+
+        if 'socialPositionLevel' in search:
+            if search['socialPositionLevel'] != '':
+                objC['social'] = {
+                    "$elemMatch": {"socialPositionLevel": {"$regex": search['socialPositionLevel']}}}
+
+        if 'formeOrganizationJob' in search:
+            if search['formeOrganizationJob'] != '':
+                objC['formercluboffice'] = {
+                    "$elemMatch": {"formeOrganizationJob": {"$regex": search['formeOrganizationJob']}}}
+
+        if 'formeOrganizationLevel' in search:
+            if search['formeOrganizationLevel'] != '':
+                objC['formercluboffice'] = {"$elemMatch": {"formeOrganizationLevel": {"$regex": search['formeOrganizationLevel']}}}
+
+        if 'startAge' in search and 'endAge' in search:
+            if search['startAge'] != '' and search['endAge']:
+                objC['birthday'] = {"$gte": search['endAge'], "$lte": search['startAge']}
+
         objC['type'] = {"$eq": "member"}
         response = couch_db.post(r'/jsmm/_find/', obj)
         members = json.loads(response.body.decode('utf-8'))
