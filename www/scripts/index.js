@@ -522,4 +522,16 @@ $(function () {
         })
     }
 
+    $('#memberInfo_export').click(function () {
+       var member = $memberList.datagrid('getSelected');
+       if (member == null) {
+            $.messager.alert('提示', '请选择需要导出的社员!', 'error');
+            return;
+        }
+        $.get('/member/export/'+ member._id,function () {
+            $.messager.alert('提示', '导出成功!', 'info');
+            $('#members_export_excel').dialog('close');
+        });
+    });
+
 });
