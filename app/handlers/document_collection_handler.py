@@ -11,121 +11,122 @@ from commons import couch_db, couchLucene_db
 
 @tornado_utils.bind_to(r'/documents/?')
 class DocumentHandler(tornado.web.RequestHandler):
+    def data_received(self, chunk):
+        pass
+
     def get(self):
-        '''
-        修改_id为member_id的member对象。
-        '''
+        """修改_id为member_id的member对象。
+        """
         response = couch_db.get(r'/jsmm/_design/documents/_view/by-memberid')
-        doucmentList = json.loads(response.body.decode('utf-8'))
+        doucment_list = json.loads(response.body.decode('utf-8'))
         documents = []
-        for row in doucmentList['rows']:
+        for row in doucment_list['rows']:
             documents.append(row['value'])
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documents))
 
     def post(self):
-        '''
+        """
         修改_id为member_id的member对象。
-        '''
+        """
         params = json.loads(self.request.body.decode('utf-8'))
 
-        pageNumber = params['page']
-        pageSize = params['rows']
+        page_number = params['page']
+        page_size = params['rows']
 
-        paramsStr = ""
+        params_str = ""
         if "documentInfo" in params:
             # name = params["documentInfo"]["name"]
             # fileName = params["documentInfo"]["fileName"]
-            keyWorld = params["documentInfo"]["keyWord"].replace(' ', '')
-            keyWordAttachment = params["documentInfo"]["keyWordAttachment"]
-            startDate = params["documentInfo"]["startDate"]
-            endDate = params["documentInfo"]["endDate"]
-            docType = params["documentInfo"]["docType"]
+            key_world = params["documentInfo"]["keyWord"].replace(' ', '')
+            key_word_attachment = params["documentInfo"]["keyWordAttachment"]
+            start_date = params["documentInfo"]["startDate"]
+            end_date = params["documentInfo"]["endDate"]
+            doc_type = params["documentInfo"]["docType"]
 
-            if keyWordAttachment != '':
-                paramsStr += keyWordAttachment
+            if key_word_attachment != '':
+                params_str += key_word_attachment
             else:
                 pass
 
-            # if name != '' and paramsStr != '':
-            #     paramsStr += ' AND name:"' + name + '"'
-            # elif name != '' and paramsStr == '':
-            #     paramsStr += 'name:"' + name + '"'
+            # if name != '' and params_str != '':
+            #     params_str += ' AND name:"' + name + '"'
+            # elif name != '' and params_str == '':
+            #     params_str += 'name:"' + name + '"'
             # else:
             #     pass
             #
-            # if fileName != '' and paramsStr != '':
-            #     paramsStr += ' AND fileName:"' + fileName + '"'
-            # elif fileName != '' and paramsStr == '':
-            #     paramsStr += 'fileName:"' + fileName + '"'
+            # if fileName != '' and params_str != '':
+            #     params_str += ' AND fileName:"' + fileName + '"'
+            # elif fileName != '' and params_str == '':
+            #     params_str += 'fileName:"' + fileName + '"'
             # else:
             #     pass
-            if keyWorld != '' and paramsStr != '':
-                paramsStr += ' AND (fileName:' + keyWorld + ' OR name:' + keyWorld + ')'
-            elif keyWorld != '' and paramsStr == '':
-                paramsStr += '(fileName:' + keyWorld + ' OR name:' + keyWorld + ')'
+            if key_world != '' and params_str != '':
+                params_str += ' AND (fileName:' + key_world + ' OR name:' + key_world + ')'
+            elif key_world != '' and params_str == '':
+                params_str += '(fileName:' + key_world + ' OR name:' + key_world + ')'
             else:
                 pass
 
-
-            if startDate != '' and endDate != '' and paramsStr != '':
-                paramsStr += ' AND fileUploadTime<date>:[' + startDate + ' TO ' + endDate + ']'
-            elif startDate != '' and endDate != '' and paramsStr == '':
-                paramsStr += 'fileUploadTime<date>:[' + startDate + ' TO ' + endDate + ']'
+            if start_date != '' and end_date != '' and params_str != '':
+                params_str += ' AND fileUploadTime<date>:[' + start_date + ' TO ' + end_date + ']'
+            elif start_date != '' and end_date != '' and params_str == '':
+                params_str += 'fileUploadTime<date>:[' + start_date + ' TO ' + end_date + ']'
             else:
                 pass
 
-            if docType != '' and paramsStr != '':
-                paramsStr += ' AND docType:"' + docType + '"'
-            elif docType != '' and paramsStr == '':
-                paramsStr += 'docType:"' + docType + '"'
+            if doc_type != '' and params_str != '':
+                params_str += ' AND docType:"' + doc_type + '"'
+            elif doc_type != '' and params_str == '':
+                params_str += 'docType:"' + doc_type + '"'
             else:
                 pass
 
         if "branch" in params:
             branch = params["branch"]
 
-            if branch != '' and paramsStr != '' and branch != '北京市' and branch != '朝阳区':
-                paramsStr += ' AND branch:"' + branch + '"'
-            elif branch != '' and paramsStr == '' and branch != '北京市' and branch != '朝阳区':
-                paramsStr += 'branch:"' + branch + '"'
+            if branch != '' and params_str != '' and branch != '北京市' and branch != '朝阳区':
+                params_str += ' AND branch:"' + branch + '"'
+            elif branch != '' and params_str == '' and branch != '北京市' and branch != '朝阳区':
+                params_str += 'branch:"' + branch + '"'
             else:
                 pass
 
-        print('paramsStr = ' + paramsStr)
+        print('params_str = ' + params_str)
 
-        if paramsStr != '':
+        if params_str != '':
             response = couchLucene_db.get(
-                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(paramsStr)s&limit=%(limit)s&skip=%(skip)s' % {
-                    "paramsStr": urllib.parse.quote(paramsStr, "utf-8"), 'limit': pageSize,
-                    'skip': (pageNumber - 1) * pageSize})
+                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s' % {
+                    "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
+                    'skip': (page_number - 1) * page_size})
         else:
             response = couch_db.get(
-                '/jsmm/_design/documents/_view/by_memberid?limit=%(pageSize)s&skip=%(pageNumber)s' % {
-                    'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize})
+                '/jsmm/_design/documents/_view/by_memberid?limit=%(page_size)s&skip=%(page_number)s' % {
+                    'page_size': page_size, 'page_number': (page_number - 1) * page_size})
 
-        documentsResult = {}
+        documents_result = {}
         if response.code == 200:
             documents = []
-            documentList = json.loads(response.body.decode('utf-8'))
-            print(documentList)
+            document_list = json.loads(response.body.decode('utf-8'))
+            print(document_list)
 
-            if paramsStr != '':
-                for row in documentList['rows']:
+            if params_str != '':
+                for row in document_list['rows']:
                     row['fields']['_id'] = row['id']
                     documents.append(row['fields'])
             else:
-                for row in documentList['rows']:
+                for row in document_list['rows']:
                     documents.append(row['value'])
 
-            documentsResult['total'] = documentList['total_rows']
-            documentsResult['rows'] = documents
+            documents_result['total'] = document_list['total_rows']
+            documents_result['rows'] = documents
         else:
-            documentsResult['total'] = 0
-            documentsResult['rows'] = []
+            documents_result['total'] = 0
+            documents_result['rows'] = []
 
-        documentsResult['pageSize'] = pageSize
-        documentsResult['pageNumber'] = pageNumber
+        documents_result['page_size'] = page_size
+        documents_result['page_number'] = page_number
 
         self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(documentsResult))
+        self.write(json.dumps(documents_result))
