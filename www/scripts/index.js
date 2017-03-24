@@ -532,4 +532,16 @@ $(function () {
         $('#members_export_excel').dialog('close');
     });
 
+    $('#members_export').click(function () {
+        var formData = $("#member-search-form").serializeArray();
+        var memberInfo = {};
+        $.each(formData, function (index, element) {
+            memberInfo[element.name] = element.value;
+        });
+        console.log(memberInfo)
+
+        window.location.href = '/member/information/' + JSON.stringify(memberInfo)
+        $('#members_export_excel').dialog('close');
+    });
+
 });
