@@ -535,7 +535,7 @@ $(function () {
             $.messager.alert('提示', '请选择需要导出的社员!', 'error');
             return;
         }
-        window.location.href = '/member/export/'+ member._id
+        window.location.href = '/member/export/'+ member._id;
         $('#members_export_excel').dialog('close');
     });
 
@@ -545,8 +545,6 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
-        console.log(memberInfo)
-
         window.location.href = '/member/information/' + JSON.stringify(memberInfo)
         $('#members_export_excel').dialog('close');
     });
