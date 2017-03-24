@@ -431,6 +431,13 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
+
+        var $start_age = $('#start_age').val();
+        var $end_age = $('#end_age').val();
+        if($start_age != '' && $end_age != ''){
+            memberInfo['startAge'] = moment().subtract($start_age, 'y').format("YYYY-MM-DD");
+            memberInfo['endAge'] = moment().subtract($end_age, 'y').format("YYYY-MM-DD");
+        }
         memberInfo.branch = (branch == null ? '' : branch);
         $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
             $('#member-search').dialog('close');
@@ -443,7 +450,7 @@ $(function () {
     function memberSearch() {
         $('#member-search').dialog({
             width: 600,
-            height: 300,
+            height: 450,
             title: '社员查询',
             closed: false,
             cache: false,
