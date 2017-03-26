@@ -245,6 +245,7 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
+            getRow = rowIndex;
             var memberId = rowData._id;
             $.get('/members/' + memberId).done(function (data) {
                 if (!$.isEmptyObject(data)) {
