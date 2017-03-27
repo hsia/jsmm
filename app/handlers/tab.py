@@ -38,8 +38,7 @@ class TabCollectionHandler(tornado.web.RequestHandler):
         tab = json.loads(self.request.body.decode('utf-8'))
         tab['type'] = 'tab'
         tab['_id'] = make_uuid()
-        tab['tab_id'] = ''.join(lazy_pinyin(tab['gridTitle']))
-        print(tab)
+        tab['tab_id'] = 'custab_'+''.join(lazy_pinyin(tab['gridTitle']))
         couch_db.post(r'/jsmm/', tab)
         response = {"success": "true"}
         self.write(response)

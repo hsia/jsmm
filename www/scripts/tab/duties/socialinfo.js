@@ -15,7 +15,16 @@ $(function () {
             title: '社会组织类别',
             width: 60,
             align: 'left',
-            editor: {type: 'textbox', options: {}}
+            editor: {
+                type: 'combobox',
+                options: {
+                    valueField: 'value',
+                    textField: 'text',
+                    method: 'get',
+                    url: 'data/socialOrgType.json',
+                    prompt: '请选择'
+                }
+            }
         },
         {
             field: 'socialOrgName',
@@ -32,7 +41,16 @@ $(function () {
             title: '社会职务级别',
             width: 60,
             align: 'left',
-            editor: {type: 'textbox', options: {}}
+            editor: {
+                type: 'combobox',
+                options: {
+                    valueField: 'value',
+                    textField: 'text',
+                    method: 'get',
+                    url: 'data/socialPositionLevel.json',
+                    prompt: '请选择'
+                }
+            }
         },
         {
             field: 'socialPositionName',

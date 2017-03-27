@@ -62,7 +62,7 @@ class MemberInfoImporter():
             'familyRelations': [],      # 社会关系       1
             'paper': [],                # 主要论文著作   1
             'achievements': [],         # 专业技术成果   1
-            'award': [],                # 工作获奖       0
+            'award': [],                # 获奖情况       1
             'patents': [],              # 专利情况       1
             'professor': [],            # 专家情况       0
             'specializedskill': [],     # 业务专长       1
@@ -78,7 +78,7 @@ class MemberInfoImporter():
             u"社会关系": self.member_family_relation,        # 社会关系
             u"主要论文著作": self.member_paper,              # 主要论文著作
             u"专业技术成果": self.member_achievements,       # 专业技术成果
-            u"工作获奖": self.member_award,                  # 工作获奖
+            u"获奖情况": self.member_award,                  # 获奖情况
             u"专利情况": self.member_patents,                # 专利情况
             u"专家情况": self.member_professor,              # 专家情况
             u"业务专长": self.member_specialized_skill,      # 业务专长
@@ -336,7 +336,14 @@ class MemberInfoImporter():
             if self._sheet.cell_value(i, 0) == "":
                 return
             else:
-                award = {}
+                award = {
+                    "awardProjectName": self._sheet.cell_value(i, 0),
+                    "awardDate": format_date(str(self._sheet.cell_value(i, 3))),
+                    "awardNameAndLevel": self._sheet.cell_value(i, 4),
+                    "awardRoleInProject": self._sheet.cell_value(i, 5),
+                    "awardCompany": self._sheet.cell_value(i, 6),
+                    "awardMemo": self._sheet.cell_value(i, 8)
+                }
                 self._member["award"].append(award)
 
     def member_professor(self, row_index):
@@ -417,6 +424,8 @@ class MemberInfoImporter():
             return msg
         else:
             self._member["retireTime"] = get_retire_time(self._member["birthday"], self._member["gender"])
+            self._member["lost"] = "否"
+            self._member["stratum"] = "否"
             couch_db.post(r'/jsmm/', self._member)
             return {"success": True}
 

@@ -22,14 +22,14 @@ $(function () {
         },
         {
             field: 'awardDate',
-            title: '获奖日期',
+            title: '获奖时间',
             width: 60,
             align: 'left',
             editor: {type: 'datebox', options: {}}
         },
         {
             field: 'awardNameAndLevel',
-            title: '获奖名称及级别',
+            title: '获奖级别',
             width: 120,
             align: 'left',
             editor: {type: 'textbox', options: {}}
