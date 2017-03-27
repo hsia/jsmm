@@ -539,16 +539,22 @@ $(function () {
             return false;
         }
 
-        $('#organ-add').dialog('close');
-        $('#organ-add-form').form('clear');
+
         $.ajax({
             url: '/organ/' + formData[0].value,
             type: 'PUT',
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $('#organTree').tree('loadData', data);
+                if (data.success) {
+                    $('#organ-add').dialog('close');
+                    $('#organ-add-form').form('clear');
 
-                $.messager.alert('提示', '新建支社成功!', 'info');
+                    $('#organTree').tree('loadData', data.content);
+                    $.messager.alert('提示', '新建支社成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'warning');
+                }
+
             },
             error: function (data) {
                 $.messager.alert('提示', '新建支社失败!', 'error');
@@ -603,19 +609,24 @@ $(function () {
             return false;
         }
 
-        $('#organ-edit').dialog('close');
-        $('#organ-edit-form').form('clear');
         $.ajax({
             url: '/organ/update/' + node.id + '/' + formData[0].value,
             type: 'PUT',
             success: function (data) {
-                //修改成功以后，重新加载数据，并将choiceRows置为空。
-                $('#organTree').tree('loadData', data);
-                //重新加载会员列表/文档列表
-                $memberList.datagrid('reload');
-                refreshDocumentListEvent();
+                if (data.success) {
+                    $('#organ-edit').dialog('close');
+                    $('#organ-edit-form').form('clear');
+                    //修改成功以后，重新加载数据，并将choiceRows置为空。
+                    $('#organTree').tree('loadData', data.content);
+                    //重新加载会员列表/文档列表
+                    $memberList.datagrid('reload');
+                    refreshDocumentListEvent();
 
-                $.messager.alert('提示', '修改支社成功!', 'info');
+                    $.messager.alert('提示', '修改支社成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'warning');
+                }
+
             },
             error: function (data) {
                 $.messager.alert('提示', '修改支社失败!', 'error');
