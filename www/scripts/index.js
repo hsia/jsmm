@@ -2,9 +2,47 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
-    $('#organization-tree').tree({
-        onSelect: function (node) {
-            console.log('Selected: ', node);
+    $('.easyui-combotree').combotree({
+        onShowPanel: function () {
+            $(this).combotree({
+                url: '/organ',
+                method: 'get'
+            });
+        }
+    });
+
+    $('.easyui-combobox').combobox({
+        onShowPanel: function () {
+            $(this).combobox({
+                valueField: 'value',
+                textField: 'text',
+                url: $(this).data('url'),
+                method: 'get'
+            })
+        }
+    });
+
+
+    //添加组织机构数的点击后触发自定义监听事件
+    branch = null;
+    $('#organTree').tree({
+        loader: function (param, success) {
+            $.get('/organ', function (data) {
+                success(data)
+            });
+        },
+        onClick: function (node) {
+            branch = node.text;
+            var event = new CustomEvent("tree-row-selection", {
+                detail: node.text
+            });
+            window.dispatchEvent(event);
+            buildMemberDetails({});
+            search = {};
+            search.branch = node.text;
+            $.post('/members/search/', JSON.stringify(search), function (data) {
+                $memberList.datagrid('loadData', data.docs);
+            })
         }
     });
 
@@ -17,6 +55,7 @@ $(function () {
     var getCurrentPage = '';
     var gridHeight = ($('#members').height());
     var $memberList = $('#member-list');
+    var $documentList = $('#document-list');
 
     //保存社员数据
     $("#member-form").submit(function (event) {
@@ -52,9 +91,9 @@ $(function () {
             success: function (data) {
                 $('#memberEdit-dialog').dialog('close');
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                console.log(getRow);
+                // console.log(getRow);
                 $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
-                $memberList.datagrid('selectRow', getRow);
+                // $memberList.datagrid('selectRow', getRow);
                 $.messager.alert('提示', '数据更新成功!', 'info');
             },
             error: function (data) {
@@ -136,7 +175,7 @@ $(function () {
                                 if (member.success == false) {
                                     var error_members = "以下社员导入失败：<br/>";
                                     member.msg.forEach(function (obj) {
-                                        error_members += obj.name+"【"+obj.idCard+"】<br/>"
+                                        error_members += obj.name + "【" + obj.idCard + "】<br/>"
                                     });
                                     $memberList.datagrid('reload');
                                     $.messager.progress('close');
@@ -268,23 +307,10 @@ $(function () {
         }
     });
 
-    //添加组织机构数的点击后触发自定义监听事件
-    branch = null;
-    $('#organTree').tree({
-        onClick: function (node) {
-            branch = node.text;
-            var event = new CustomEvent("tree-row-selection", {
-                detail: node.text
-            });
-            window.dispatchEvent(event);
-            buildMemberDetails({});
-            search = {};
-            search.branch = node.text;
-            $.post('/members/search/', JSON.stringify(search), function (data) {
-                $memberList.datagrid('loadData', data.docs);
-            })
-        }
-    });
+    function refreshDocumentListEvent() {
+        var event = new CustomEvent("organ-tree-operation", {});
+        window.dispatchEvent(event);
+    }
 
 
     //社员信息详情
@@ -351,6 +377,7 @@ $(function () {
             $.messager.alert('提示', '请选择需要编辑的数据!', 'error');
             return;
         }
+
         // 2、 发送异步请求，获得信息数据
         $.getJSON("/members/" + $member._id, function (data, status) {
             if (status) {
@@ -549,5 +576,263 @@ $(function () {
         window.location.href = '/member/information/' + JSON.stringify(memberInfo)
         $('#members_export_excel').dialog('close');
     });
+  
+    $('#reminder_retire').click(function () {
+        var now = moment().format("YYYY-MM-DD");
+        $.get('/members/reminder/' + now, function (data) {
+            $memberList.datagrid('loadData', data.docs);
+            $('#reminder_dialog').dialog("close")
+        })
+    });
+
+    //新建支社
+    $('#newOrgan').click(function () {
+        $('#organ-add').dialog({
+            width: 300,
+            height: 150,
+            title: '新建支社',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '确定',
+                handler: function () {
+                    $('#organ-add-form').trigger('submit');
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#organ-add-form').form('clear');
+                    $('#organ-add').dialog('close');
+                }
+            }]
+        });
+    });
+
+    $("#organ-add-form").submit(function (event) {
+        event.preventDefault();
+        var formData = $(this).serializeArray();
+        if (formData[0].value == '') {
+            $.messager.alert('提示', '请输入组织机构名称!', 'info');
+            return false;
+        }
+
+
+        $.ajax({
+            url: '/organ/' + formData[0].value,
+            type: 'PUT',
+            success: function (data) {
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
+                if (data.success) {
+                    $('#organ-add').dialog('close');
+                    $('#organ-add-form').form('clear');
+
+                    $('#organTree').tree('loadData', data.content);
+                    $.messager.alert('提示', '新建支社成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'warning');
+                }
+
+            },
+            error: function (data) {
+                $.messager.alert('提示', '新建支社失败!', 'error');
+            }
+        });
+    });
+
+    //编辑支社
+    $('#editOrgan').click(function () {
+        var node = $('#organTree').tree('getSelected');
+        if (node == null) {
+            $.messager.alert('提示', '请选择需要编辑的数据!', 'error');
+            return;
+        } else if (node.text == '北京市' || node.text == '朝阳区') {
+            $.messager.alert('提示', '该数据不能修改，请选择支社数据进行修改!', 'warning');
+            return;
+        } else {
+            $('#organ-edit-form').form('load', {organName: node.text})
+        }
+
+        $('#organ-edit').dialog({
+            width: 300,
+            height: 150,
+            title: '编辑支社',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '确定',
+                handler: function () {
+                    $('#organ-edit-form').trigger('submit');
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#organ-edit-form').form('clear');
+                    $('#organ-edit').dialog('close');
+                }
+            }]
+        });
+
+    })
+
+    $("#organ-edit-form").submit(function (event) {
+        event.preventDefault();
+        var node = $('#organTree').tree('getSelected');
+        var formData = $(this).serializeArray();
+        if (formData[0].value == '') {
+            $.messager.alert('提示', '请输入组织机构名称!', 'info');
+            return false;
+        }
+
+        $.ajax({
+            url: '/organ/update/' + node.id + '/' + formData[0].value,
+            type: 'PUT',
+            success: function (data) {
+                if (data.success) {
+                    $('#organ-edit').dialog('close');
+                    $('#organ-edit-form').form('clear');
+                    //修改成功以后，重新加载数据，并将choiceRows置为空。
+                    $('#organTree').tree('loadData', data.content);
+                    //重新加载会员列表/文档列表
+                    $memberList.datagrid('reload');
+                    refreshDocumentListEvent();
+
+                    $.messager.alert('提示', '修改支社成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'warning');
+                }
+
+            },
+            error: function (data) {
+                $.messager.alert('提示', '修改支社失败!', 'error');
+            }
+        });
+    });
+
+    //合并支社
+    $('#mergeOrgan').click(function () {
+        // $('#mergeBranch').combotree({
+        //     url: '/organ',
+        //     method: 'get',
+        //     required: true
+        // });
+
+        // $('#mergeBranch').combotree('reload')
+        var node = $('#organTree').tree('getSelected');
+        if (node == null) {
+            $.messager.alert('提示', '请选择需要合并的支社!', 'error');
+            return;
+        } else if (node.text == '北京市' || node.text == '朝阳区') {
+            $.messager.alert('提示', '该数据不能合并，请选择支社数据进行合并!', 'warning');
+            return;
+        }
+        $('#organ-merge').dialog({
+            width: 300,
+            height: 150,
+            title: '编辑支社',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '确定',
+                handler: function () {
+                    $('#organ-merge-form').trigger('submit');
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#organ-merge-form').form('clear');
+                    $('#organ-merge').dialog('close');
+                }
+            }]
+        });
+    })
+
+    $("#organ-merge-form").submit(function (event) {
+        event.preventDefault();
+        var node = $('#organTree').tree('getSelected');
+        var formData = $(this).serializeArray();
+        if (formData[0].value == '') {
+            $.messager.alert('提示', '请输入组织机构名称!', 'info');
+            return false;
+        }
+        if (node.id == formData[0].value) {
+            $.messager.alert('提示', '选择的目标支社和原支社相同，请选择不同的支社!', 'warning');
+            return false;
+        }
+
+        $('#organ-merge').dialog('close');
+        $('#organ-merge-form').form('clear');
+        $.ajax({
+            url: '/organ/merge/' + node.id + '/' + formData[0].value,
+            type: 'PUT',
+            success: function (data) {
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
+                $('#organTree').tree('loadData', data);
+                //重新加载会员列表/文档列表
+                $memberList.datagrid('reload');
+                refreshDocumentListEvent();
+
+                $.messager.alert('提示', '支社合并成功!', 'info');
+            },
+            error: function (data) {
+                $.messager.alert('提示', '修改合并失败!', 'error');
+            }
+        });
+    });
+
+    //删除支社
+    $('#deleteOrgan').click(function () {
+        //1、先判断是否有选中的数据行
+        var node = $('#organTree').tree('getSelected');
+        if (node == null) {
+            $.messager.alert('提示', '请选择需要删除的数据!', 'error');
+            return;
+        } else if (node.text == '北京市' || node.text == '朝阳区') {
+            $.messager.alert('提示', '该数据不能删除，请选择支社数据进行删除!', 'warning');
+            return;
+        }
+        //2、将选中数据的_id放入到一个数组中
+        var id = node.id;
+        //3、提示删除确认
+        $.messager.confirm('删除提示', '确定删除选中的数据?', function (r) {
+            if (r) {
+                //4、确认后，删除选中的数据
+                removeOrgan(id)
+            }
+        });
+    })
+
+    //删除数据行
+    function removeOrgan(id) {
+        $.ajax({
+            url: '/organ/' + id,
+            type: 'DELETE',
+            success: function (data) {
+                if (data.success) {
+                    //删除成功以后，重新加载数据。
+                    $('#organTree').tree('loadData', data.content);
+                    //重新加载会员列表/文档列表
+                    $memberList.datagrid('reload');
+                    refreshDocumentListEvent();
+
+                    $.messager.alert('提示', '支社删除成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'warning');
+                }
+
+            },
+            error: function (data) {
+                $.messager.alert('提示', '支社删除失败!', 'error');
+            }
+        });
+    }
 
 });

@@ -2,10 +2,10 @@
  * Created by S on 2017/2/21.
  */
 
-// 部门信息
+// 参政议政信息
 $(function () {
-    var tabId = 'departmentInfo';
-    var $grid = $("#department-info");
+    var tabId = 'politicsInfo';
+    var $grid = $("#politics-info");
     var gridTab = new GridTab(tabId, $grid);
     var columns = [
         {
@@ -33,7 +33,7 @@ $(function () {
         }
     ];
     var toolbar = [{
-        text: '信息上传',
+        text: '参政议政信息上传',
         iconCls: 'icon-import',
         handler: function () {
             gridTab.docUpload()

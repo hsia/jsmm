@@ -93,6 +93,7 @@ GridTab.prototype.docUpload = function () {
                     url: '/document/' + that.memberId + '/' + that.tabId,
                     success: function (data) {
                         that.reloadGridRemote();
+                        $.messager.progress('close');
                         $.messager.alert('提示信息', '文档上传成功！', 'info');
                     }
                 });

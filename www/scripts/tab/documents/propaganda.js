@@ -2,12 +2,11 @@
  * Created by S on 2017/2/21.
  */
 
-// 部门报告
+// 宣传稿
 $(function () {
-    var tabId = 'departmentReport';
-    var $grid = $("#department-report");
-    var docType = "departmentInfo";
-    var gridTab = new GridTab(tabId, $grid, docType);
+    var tabId = 'propaganda';
+    var $grid = $("#propaganda");
+    var gridTab = new GridTab(tabId, $grid);
     var columns = [
         {
             field: 'fileUploadTime',
@@ -34,7 +33,7 @@ $(function () {
         }
     ];
     var toolbar = [{
-        text: '报告上传',
+        text: '宣传稿上传',
         iconCls: 'icon-import',
         handler: function () {
             gridTab.docUpload()

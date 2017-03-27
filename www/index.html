@@ -31,9 +31,10 @@
     <script type="text/javascript" src="scripts/tab/duties/socialinfo.js"></script>
     <script type="text/javascript" src="scripts/tab/political/politicsresume.js"></script>
     <script type="text/javascript" src="scripts/tab/political/participateperformance.js"></script>
-    <script type="text/javascript" src="scripts/tab/documents/depreportinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/documents/depinfo.js"></script>
-    <script type="text/javascript" src="scripts/tab/documents/speechesinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/researchinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/politicsinfo.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/unitedtheory.js"></script>
+    <script type="text/javascript" src="scripts/tab/documents/propaganda.js"></script>
     <script type="text/javascript" src="scripts/documentlist.js"></script>
     <script type="text/javascript" src="scripts/tab/custom/clienttab.js"></script>
     <script type="text/javascript" src="scripts/tab/custom/addtab.js"></script>
@@ -47,9 +48,15 @@
         </div>
     </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
+
         <div class="easyui-panel" style="padding:5px; height:100%;">
-            <ul id="organTree" class="easyui-tree" id="organization-tree"
-                data-options="url:'data/organization.json',method:'get'"></ul>
+            <div style="padding-bottom: 10px;">
+                <a class="easyui-linkbutton" id="newOrgan">新建</a>
+                <a class="easyui-linkbutton" id="editOrgan">编辑</a>
+                <a class="easyui-linkbutton" id="mergeOrgan">合并</a>
+                <a class="easyui-linkbutton" id="deleteOrgan">删除</a>
+            </div>
+            <ul id="organTree" class="easyui-tree"></ul>
         </div>
     </div>
     <div data-options="region:'center'" style="height:100%;">
@@ -136,14 +143,17 @@
                         </div>
                         <div title="文档" data-options="fit:true,plain:true" style="padding:0;">
                             <div id="documents_tab" class="easyui-tabs" data-options="fit:true,plain:true">
-                                <div title="部门报告">
-                                    <table id="department-report" style="width:100%;height:100%"></table>
+                                <div title="调研报告">
+                                    <table id="research-report" style="width:100%;height:100%"></table>
                                 </div>
-                                <div title="部门信息">
-                                    <table id="department-info" style="width:100%;height:100%"></table>
+                                <div title="参政议政信息">
+                                    <table id="politics-info" style="width:100%;height:100%"></table>
                                 </div>
-                                <div title="发言稿">
-                                    <table id="speeches-text" style="width:100%;height:100%"></table>
+                                <div title="统战理论">
+                                    <table id="united-theory" style="width:100%;height:100%"></table>
+                                </div>
+                                <div title="宣传稿">
+                                    <table id="propaganda" style="width:100%;height:100%"></table>
                                 </div>
                             </div>
                         </div>
@@ -159,10 +169,6 @@
             </div>
         </div>
     </div>
-</div>
-<div id="sonic-dialog"
-     style="width: 100%;height: 100%;display: block; background-color: rgba(0,0,0,50); z-index: 1000;">
-    <div style="width: 100px;height: 100px; margin: auto;" id="sonic-canvas"></div>
 </div>
 <div id="client_add_tab" style="width:500px;height:500px;">
     <input class="easyui-textbox" id="tab_title" style="width:90%" data-options="label:'标题:',required:true">
@@ -184,14 +190,38 @@
         </form>
     </div>
 </div>
+<div id="organ-add" class="member-dialog">
+    <form id="organ-add-form" class="easyui-form member-form" data-options="validate:true">
+        <div style="margin-bottom:20px;" class="member-property">
+            <input class="easyui-textbox" name="organName" style="width:100%"
+                   data-options="label:'组织机构名称:',required:true">
+        </div>
+    </form>
+</div>
+<div id="organ-edit" class="member-dialog">
+    <form id="organ-edit-form" class="easyui-form member-form" data-options="validate:true">
+        <div style="margin-bottom:20px;" class="member-property">
+            <input class="easyui-textbox" name="organName" style="width:100%"
+                   data-options="label:'组织机构名称:',required:true">
+        </div>
+    </form>
+</div>
+<div id="organ-merge" class="member-dialog">
+    <form id="organ-merge-form" class="easyui-form member-form" data-options="validate:true">
+        <div style="margin-bottom:20px;" class="member-property">
+            <select id="mergeBranch" class="easyui-combotree" name="organName" style="width:100%"
+                    data-options="label:'目标支社:',required:false,prompt: '请选择'"></select>
+        </div>
+    </form>
+</div>
 <div id="member-search" class="member-dialog">
     <form id="member-search-form" class="easyui-form member-form" data-options="novalidate:true">
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="gender" style="width:100%"
-                   data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/gender.json" name="gender" style="width:100%"
+                   data-options="label:'性别:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-combobox" name="sector" style="width:100%"
@@ -258,8 +288,8 @@
                    data-options="label:'结束时间:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="docType" style="width:100%"
-                   data-options="label:'类型:',required:true,valueField:'value',textField:'text',url:'data/documenttype.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/documenttype.json" name="docType" style="width:100%"
+                   data-options="label:'类型:',required:true,panelHeight:'auto',prompt: '请选择'">
         </div>
     </form>
 </div>
@@ -276,6 +306,11 @@
     <div style="padding:5px 0;">
         <a id="memberInfo_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton" style="width:100%">个人信息导出</a>
         <a id="members_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton" style="width:100%">社员简表导出</a>
+        <a id="reminder_birthday" class="easyui-linkbutton" data-options="iconCls:'icon-birthday'" style="width:100%"
+           title="七天内过生日的社员，请点击查询">生日提醒</a>
+        <a id="reminder_retire" class="easyui-linkbutton" data-options="iconCls:'icon-old'" style="width:100%">退休提醒</a>
+        <a class="easyui-linkbutton" style="width:100%">Reload</a>
+        <a class="easyui-linkbutton" style="width:100%">Help</a>
     </div>
 </div>
 <div id="member-dialog" class="member-dialog">
@@ -292,8 +327,8 @@
             <input class="easyui-textbox" name="usedName" style="width:100%" data-options="label:'曾用名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="gender" style="width:100%"
-                   data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/gender.json" name="gender" style="width:100%"
+                   data-options="label:'性别:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
@@ -307,30 +342,30 @@
                    data-options="label:'出生地:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="nation" style="width:100%" text="请选择"
-                   data-options="label:'民族:',required:true,valueField:'value',textField:'text',url:'data/peoples.json',method:'get',prompt:'请选择'">
+            <input class="easyui-combobox" data-url="data/peoples.json" name="nation" style="width:100%"
+                   data-options="label:'民族:',required:false,prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="health" style="width:100%"
-                   data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/health.json" name="health" style="width:100%"
+                   data-options="label:'健康状态:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="marriage" style="width:100%"
-                   data-options="label:'婚姻状况:',required:true,valueField:'value',textField:'text',url:'data/marriage.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/marriage.json" name="marriage" style="width:100%"
+                   data-options="label:'婚姻状况:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="idCard" style="width:100%" data-options="label:'身份证号:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="idType" style="width:100%"
-                   data-options="label:'有效证件类别:',required:true,valueField:'value',textField:'text',url:'data/idType.json',method:'get',prompt:'请选择'">
+            <input class="easyui-combobox" data-url="data/idType.json" name="idType" style="width:100%"
+                   data-options="label:'有效证件类别:',required:false,prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="idNo" style="width:100%" data-options="label:'证件号码:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <select class="easyui-combotree" name="branch" style="width:100%"
-                    data-options="label:'所属支社:',url:'data/organization.json',method:'get',required:true"></select>
+            <select id="newBranch" class="easyui-combotree" name="branch" style="width:100%"
+                    data-options="label:'所属支社:', required:false,prompt: '请选择'"></select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
@@ -356,8 +391,8 @@
                    data-options="label:'工作部门:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="retire" style="width:100%"
-                   data-options="label:'办理退休手续:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/retire.json" name="retire" style="width:100%"
+                   data-options="label:'办理退休手续:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="duty" style="width:100%" data-options="label:'职务:',required:true">
@@ -439,10 +474,10 @@
 </div>
 <div id="memberEdit-dialog" class="member-dialog">
     <form id="memberEdit-form" class="easyui-form member-form" data-options="novalidate:true">
-        <div style="margin-bottom:20px" class="member-property">
+        <div style="margin-bottom:20px;" class="member-property">
             <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
         </div>
-        <div style="margin-bottom:20px" class="member-property">
+        <div style="margin-bottom:20px;" class="member-property">
             <input class="easyui-textbox" name="foreignName" style="width:100%"
                    data-options="label:'外文姓名:',required:true,validType:'email'">
         </div>
@@ -450,8 +485,8 @@
             <input class="easyui-textbox" name="usedName" style="width:100%" data-options="label:'曾用名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="gender" style="width:100%"
-                   data-options="label:'性别:',required:true,valueField:'value',textField:'text',url:'data/gender.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/gender.json" name="gender" style="width:100%"
+                   data-options="label:'性别:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="birthday" style="width:100%" data-options="label:'出生日期:',required:true">
@@ -465,37 +500,37 @@
                    data-options="label:'出生地:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="nation" style="width:100%" text="请选择"
-                   data-options="label:'民族:',required:true,valueField:'value',textField:'text',url:'data/peoples.json',method:'get',prompt:'请选择'">
+            <input class="easyui-combobox" data-url="data/peoples.json" name="nation" style="width:100%" text="请选择"
+                   data-options="label:'民族:',required:false,prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="health" style="width:100%"
-                   data-options="label:'健康状态:',required:true,valueField:'value',textField:'text',url:'data/health.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/health.json" name="health" style="width:100%"
+                   data-options="label:'健康状态:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="marriage" style="width:100%"
-                   data-options="label:'婚姻状况:',required:true,valueField:'value',textField:'text',url:'data/marriage.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/marriage.json" name="marriage" style="width:100%"
+                   data-options="label:'婚姻状况:',required:false,panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="idCard" style="width:100%" data-options="label:'身份证号:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="idType" style="width:100%"
-                   data-options="label:'有效证件类别:',required:true,valueField:'value',textField:'text',url:'data/idType.json',method:'get',prompt:'请选择'">
+            <input class="easyui-combobox" data-url="data/idType.json" name="idType" style="width:100%"
+                   data-options="label:'有效证件类别:',required:false,prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="idNo" style="width:100%" data-options="label:'证件号码:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <select class="easyui-combotree" name="branch" style="width:100%"
-                    data-options="label:'所属支社:',url:'data/organization.json',method:'get',required:true"></select>
+            <select id="editBranch" class="easyui-combotree" name="branch" style="width:100%"
+                    data-options="label:'所属支社:',prompt: '请选择'"></select>
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="organ" style="width:100%" data-options="label:'所属基层组织:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-datebox" name="branchTime" style="width:100%"
-                   data-options="label:'入社时间:',required:true">
+                   data-options="label:'入社时间:',required:false">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="partyCross" style="width:100%"
@@ -514,8 +549,8 @@
                    data-options="label:'工作部门:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-combobox" name="retire" style="width:100%"
-                   data-options="label:'办理退休手续:',required:true,valueField:'value',textField:'text',url:'data/retire.json',method:'get',prompt:'请选择',panelHeight:'auto'">
+            <input class="easyui-combobox" data-url="data/retire.json" name="retire" style="width:100%"
+                   data-options="label:'办理退休手续:',required:false, panelHeight:'auto',prompt: '请选择'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="duty" style="width:100%" data-options="label:'职务:',required:true">

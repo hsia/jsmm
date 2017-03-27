@@ -4,10 +4,8 @@
 
 import os.path
 import uuid
-import tornado.web
-import json
 
-import tornado_utils
+import tornado.web
 
 
 class UploadHandler(tornado.web.RequestHandler):

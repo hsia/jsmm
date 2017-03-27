@@ -25,12 +25,14 @@ class MemberHandler(tornado.web.RequestHandler):
         documents = json.loads(documents_response.body.decode('utf-8'))
         member_response = couch_db.get(r'/jsmm/%(id)s' % {'id': member_id})
         member = json.loads(member_response.body.decode('utf-8'))
-        member['departmentReport'] = [doc['value'] for doc in documents[
-            'rows'] if doc['value']['docType'] == 'departmentReport']
-        member['departmentInfo'] = [doc['value'] for doc in documents[
-            'rows'] if doc['value']['docType'] == 'departmentInfo']
-        member['speechesText'] = [doc['value'] for doc in documents[
-            'rows'] if doc['value']['docType'] == 'speechesText']
+        member['researchReport'] = [doc['value'] for doc in documents[
+            'rows'] if doc['value']['docType'] == 'researchReport']
+        member['unitedTheory'] = [doc['value'] for doc in documents[
+            'rows'] if doc['value']['docType'] == 'unitedTheory']
+        member['politicsInfo'] = [doc['value'] for doc in documents[
+            'rows'] if doc['value']['docType'] == 'politicsInfo']
+        member['propaganda'] = [doc['value'] for doc in documents[
+            'rows'] if doc['value']['docType'] == 'propaganda']
         self.write(member)
 
     def put(self, member_id):

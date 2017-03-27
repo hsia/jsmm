@@ -122,3 +122,29 @@ try_(couch_db.put('/jsmm/_design/documents', {
         }
     }
 }))
+
+try_(couch_db.put('/jsmm/_design/organ', {
+    "views": {
+        "getOrgan": {
+            "map": "function (doc) {\n  if(doc.typeFlag == 'organ'){\n    emit(doc.typeFlag,doc);\n  }\n}"
+        }
+    }
+}))
+
+organ = {
+    "typeFlag": "organ",
+    "organ": [
+        {
+            "id": "北京市",
+            "text": "北京市",
+            "children": [
+                {
+                    "id": "朝阳区",
+                    "text": "朝阳区",
+                    "children": []
+                }
+            ]
+        }
+    ]
+}
+try_(couch_db.post(r'/jsmm/', organ))
