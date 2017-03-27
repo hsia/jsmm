@@ -567,14 +567,6 @@ $(function () {
         $('#members_export_excel').dialog('close');
     });
 
-    $('#reminder_retire').click(function () {
-        var now = moment().format("YYYY-MM-DD");
-        $.get('/members/reminder/' + now, function (data) {
-            $memberList.datagrid('loadData', data.docs);
-            $('#reminder_dialog').dialog("close")
-        })
-    });
-
     $('#members_export').click(function () {
         var formData = $("#member-search-form").serializeArray();
         var memberInfo = {};
@@ -583,6 +575,14 @@ $(function () {
         });
         window.location.href = '/member/information/' + JSON.stringify(memberInfo)
         $('#members_export_excel').dialog('close');
+    });
+  
+    $('#reminder_retire').click(function () {
+        var now = moment().format("YYYY-MM-DD");
+        $.get('/members/reminder/' + now, function (data) {
+            $memberList.datagrid('loadData', data.docs);
+            $('#reminder_dialog').dialog("close")
+        })
     });
 
     //新建支社

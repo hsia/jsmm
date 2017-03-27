@@ -9,7 +9,6 @@ __all__ = [
     'attachment_handler',
     'tab',
     'reminder_handler',
+    'member_export',
     'organ_handler'
-    'reminder_handler',
-    'member_export'
 ]
