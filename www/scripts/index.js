@@ -2,12 +2,26 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
-    branch = {};
+    //添加组织机构数的点击后触发自定义监听事件
+    branch = null;
     $('#organTree').tree({
         loader: function (param, success) {
             $.get('/organ', function (data) {
                 success(data)
             });
+        },
+        onClick: function (node) {
+            branch = node.text;
+            var event = new CustomEvent("tree-row-selection", {
+                detail: node.text
+            });
+            window.dispatchEvent(event);
+            buildMemberDetails({});
+            search = {};
+            search.branch = node.text;
+            $.post('/members/search/', JSON.stringify(search), function (data) {
+                $memberList.datagrid('loadData', data.docs);
+            })
         }
     });
 
@@ -56,9 +70,9 @@ $(function () {
             success: function (data) {
                 $('#memberEdit-dialog').dialog('close');
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
-                console.log(getRow);
+                // console.log(getRow);
                 $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
-                $memberList.datagrid('selectRow', getRow);
+                // $memberList.datagrid('selectRow', getRow);
                 $.messager.alert('提示', '数据更新成功!', 'info');
             },
             error: function (data) {
@@ -71,8 +85,11 @@ $(function () {
         text: '添加',
         iconCls: 'icon-add',
         handler: function () {
-            $('#newBranch').combotree('reload')
-            $('#editBranch').combotree('reload')
+            $('#newBranch').combotree({
+                url: '/organ',
+                method: 'get',
+                required: true
+            });
             $('#member-dialog').dialog({
                 width: 800,
                 height: 630,
@@ -265,24 +282,6 @@ $(function () {
         }
     });
 
-    //添加组织机构数的点击后触发自定义监听事件
-    branch = null;
-    $('#organTree').tree({
-        onClick: function (node) {
-            branch = node.text;
-            var event = new CustomEvent("tree-row-selection", {
-                detail: node.text
-            });
-            window.dispatchEvent(event);
-            buildMemberDetails({});
-            search = {};
-            search.branch = node.text;
-            $.post('/members/search/', JSON.stringify(search), function (data) {
-                $memberList.datagrid('loadData', data.docs);
-            })
-        }
-    });
-
     function refreshDocumentListEvent() {
         var event = new CustomEvent("organ-tree-operation", {});
         window.dispatchEvent(event);
@@ -341,14 +340,19 @@ $(function () {
 
     //编辑数据
     function editInfo() {
-        $('#newBranch').combotree('reload')
-        $('#editBranch').combotree('reload')
+        $('#editBranch').combotree({
+            url: '/organ',
+            method: 'get'
+        });
+        // $('#newBranch').combotree('reload')
+        // $('#editBranch').combotree('reload')
         //1、先判断是否有选中的数据行
         var $member = $memberList.datagrid('getSelected');
         if ($member == null) {
             $.messager.alert('提示', '请选择需要编辑的数据!', 'error');
             return;
         }
+
         // 2、 发送异步请求，获得信息数据
         $.getJSON("/members/" + $member._id, function (data, status) {
             if (status) {
@@ -636,7 +640,13 @@ $(function () {
 
     //合并支社
     $('#mergeOrgan').click(function () {
-        $('#mergeBranch').combotree('reload')
+        $('#mergeBranch').combotree({
+            url: '/organ',
+            method: 'get',
+            required: true
+        });
+
+        // $('#mergeBranch').combotree('reload')
         var node = $('#organTree').tree('getSelected');
         if (node == null) {
             $.messager.alert('提示', '请选择需要合并的支社!', 'error');
