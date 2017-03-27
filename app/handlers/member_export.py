@@ -342,6 +342,7 @@ class memberInfoExport(tornado.web.RequestHandler):
                         obj_row = 3 + len(member['agencybroker'])
                         current_row += obj_row
                         break
+                current_row = customizeObj(obj, current_row, ws, style, memberInfoStyle, member)
 
         tall_style = xlwt.easyxf('font:height 360;')
         for i in range(0, current_row):
@@ -369,11 +370,43 @@ class switch(object):
     def match(self, *args):
         if self.fall or not args:
             return True
-        elif self.value in args:  # changed for v1.5, see below
+        elif self.value in args:
             self.fall = True
             return True
         else:
             return False
+
+
+def customizeObj(obj, current_row, ws, style, memberInfoStyle, member):
+    if len(obj) > 6:
+        if obj[0:7] == 'custab_':
+            selector = {
+                "selector": {
+                    "type": {
+                        "$eq": "tab"
+                    },
+                    "tab_id": {
+                        "$eq": obj
+                    }
+                }
+            }
+            response = couch_db.post(r'/jsmm/_find/', selector)
+            tab = json.loads(response.body.decode('utf-8'))
+            tabObj = tab['docs'][0]
+            ws.write_merge(current_row, current_row, 0, 9, u'')
+            ws.write_merge(current_row + 1, current_row + 1, 0, 9, tabObj['gridTitle'], style)
+            columns = tabObj['columns']
+            for y in range(0, len(columns)):
+                ws.write(current_row + 2, y, columns[y]['title'], memberInfoStyle)
+
+            for i in range(0, len(member[obj])):
+                memberObj = member[obj][i]
+                for z in range(0, len(columns)):
+                    ws.write(current_row + 3 + i, z, memberObj['file_' + str(z)], memberInfoStyle)
+
+            obj_row = 3 + len(member[obj])
+            current_row += obj_row
+    return current_row
 
 
 @tornado_utils.bind_to(r'/member/information/(.+)')
