@@ -2,6 +2,27 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
+    $('.easyui-combotree').combotree({
+        onShowPanel: function () {
+            $(this).combotree({
+                url: '/organ',
+                method: 'get'
+            });
+        }
+    });
+
+    $('.easyui-combobox').combobox({
+        onShowPanel: function () {
+            $(this).combobox({
+                valueField: 'value',
+                textField: 'text',
+                url: $(this).data('url'),
+                method: 'get'
+            })
+        }
+    });
+
+
     //添加组织机构数的点击后触发自定义监听事件
     branch = null;
     $('#organTree').tree({
@@ -85,11 +106,6 @@ $(function () {
         text: '添加',
         iconCls: 'icon-add',
         handler: function () {
-            $('#newBranch').combotree({
-                url: '/organ',
-                method: 'get',
-                required: true
-            });
             $('#member-dialog').dialog({
                 width: 800,
                 height: 630,
@@ -340,12 +356,6 @@ $(function () {
 
     //编辑数据
     function editInfo() {
-        $('#editBranch').combotree({
-            url: '/organ',
-            method: 'get'
-        });
-        // $('#newBranch').combotree('reload')
-        // $('#editBranch').combotree('reload')
         //1、先判断是否有选中的数据行
         var $member = $memberList.datagrid('getSelected');
         if ($member == null) {
@@ -640,11 +650,11 @@ $(function () {
 
     //合并支社
     $('#mergeOrgan').click(function () {
-        $('#mergeBranch').combotree({
-            url: '/organ',
-            method: 'get',
-            required: true
-        });
+        // $('#mergeBranch').combotree({
+        //     url: '/organ',
+        //     method: 'get',
+        //     required: true
+        // });
 
         // $('#mergeBranch').combotree('reload')
         var node = $('#organTree').tree('getSelected');
