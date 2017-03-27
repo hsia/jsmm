@@ -13,7 +13,7 @@ from commons import couch_db, get_retire_time, make_uuid
 class NewMemberCollectionHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def post(self):
-        keys = ['name', 'gender', 'branchTime', 'mobile']
+        keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'titleLevel', 'highestEducation']
         obj = {
             "selector": {},
             "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ", "branchTime"]
@@ -24,11 +24,38 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
         for key in keys:
             if key in search:
                 if search[key] != '':
-                    objC[key] = {'$eq': search[key]}
+                    objC[key] = {'$regex': search[key]}
+
+        if 'retireTime' in search:
+            if search['retireTime'] != '':
+                objC['retireTime'] = {"$lt": search["retireTime"]}
 
         if 'branch' in search:
             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
                 objC['branch'] = {"$eq": search["branch"]}
+
+        if 'socialPositionName' in search:
+            if search['socialPositionName'] != '':
+                objC['social'] = {"$elemMatch": {"socialPositionName": {"$regex": search['socialPositionName']}}}
+
+        if 'socialPositionLevel' in search:
+            if search['socialPositionLevel'] != '':
+                objC['social'] = {
+                    "$elemMatch": {"socialPositionLevel": {"$regex": search['socialPositionLevel']}}}
+
+        if 'formeOrganizationJob' in search:
+            if search['formeOrganizationJob'] != '':
+                objC['formercluboffice'] = {
+                    "$elemMatch": {"formeOrganizationJob": {"$regex": search['formeOrganizationJob']}}}
+
+        if 'formeOrganizationLevel' in search:
+            if search['formeOrganizationLevel'] != '':
+                objC['formercluboffice'] = {"$elemMatch": {"formeOrganizationLevel": {"$regex": search['formeOrganizationLevel']}}}
+
+        if 'startAge' in search and 'endAge' in search:
+            if search['startAge'] != '' and search['endAge']:
+                objC['birthday'] = {"$gte": search['endAge'], "$lte": search['startAge']}
+
         objC['type'] = {"$eq": "member"}
         response = couch_db.post(r'/jsmm/_find/', obj)
         members = json.loads(response.body.decode('utf-8'))

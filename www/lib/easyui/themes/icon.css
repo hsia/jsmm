@@ -106,3 +106,9 @@
 .icon-birthday{
 	background:url('icons/birthday-icon.png') no-repeat center center;
 }
+.export-excel{
+	background:url('icons/export-excel.png') no-repeat center center;
+}
+.save-excel{
+	background:url('icons/save-excel.png') no-repeat center center;
+}

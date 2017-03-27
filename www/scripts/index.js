@@ -204,13 +204,21 @@ $(function () {
         handler: function () {
             client_add_tab();
         }
-    }, '-', {
-        text: '提醒',
-        iconCls: 'icon-clock',
+    }
+    // , '-', {
+    //     text: '提醒',
+    //     iconCls: 'icon-clock',
+    //     handler: function () {
+    //         reminderBirthday();
+    //     }
+    //
+    // }
+    ,'-',{
+        text: '社员导出',
+        iconCls: 'save-excel',
         handler: function () {
-            reminderBirthday();
+            exportMembersExcel();
         }
-
     }];
 
     var defaultUrl = '/members';
@@ -276,6 +284,7 @@ $(function () {
             return data;
         },
         onSelect: function (rowIndex, rowData) {
+            getRow = rowIndex;
             var memberId = rowData._id;
             $.get('/members/' + memberId).done(function (data) {
                 if (!$.isEmptyObject(data)) {
@@ -326,6 +335,8 @@ $(function () {
         <div class="member-item"><span class="member-item-title">有效证件类别: </span>${rowData.idType || ""}</div>
         <div class="member-item"><span class="member-item-title">证件号码: </span>${rowData.idNo || ""}</div>
         <div class="member-item"><span class="member-item-title">移动电话: </span>${rowData.mobile || ""}</div>
+        <div class="member-item"><span class="member-item-title">界别: </span>${rowData.sector || ""}</div>
+        <div class="member-item"><span class="member-item-title">职务级别: </span>${rowData.jobLevel || ""}</div>
     </div>
     <div class="member-column">
         <div class="member-item"><span class="member-item-title">党派交叉: </span>${rowData.partyCross || ""}</div>
@@ -337,6 +348,8 @@ $(function () {
         <div class="member-item"><span class="member-item-title">职称: </span>${rowData.jobTitle || ""}</div>
         <div class="member-item"><span class="member-item-title">学术职务: </span>${rowData.academic || ""}</div>
         <div class="member-item"><span class="member-item-title">电子邮箱: </span>${rowData.email || ""}</div>
+        <div class="member-item"><span class="member-item-title">是否失联: </span>${rowData.lost || ""}</div>
+        <div class="member-item"><span class="member-item-title">职称级别: </span>${rowData.titleLevel || ""}</div>
     </div>
     <div class="member-column">
         <div class="member-item"><span class="member-item-title">家庭地址: </span>${rowData.homeAddress || ""}</div>
@@ -348,6 +361,8 @@ $(function () {
         <div class="member-item"><span class="member-item-title">通信地址: </span>${rowData.commAddress || ""}</div>
         <div class="member-item"><span class="member-item-title">通信地址邮编: </span>${rowData.commPost || ""}</div>
         <div class="member-item"><span class="member-item-title">爱好: </span>${rowData.hobby || ""}</div>
+        <div class="member-item"><span class="member-item-title">新阶层: </span>${rowData.stratum || ""}</div>
+        <div class="member-item"><span class="member-item-title">最高学历: </span>${rowData.highestEducation || ""}</div>
     </div>
 </div>
 `;
@@ -444,6 +459,13 @@ $(function () {
         $.each(formData, function (index, element) {
             memberInfo[element.name] = element.value;
         });
+
+        var $start_age = $('#start_age').val();
+        var $end_age = $('#end_age').val();
+        if($start_age != '' && $end_age != ''){
+            memberInfo['startAge'] = moment().subtract($start_age, 'y').format("YYYY-MM-DD");
+            memberInfo['endAge'] = moment().subtract($end_age, 'y').format("YYYY-MM-DD");
+        }
         memberInfo.branch = (branch == null ? '' : branch);
         $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
             $('#member-search').dialog('close');
@@ -456,7 +478,7 @@ $(function () {
     function memberSearch() {
         $('#member-search').dialog({
             width: 600,
-            height: 300,
+            height: 450,
             title: '社员查询',
             closed: false,
             cache: false,
@@ -491,24 +513,58 @@ $(function () {
         })
     }
 
-    function reminderBirthday() {
-        $('#reminder_dialog').dialog({
-            title: '提醒',
+    // function reminderBirthday() {
+    //     $('#reminder_dialog').dialog({
+    //         title: '提醒',
+    //         closed: false,
+    //         cache: false,
+    //         modal: true,
+    //         height: 200,
+    //         width: 200
+    //     })
+    // }
+    //
+    // $('#reminder_birthday').click(function () {
+    //     var now = moment().format("M-D");
+    //     var end = moment().add(7, 'd').format("M-D");
+    //     $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
+    //         $memberList.datagrid('loadData', data);
+    //         $('#reminder_dialog').dialog("close")
+    //     });
+    // });
+    //
+    // $('#reminder_retire').click(function () {
+    //    var now = moment().format("YYYY-MM-DD");
+    //     $.get('/members/reminder/' + now,function (data) {
+    //         $memberList.datagrid('loadData', data.docs);
+    //         $('#reminder_dialog').dialog("close")
+    //     })
+    // });
+
+    $('#retire_time_div').click(function () {
+        var now = moment().format("YYYY-MM-DD");
+        $('#retire_time_input').textbox("setValue",now);
+    });
+
+    function exportMembersExcel(){
+        $('#members_export_excel').dialog({
+            title: '社员导出',
             closed: false,
             cache: false,
             modal: true,
-            height: 200,
+            height: 100,
             width: 200
         })
     }
 
-    $('#reminder_birthday').click(function () {
-        var now = moment().format("M-D");
-        var end = moment().add(7, 'd').format("M-D");
-        $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
-            $memberList.datagrid('loadData', data);
-            $('#reminder_dialog').dialog("close")
-        });
+    $('#memberInfo_export').click(function () {
+       var member = $memberList.datagrid('getSelected');
+       if (member == null) {
+            $.messager.alert('提示', '请选择需要导出的社员!', 'error');
+            return;
+        }
+        window.location.href = '/member/export/'+ member._id;
+        $('#members_export_excel').dialog('close');
     });
 
     $('#reminder_retire').click(function () {
@@ -517,6 +573,16 @@ $(function () {
             $memberList.datagrid('loadData', data.docs);
             $('#reminder_dialog').dialog("close")
         })
+    });
+
+    $('#members_export').click(function () {
+        var formData = $("#member-search-form").serializeArray();
+        var memberInfo = {};
+        $.each(formData, function (index, element) {
+            memberInfo[element.name] = element.value;
+        });
+        window.location.href = '/member/information/' + JSON.stringify(memberInfo)
+        $('#members_export_excel').dialog('close');
     });
 
     //新建支社
