@@ -8,5 +8,6 @@ __all__ = [
     'document_handler',
     'attachment_handler',
     'tab',
-    'reminder_handler'
+    'reminder_handler',
+    'organ_handler'
 ]

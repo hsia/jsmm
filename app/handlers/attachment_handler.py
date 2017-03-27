@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-'''
+"""
 Copyright lixia@ccrise.com
-'''
+"""
 import json
-import os.path
-import urllib
-import uuid
 import time
+import urllib
 
 import tornado.web
-from tornado.httputil import HTTPHeaders
-
 import tornado_utils
+
 from commons import couch_db, make_uuid
 
 
@@ -147,42 +144,46 @@ class AttachmentHandler(tornado.web.RequestHandler):
 
     def post(self, member_id, doc_type):
 
-        responseMember = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": member_id})
-        memberInDb = json.loads(responseMember.body.decode('utf-8'))
+        response_member = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": member_id})
+        member_in_db = json.loads(response_member.body.decode('utf-8'))
 
         docs = self.request.files['docs']
-        docName = docs[0]['filename'];
+        doc_name = docs[0]['filename']
 
-        documentInfo = {
+        document_info = {
             '_id': make_uuid(),
-            'memberId': memberInDb['_id'],
-            'name': memberInDb['name'],
+            'memberId': member_in_db['_id'],
+            'name': member_in_db['name'],
             'type': 'document',
-            'branch': memberInDb['branch'],
-            'organ': memberInDb['organ'],
+            'branch': member_in_db['branch'],
+            'organ': member_in_db['organ'],
             'fileUploadTime': time.strftime("%Y-%m-%d", time.localtime()),
             'docType': doc_type,
-            'fileName': docName
+            'fileName': doc_name
         }
 
-        documentResponse = couch_db.post(r'/jsmm/', documentInfo)
+        document_response = couch_db.post(r'/jsmm/', document_info)
 
-        result = json.loads(documentResponse.body.decode('utf-8'))
-        document_id = result["id"];
+        result = json.loads(document_response.body.decode('utf-8'))
+        document_id = result["id"]
 
-        if doc_type == 'departmentReport':
-            if ('departmentReport' not in memberInDb):
-                memberInDb['departmentReport'] = []
-            memberInDb['departmentReport'].append(document_id)
-        elif doc_type == 'departmentInfo':
-            if ('departmentInfo' not in memberInDb):
-                memberInDb['departmentInfo'] = []
-            memberInDb['departmentInfo'].append(document_id)
-        elif doc_type == 'speechesText':
-            if ('speechesText' not in memberInDb):
-                memberInDb['speechesText'] = []
-            memberInDb['speechesText'].append(document_id)
+        if doc_type == 'researchReport':
+            if 'researchReport' not in member_in_db:
+                member_in_db['researchReport'] = []
+            member_in_db['researchReport'].append(document_id)
+        elif doc_type == 'unitedTheory':
+            if 'unitedTheory' not in member_in_db:
+                member_in_db['unitedTheory'] = []
+            member_in_db['unitedTheory'].append(document_id)
+        elif doc_type == 'politicsInfo':
+            if 'politicsInfo' not in member_in_db:
+                member_in_db['politicsInfo'] = []
+            member_in_db['politicsInfo'].append(document_id)
+        elif doc_type == 'propaganda':
+            if 'propaganda' not in member_in_db:
+                member_in_db['propaganda'] = []
+            member_in_db['propaganda'].append(document_id)
 
-        responseMemberPut = couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, memberInDb)
+        couch_db.put(r'/jsmm/%(id)s' % {"id": member_id}, member_in_db)
 
-        return self.put(document_id, docName);
+        return self.put(document_id, doc_name)

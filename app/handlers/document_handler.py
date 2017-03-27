@@ -3,14 +3,11 @@
 
 
 import json
-import os.path
-import time
-import uuid
 
 import tornado.web
-
 import tornado_utils
-from commons import couch_db, make_uuid
+
+from commons import couch_db
 
 
 @tornado_utils.bind_to(r'/document/([0-9a-f]+)')
@@ -19,6 +16,9 @@ class DocumentHandler(tornado.web.RequestHandler):
 
     URL: '/document/<document_id>
     """
+
+    def data_received(self, chunk):
+        pass
 
     def get(self, document_id):
         """获取文档信息
@@ -35,23 +35,25 @@ class DocumentHandler(tornado.web.RequestHandler):
         """删除文档：
             包括删除文档记录和更新memer中的文档id
         """
-        responseDocument = couch_db.get(r'/jsmm/%(document_id)s' % {"document_id": document_id})
-        document = json.loads(responseDocument.body.decode('utf-8'))
+        response_document = couch_db.get(r'/jsmm/%(document_id)s' % {"document_id": document_id})
+        document = json.loads(response_document.body.decode('utf-8'))
 
-        responseMember = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": document["memberId"]})
-        member = json.loads(responseMember.body.decode('utf-8'))
-        if document['docType'] == 'departmentReport':
-            member['departmentReport'].remove(document['_id'])
-        elif document['docType'] == 'departmentInfo':
-            member['departmentInfo'].remove(document['_id'])
-        elif document['docType'] == 'speechesText':
-            member['speechesText'].remove(document['_id'])
+        response_member = couch_db.get(r'/jsmm/%(member_id)s' % {"member_id": document["memberId"]})
+        member = json.loads(response_member.body.decode('utf-8'))
+        if document['docType'] == 'researchReport':
+            member['researchReport'].remove(document['_id'])
+        elif document['docType'] == 'unitedTheory':
+            member['unitedTheory'].remove(document['_id'])
+        elif document['docType'] == 'politicsInfo':
+            member['politicsInfo'].remove(document['_id'])
+        elif document['docType'] == 'propaganda':
+            member['propaganda'].remove(document['_id'])
         # 删除Document记录
-        responseDelDocument = couch_db.delete(r'/jsmm/%(document_id)s?rev=%(document_rev)s' %
-                                              {'document_id': document_id, 'document_rev': document['_rev']})
+        couch_db.delete(r'/jsmm/%(document_id)s?rev=%(document_rev)s' %
+                        {'document_id': document_id, 'document_rev': document['_rev']})
         # 更新member中的document的id
-        responseUpdateMember = couch_db.put(r'/jsmm/%(id)s' % {"id": member["_id"]}, member)
+        couch_db.put(r'/jsmm/%(id)s' % {"id": member["_id"]}, member)
 
-        delResult = json.loads(responseDelDocument.body.decode('utf-8'))
+        # del_result = json.loads(response_del_document.body.decode('utf-8'))
 
         self.write({'success': 'true'})

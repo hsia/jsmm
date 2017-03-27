@@ -70,12 +70,23 @@ $(function () {
         }
     });
 
+    window.addEventListener("organ-tree-operation", function (event) {
+        $dataGrid.datagrid({
+            loader: function (param, success) {
+                param.branch = '';
+                $.post('/documents', JSON.stringify(param), function (data) {
+                    success(data)
+                }, 'json');
+            }
+        });
+    });
+
     $('#tabsAll').tabs({
         border: false,
         onSelect: function (title, index) {
             $("#tb-form").form('clear');
             console.log(title + "," + index);
-            if (index == 1) {
+            if (index == 1 && organName == null) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
                         var defaultUrl = '/documents';
@@ -91,14 +102,17 @@ $(function () {
     function changeType(value, row, index) {
         var result = '';
         switch (value) {
-            case 'departmentReport':
-                result = '部门报告';
+            case 'researchReport':
+                result = '调研报告';
                 break;
-            case 'departmentInfo':
-                result = '部门信息';
+            case 'politicsInfo':
+                result = '参政议政信息';
                 break;
-            case 'speechesText':
-                result = '演讲稿';
+            case 'unitedTheory':
+                result = '统战理论';
+                break;
+            case 'propaganda':
+                result = '宣传稿';
                 break;
         }
 
