@@ -740,13 +740,18 @@ $(function () {
             url: '/organ/' + id,
             type: 'DELETE',
             success: function (data) {
-                //删除成功以后，重新加载数据。
-                $('#organTree').tree('loadData', data);
-                //重新加载会员列表/文档列表
-                $memberList.datagrid('reload');
-                refreshDocumentListEvent();
+                if (data.success) {
+                    //删除成功以后，重新加载数据。
+                    $('#organTree').tree('loadData', data.content);
+                    //重新加载会员列表/文档列表
+                    $memberList.datagrid('reload');
+                    refreshDocumentListEvent();
 
-                $.messager.alert('提示', '支社删除成功!', 'info');
+                    $.messager.alert('提示', '支社删除成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'warning');
+                }
+
             },
             error: function (data) {
                 $.messager.alert('提示', '支社删除失败!', 'error');

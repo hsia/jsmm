@@ -152,6 +152,7 @@ class OrganOperationHandler(tornado.web.RequestHandler):
     def delete(self, organ_id):
         """删除支社
         """
+        result = {}
         response = couch_db.get(r'/jsmm/_design/organ/_view/getOrgan')
         organ_content = json.loads(response.body.decode('utf-8'))
         organ_row = organ_content['rows'][0]
@@ -162,17 +163,17 @@ class OrganOperationHandler(tornado.web.RequestHandler):
         response_member = couch_db.post(r'/jsmm/_find', selector)
         members = json.loads(response_member.body.decode('utf-8'))['docs']
         if len(members) < 1:
-            pass
+            for organ in organ_cy['children']:
+                if organ['id'] == organ_id:
+                    organ_cy['children'].remove(organ)
+
+            couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+
+            result['success'] = True
+            result['content'] = organ_value['organ']
         else:
-            for member in members:
-                member['branch'] = ''
-                couch_db.put(r'/jsmm/%(id)s' % {"id": member['_id']}, member)
-
-        for organ in organ_cy['children']:
-            if organ['id'] == organ_id:
-                organ_cy['children'].remove(organ)
-
-        couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+            result['success'] = False
+            result['content'] = u'该支社拥有社员，请将"该支社下社员删除"或者"将该支社合并到其他支社"或者"修改会员所属支社"！'
 
         self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(organ_value['organ']))
+        self.write(result)
