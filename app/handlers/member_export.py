@@ -13,8 +13,10 @@ import xlwt
 from commons import couch_db
 
 
-@tornado_utils.bind_to(r'/member/export/([0-9a-f]+)')
+@tornado_utils.bind_to(r'/member/export/([0-9a-f]+)/?')
 class memberInfoExport(tornado.web.RequestHandler):
+
+    @tornado.web.addslash
     def get(self, member_id):
 
         current_row = 18
@@ -342,7 +344,8 @@ class memberInfoExport(tornado.web.RequestHandler):
                         obj_row = 3 + len(member['agencybroker'])
                         current_row += obj_row
                         break
-                current_row = customizeObj(obj, current_row, ws, style, memberInfoStyle, member)
+                if self.request.arguments:
+                    current_row = customizeObj(obj, current_row, ws, style, memberInfoStyle, member)
 
         tall_style = xlwt.easyxf('font:height 360;')
         for i in range(0, current_row):

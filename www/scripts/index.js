@@ -553,7 +553,7 @@ $(function () {
             closed: false,
             cache: false,
             modal: true,
-            height: 100,
+            height: 150,
             width: 200
         })
     }
@@ -565,6 +565,16 @@ $(function () {
             return;
         }
         window.location.href = '/member/export/'+ member._id;
+        $('#members_export_excel').dialog('close');
+    });
+
+    $('#memberInfo_cus_export').click(function () {
+        var member = $memberList.datagrid('getSelected');
+       if (member == null) {
+            $.messager.alert('提示', '请选择需要导出的社员!', 'error');
+            return;
+        }
+        window.location.href = '/member/export/'+ member._id + '?cus = cus';
         $('#members_export_excel').dialog('close');
     });
 
@@ -587,13 +597,13 @@ $(function () {
         $('#members_export_excel').dialog('close');
     });
   
-    $('#reminder_retire').click(function () {
-        var now = moment().format("YYYY-MM-DD");
-        $.get('/members/reminder/' + now, function (data) {
-            $memberList.datagrid('loadData', data.docs);
-            $('#reminder_dialog').dialog("close")
-        })
-    });
+    // $('#reminder_retire').click(function () {
+    //     var now = moment().format("YYYY-MM-DD");
+    //     $.get('/members/reminder/' + now, function (data) {
+    //         $memberList.datagrid('loadData', data.docs);
+    //         $('#reminder_dialog').dialog("close")
+    //     })
+    // });
 
     //新建支社
     $('#newOrgan').click(function () {
