@@ -438,6 +438,30 @@ class MembersExport(tornado.web.RequestHandler):
             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
                 selector_content['branch'] = {"$eq": search["branch"]}
 
+        if 'socialPositionName' in search:
+            if search['socialPositionName'] != '':
+                selector_content['social'] = {
+                    "$elemMatch": {"socialPositionName": {"$regex": search['socialPositionName']}}}
+
+        if 'socialPositionLevel' in search:
+            if search['socialPositionLevel'] != '':
+                selector_content['social'] = {
+                    "$elemMatch": {"socialPositionLevel": {"$regex": search['socialPositionLevel']}}}
+
+        if 'formeOrganizationJob' in search:
+            if search['formeOrganizationJob'] != '':
+                selector_content['formercluboffice'] = {
+                    "$elemMatch": {"formeOrganizationJob": {"$regex": search['formeOrganizationJob']}}}
+
+        if 'formeOrganizationLevel' in search:
+            if search['formeOrganizationLevel'] != '':
+                selector_content['formercluboffice'] = {
+                    "$elemMatch": {"formeOrganizationLevel": {"$regex": search['formeOrganizationLevel']}}}
+
+        if 'startAge' in search and 'endAge' in search:
+            if search['startAge'] != '' and search['endAge']:
+                selector_content['birthday'] = {"$gte": search['endAge'], "$lte": search['startAge']}
+
         selector_content['type'] = {"$eq": "member"}
 
         response = couch_db.post(r'/jsmm/_find/', selector)
@@ -492,7 +516,7 @@ class MembersExport(tornado.web.RequestHandler):
             worksheet.col(column).width = titles[title] * 256
             column += 1
 
-        if len(members_simple_info) > 1:
+        if len(members_simple_info) > 0:
             row = 1
             for member in members_simple_info:
                 column = 0
