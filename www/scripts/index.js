@@ -2,6 +2,18 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
+    $("#logout").click(function () {
+        $.messager.confirm('确定', '注销当前用户？', function (r) {
+            if (r) {
+                window.location.href = '/logout';
+            }
+        });
+    })
+
+    $("#modPasswd").click(function () {
+        alert("修改密码")
+    })
+
     $('.easyui-combotree').combotree({
         onShowPanel: function () {
             $(this).combotree({
@@ -205,21 +217,21 @@ $(function () {
             client_add_tab();
         }
     }
-    // , '-', {
-    //     text: '提醒',
-    //     iconCls: 'icon-clock',
-    //     handler: function () {
-    //         reminderBirthday();
-    //     }
-    //
-    // }
-    ,'-',{
-        text: '社员导出',
-        iconCls: 'save-excel',
-        handler: function () {
-            exportMembersExcel();
-        }
-    }];
+        // , '-', {
+        //     text: '提醒',
+        //     iconCls: 'icon-clock',
+        //     handler: function () {
+        //         reminderBirthday();
+        //     }
+        //
+        // }
+        , '-', {
+            text: '社员导出',
+            iconCls: 'save-excel',
+            handler: function () {
+                exportMembersExcel();
+            }
+        }];
 
     var defaultUrl = '/members';
 
@@ -462,7 +474,7 @@ $(function () {
 
         var $start_age = $('#start_age').val();
         var $end_age = $('#end_age').val();
-        if($start_age != '' && $end_age != ''){
+        if ($start_age != '' && $end_age != '') {
             memberInfo['startAge'] = moment().subtract($start_age, 'y').format("YYYY-MM-DD");
             memberInfo['endAge'] = moment().subtract($end_age, 'y').format("YYYY-MM-DD");
         }
@@ -544,10 +556,10 @@ $(function () {
 
     $('#retire_time_div').click(function () {
         var now = moment().format("YYYY-MM-DD");
-        $('#retire_time_input').textbox("setValue",now);
+        $('#retire_time_input').textbox("setValue", now);
     });
 
-    function exportMembersExcel(){
+    function exportMembersExcel() {
         $('#members_export_excel').dialog({
             title: '社员导出',
             closed: false,
@@ -559,22 +571,22 @@ $(function () {
     }
 
     $('#memberInfo_export').click(function () {
-       var member = $memberList.datagrid('getSelected');
-       if (member == null) {
+        var member = $memberList.datagrid('getSelected');
+        if (member == null) {
             $.messager.alert('提示', '请选择需要导出的社员!', 'error');
             return;
         }
-        window.location.href = '/member/export/'+ member._id;
+        window.location.href = '/member/export/' + member._id;
         $('#members_export_excel').dialog('close');
     });
 
     $('#memberInfo_cus_export').click(function () {
         var member = $memberList.datagrid('getSelected');
-       if (member == null) {
+        if (member == null) {
             $.messager.alert('提示', '请选择需要导出的社员!', 'error');
             return;
         }
-        window.location.href = '/member/export/'+ member._id + '?cus = cus';
+        window.location.href = '/member/export/' + member._id + '?cus = cus';
         $('#members_export_excel').dialog('close');
     });
 
@@ -596,7 +608,7 @@ $(function () {
         window.location.href = '/member/information/' + JSON.stringify(memberInfo)
         $('#members_export_excel').dialog('close');
     });
-  
+
     // $('#reminder_retire').click(function () {
     //     var now = moment().format("YYYY-MM-DD");
     //     $.get('/members/reminder/' + now, function (data) {

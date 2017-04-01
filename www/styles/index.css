@@ -25,14 +25,14 @@ html, body {
 .banner .reminder {
     display: inline-block;
     float: right;
-    width: 80px;
+    width: 180px;
     height: 100%;
     line-height: 60px;
     vertical-align: middle;
 }
 
 .bell {
-    background-image: url("../resources/reminder1.png");
+    /*background-image: url("../resources/reminder1.png");*/
     background-repeat: no-repeat;
     background-size: 48px 48px;
     background-position: 0 center;
