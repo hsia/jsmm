@@ -44,6 +44,7 @@ html, body {
 }
 
 .member-dialog {
+    display: none;
     padding: 1em;
 }
 
@@ -54,7 +55,7 @@ html, body {
 }
 
 .member-property {
-    min-width: 150px;
+    min-width: 240px;
 }
 
 .member-detail {

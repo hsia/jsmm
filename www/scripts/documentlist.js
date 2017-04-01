@@ -36,7 +36,7 @@ $(function () {
                 align: 'left',
                 formatter: changeType
             },
-            {field: 'name', title: '所属社员', width: 60, sortable: false, align: 'left'},
+            {field: 'name', title: '社员姓名', width: 60, sortable: false, align: 'left'},
             {field: 'branch', title: '所属支社', width: 90, sortable: false, align: 'left'},
             {field: 'fileUploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
             {
@@ -228,6 +228,13 @@ $(function () {
     });
 
     function documentsSearch() {
+
+        $('#docTypeD').combobox({
+            valueField: 'value',
+            textField: 'text',
+            url: 'data/documenttype.json',
+            method: 'get'
+        })
         $('#document-search').dialog({
             width: 600,
             height: 300,

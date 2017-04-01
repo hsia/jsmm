@@ -3,19 +3,19 @@ $(function () {
     var $dataGrid = $('#client_add_tab_table');
 
     var toolbar = [{
-        text: '添加记录',
+        text: '添加列',
         iconCls: 'icon-add',
         handler: function () {
             append();
         }
     }, '-', {
-        text: '移除记录',
+        text: '移除列',
         iconCls: 'icon-remove',
         handler: function () {
             removeit();
         }
     }, '-', {
-        text: '保存记录',
+        text: '保存表',
         iconCls: 'icon-save',
         handler: function () {
             save();
