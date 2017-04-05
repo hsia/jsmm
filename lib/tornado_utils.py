@@ -39,6 +39,7 @@ def serve(port, **options):
         ],
         **options
     )
+    print(registered_handlers)
     application.listen(port)
     from tornado.ioloop import IOLoop
     IOLoop.instance().start()

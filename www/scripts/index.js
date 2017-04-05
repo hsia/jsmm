@@ -388,7 +388,7 @@ $(function () {
                     exportMembersExcel();
                 }
             }, '-', {
-                text: '添加自定义tab',
+                text: '管理自定义tab',
                 iconCls: 'icon-add',
                 handler: function () {
                     client_add_tab();
@@ -679,8 +679,9 @@ $(function () {
         //添加tab页
         function client_add_tab() {
             var gridHeight = ($("#member-info").height()) + 77;
+            $("#tab_title").textbox('setValue', '');
             $('#client_add_tab').dialog({
-                title: '添加自定义tab',
+                title: '管理自定义tab',
                 closed: false,
                 cache: false,
                 modal: true,

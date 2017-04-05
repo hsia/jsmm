@@ -123,7 +123,7 @@ class OrganOperationHandler(tornado.web.RequestHandler):
     def put(self, new_organ_value):
         """新建支社
         """
-        result = {};
+        result = {}
         response = couch_db.get(r'/jsmm/_design/organ/_view/getOrgan')
         organ_content = json.loads(response.body.decode('utf-8'))
         organ_row = organ_content['rows'][0]
