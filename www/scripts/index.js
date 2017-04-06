@@ -626,7 +626,28 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-add-form').trigger('submit');
+                    // $('#organ-add-form').trigger('submit');
+                    $('#organ-add-form').form({
+                        url: "/organ/",
+                        onSubmit: function (param) {
+                            param.flag = 'add';
+                            var isValid = $(this).form('validate');
+                            return isValid;	// 返回false终止表单提交
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.success) {
+                                $('#organ-add').dialog('close');
+                                $('#organ-add-form').form('clear');
+
+                                $('#organTree').tree('loadData', data.content);
+                                $.messager.alert('提示', '新建支社成功!', 'info');
+                            } else {
+                                $.messager.alert('提示', data.content, 'warning');
+                            }
+                        }
+                    });
+                    $('#organ-add-form').submit();
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -639,36 +660,36 @@ $(function () {
         });
     });
 
-    $("#organ-add-form").submit(function (event) {
-        event.preventDefault();
-        var formData = $(this).serializeArray();
-        if (formData[0].value == '') {
-            $.messager.alert('提示', '请输入组织机构名称!', 'info');
-            return false;
-        }
-
-
-        $.ajax({
-            url: '/organ/' + formData[0].value,
-            type: 'PUT',
-            success: function (data) {
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                if (data.success) {
-                    $('#organ-add').dialog('close');
-                    $('#organ-add-form').form('clear');
-
-                    $('#organTree').tree('loadData', data.content);
-                    $.messager.alert('提示', '新建支社成功!', 'info');
-                } else {
-                    $.messager.alert('提示', data.content, 'warning');
-                }
-
-            },
-            error: function (data) {
-                $.messager.alert('提示', '新建支社失败!', 'error');
-            }
-        });
-    });
+    // $("#organ-add-form").submit(function (event) {
+    //     event.preventDefault();
+    //     var formData = $(this).serializeArray();
+    //     if (formData[0].value == '') {
+    //         $.messager.alert('提示', '请输入组织机构名称!', 'info');
+    //         return false;
+    //     }
+    //
+    //
+    //     $.ajax({
+    //         url: '/organ/' + formData[0].value,
+    //         type: 'PUT',
+    //         success: function (data) {
+    //             //删除成功以后，重新加载数据，并将choiceRows置为空。
+    //             if (data.success) {
+    //                 $('#organ-add').dialog('close');
+    //                 $('#organ-add-form').form('clear');
+    //
+    //                 $('#organTree').tree('loadData', data.content);
+    //                 $.messager.alert('提示', '新建支社成功!', 'info');
+    //             } else {
+    //                 $.messager.alert('提示', data.content, 'warning');
+    //             }
+    //
+    //         },
+    //         error: function (data) {
+    //             $.messager.alert('提示', '新建支社失败!', 'error');
+    //         }
+    //     });
+    // });
 
     //编辑支社
     $('#edit-organ').click(function () {
@@ -694,7 +715,34 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-edit-form').trigger('submit');
+                    // $('#organ-edit-form').trigger('submit');
+                    $('#organ-edit-form').form({
+                        url: "/organ/",
+                        onSubmit: function (param) {
+                            var node = $('#organTree').tree('getSelected');
+                            param.organId = node.id
+                            param.flag = 'edit';
+                            var isValid = $(this).form('validate');
+                            return isValid;	// 返回false终止表单提交
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.success) {
+                                $('#organ-edit').dialog('close');
+                                $('#organ-edit-form').form('clear');
+                                //修改成功以后，重新加载数据，并将choiceRows置为空。
+                                $('#organTree').tree('loadData', data.content);
+                                //重新加载会员列表/文档列表
+                                $memberList.datagrid('reload');
+                                refreshDocumentListEvent();
+
+                                $.messager.alert('提示', '修改支社成功!', 'info');
+                            } else {
+                                $.messager.alert('提示', data.content, 'warning');
+                            }
+                        }
+                    });
+                    $('#organ-edit-form').submit();
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -708,49 +756,42 @@ $(function () {
 
     })
 
-    $("#organ-edit-form").submit(function (event) {
-        event.preventDefault();
-        var node = $('#organTree').tree('getSelected');
-        var formData = $(this).serializeArray();
-        if (formData[0].value == '') {
-            $.messager.alert('提示', '请输入组织机构名称!', 'info');
-            return false;
-        }
-
-        $.ajax({
-            url: '/organ/update/' + node.id + '/' + formData[0].value,
-            type: 'PUT',
-            success: function (data) {
-                if (data.success) {
-                    $('#organ-edit').dialog('close');
-                    $('#organ-edit-form').form('clear');
-                    //修改成功以后，重新加载数据，并将choiceRows置为空。
-                    $('#organTree').tree('loadData', data.content);
-                    //重新加载会员列表/文档列表
-                    $memberList.datagrid('reload');
-                    refreshDocumentListEvent();
-
-                    $.messager.alert('提示', '修改支社成功!', 'info');
-                } else {
-                    $.messager.alert('提示', data.content, 'warning');
-                }
-
-            },
-            error: function (data) {
-                $.messager.alert('提示', '修改支社失败!', 'error');
-            }
-        });
-    });
+    // $("#organ-edit-form").submit(function (event) {
+    //     event.preventDefault();
+    //     var node = $('#organTree').tree('getSelected');
+    //     var formData = $(this).serializeArray();
+    //     if (formData[0].value == '') {
+    //         $.messager.alert('提示', '请输入组织机构名称!', 'info');
+    //         return false;
+    //     }
+    //
+    //     $.ajax({
+    //         url: '/organ/update/' + node.id + '/' + formData[0].value,
+    //         type: 'PUT',
+    //         success: function (data) {
+    //             if (data.success) {
+    //                 $('#organ-edit').dialog('close');
+    //                 $('#organ-edit-form').form('clear');
+    //                 //修改成功以后，重新加载数据，并将choiceRows置为空。
+    //                 $('#organTree').tree('loadData', data.content);
+    //                 //重新加载会员列表/文档列表
+    //                 $memberList.datagrid('reload');
+    //                 refreshDocumentListEvent();
+    //
+    //                 $.messager.alert('提示', '修改支社成功!', 'info');
+    //             } else {
+    //                 $.messager.alert('提示', data.content, 'warning');
+    //             }
+    //
+    //         },
+    //         error: function (data) {
+    //             $.messager.alert('提示', '修改支社失败!', 'error');
+    //         }
+    //     });
+    // });
 
     //合并支社
     $('#merge-organ').click(function () {
-        // $('#mergeBranch').combotree({
-        //     url: '/organ',
-        //     method: 'get',
-        //     required: true
-        // });
-
-        // $('#mergeBranch').combotree('reload')
         var node = $('#organTree').tree('getSelected');
         if (node == null) {
             $.messager.alert('提示', '请选择需要合并的支社!', 'error');
@@ -762,7 +803,7 @@ $(function () {
         $('#organ-merge').dialog({
             width: 300,
             height: 150,
-            title: '编辑支社',
+            title: '合并支社',
             closed: false,
             cache: false,
             modal: true,
@@ -770,7 +811,30 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-merge-form').trigger('submit');
+                    // $('#organ-merge-form').trigger('submit');
+                    $('#organ-merge-form').form({
+                        url: "/organ/",
+                        onSubmit: function (param) {
+                            var node = $('#organTree').tree('getSelected');
+                            param.organId = node.id
+                            param.flag = 'merge';
+                            var isValid = $(this).form('validate');
+                            return isValid;	// 返回false终止表单提交
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            //删除成功以后，重新加载数据，并将choiceRows置为空。
+                            $('#organTree').tree('loadData', data);
+                            //重新加载会员列表/文档列表
+                            $memberList.datagrid('reload');
+                            refreshDocumentListEvent();
+
+                            $.messager.alert('提示', '支社合并成功!', 'info');
+                            $('#organ-merge').dialog('close');
+                            $('#organ-merge-form').form('clear');
+                        }
+                    });
+                    $('#organ-merge-form').submit();
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -783,38 +847,38 @@ $(function () {
         });
     })
 
-    $("#organ-merge-form").submit(function (event) {
-        event.preventDefault();
-        var node = $('#organTree').tree('getSelected');
-        var formData = $(this).serializeArray();
-        if (formData[0].value == '') {
-            $.messager.alert('提示', '请输入组织机构名称!', 'info');
-            return false;
-        }
-        if (node.id == formData[0].value) {
-            $.messager.alert('提示', '选择的目标支社和原支社相同，请选择不同的支社!', 'warning');
-            return false;
-        }
-
-        $('#organ-merge').dialog('close');
-        $('#organ-merge-form').form('clear');
-        $.ajax({
-            url: '/organ/merge/' + node.id + '/' + formData[0].value,
-            type: 'PUT',
-            success: function (data) {
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $('#organTree').tree('loadData', data);
-                //重新加载会员列表/文档列表
-                $memberList.datagrid('reload');
-                refreshDocumentListEvent();
-
-                $.messager.alert('提示', '支社合并成功!', 'info');
-            },
-            error: function (data) {
-                $.messager.alert('提示', '修改合并失败!', 'error');
-            }
-        });
-    });
+    // $("#organ-merge-form").submit(function (event) {
+    //     event.preventDefault();
+    //     var node = $('#organTree').tree('getSelected');
+    //     var formData = $(this).serializeArray();
+    //     if (formData[0].value == '') {
+    //         $.messager.alert('提示', '请输入组织机构名称!', 'info');
+    //         return false;
+    //     }
+    //     if (node.id == formData[0].value) {
+    //         $.messager.alert('提示', '选择的目标支社和原支社相同，请选择不同的支社!', 'warning');
+    //         return false;
+    //     }
+    //
+    //     $('#organ-merge').dialog('close');
+    //     $('#organ-merge-form').form('clear');
+    //     $.ajax({
+    //         url: '/organ/merge/' + node.id + '/' + formData[0].value,
+    //         type: 'PUT',
+    //         success: function (data) {
+    //             //删除成功以后，重新加载数据，并将choiceRows置为空。
+    //             $('#organTree').tree('loadData', data);
+    //             //重新加载会员列表/文档列表
+    //             $memberList.datagrid('reload');
+    //             refreshDocumentListEvent();
+    //
+    //             $.messager.alert('提示', '支社合并成功!', 'info');
+    //         },
+    //         error: function (data) {
+    //             $.messager.alert('提示', '修改合并失败!', 'error');
+    //         }
+    //     });
+    // });
 
     //删除支社
     $('#delete-organ').click(function () {
@@ -878,7 +942,29 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    passwordModified();
+                    // passwordModified();
+                    $('#password-form').form({
+                        url: "/user/",
+                        onSubmit: function (param) {
+                            var isValid = $(this).form('validate');
+                            return isValid;	// 返回false终止表单提交
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.success) {
+                                $('#password-modified').dialog('close');
+                                $.messager.alert('提示', '修改密码成功,请重新登录！', 'info', function () {
+                                    window.location.href = '/logout'
+                                });
+                                $('#password-form').form('clear');
+                            } else if (!data.success) {
+                                $.messager.alert('提示', data.content, 'error');
+                            } else {
+                                $.messager.alert('提示', "修改密码失败", 'error');
+                            }
+                        }
+                    });
+                    $('#password-form').submit();
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -891,30 +977,30 @@ $(function () {
         });
     });
 
-    function passwordModified() {
-        var formData = $("#password-form").serializeArray();
-        var userInfo = {};
-        $.each(formData, function (index, element) {
-            userInfo[element.name] = element.value;
-        });
-
-        if (userInfo.username == "" || userInfo.oldPassword == '' || userInfo.newPassword == '' || userInfo.newPasswordSecond == '') {
-            return false;
-        }
-
-        $.post("/user/", JSON.stringify(userInfo), function (data) {
-            if (data.success) {
-                $('#password-modified').dialog('close');
-                $.messager.alert('提示', '修改密码成功,请重新登录！', 'info', function () {
-                    window.location.href = '/logout'
-                });
-                $('#password-form').form('clear');
-            } else if (!data.success) {
-                $.messager.alert('提示', data.content, 'error');
-            } else {
-                $.messager.alert('提示', "修改密码失败", 'error');
-            }
-        })
-    }
+    // function passwordModified() {
+    //     var formData = $("#password-form").serializeArray();
+    //     var userInfo = {};
+    //     $.each(formData, function (index, element) {
+    //         userInfo[element.name] = element.value;
+    //     });
+    //
+    //     if (userInfo.username == "" || userInfo.oldPassword == '' || userInfo.newPassword == '' || userInfo.newPasswordSecond == '') {
+    //         return false;
+    //     }
+    //
+    //     $.post("/user/", JSON.stringify(userInfo), function (data) {
+    //         if (data.success) {
+    //             $('#password-modified').dialog('close');
+    //             $.messager.alert('提示', '修改密码成功,请重新登录！', 'info', function () {
+    //                 window.location.href = '/logout'
+    //             });
+    //             $('#password-form').form('clear');
+    //         } else if (!data.success) {
+    //             $.messager.alert('提示', data.content, 'error');
+    //         } else {
+    //             $.messager.alert('提示', "修改密码失败", 'error');
+    //         }
+    //     })
+    // }
 
 });

@@ -192,7 +192,7 @@
     </div>
 </div>
 <div id="organ-add" class="member-dialog">
-    <form id="organ-add-form" class="easyui-form member-form" data-options="validate:true">
+    <form id="organ-add-form" class="easyui-form member-form" data-options="validate:true" method="post">
         <div style="margin-bottom:20px;" class="member-property">
             <input class="easyui-textbox" name="organName" style="width:100%"
                    data-options="label:'组织机构名称:',required:true">
@@ -200,7 +200,7 @@
     </form>
 </div>
 <div id="organ-edit" class="member-dialog">
-    <form id="organ-edit-form" class="easyui-form member-form" data-options="validate:true">
+    <form id="organ-edit-form" class="easyui-form member-form" data-options="validate:true" method="post">
         <div style="margin-bottom:20px;" class="member-property">
             <input class="easyui-textbox" name="organName" style="width:100%"
                    data-options="label:'组织机构名称:',required:true">
@@ -208,7 +208,7 @@
     </form>
 </div>
 <div id="organ-merge" class="member-dialog">
-    <form id="organ-merge-form" class="easyui-form member-form" data-options="validate:true">
+    <form id="organ-merge-form" class="easyui-form member-form" data-options="validate:true" method="post">
         <div style="margin-bottom:20px;" class="member-property">
             <select id="mergeBranch" class="easyui-combotree" name="organName" style="width:100%"
                     data-options="label:'目标支社:',required:false,prompt:'请选择'"></select>
@@ -642,7 +642,7 @@
     </form>
 </div>
 <div id="password-modified" class="member-dialog">
-    <form id="password-form" class="easyui-form member-form" data-options="validate:true">
+    <form id="password-form" class="easyui-form member-form" data-options="validate:true" method="post">
         <div style="margin-bottom:20px;" class="member-property">
             <input id="userNameId" class="easyui-textbox" name="userName" style="width:90%"
                    data-options="label:'用户名:',required:true, value:'{{user}}'">

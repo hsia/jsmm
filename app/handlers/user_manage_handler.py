@@ -17,7 +17,10 @@ class UserManageHandler(tornado.web.RequestHandler):
 
     @tornado.web.addslash
     def post(self):
-        user_info = json.loads(self.request.body.decode("utf-8"))
+        user_info = {'userName': self.get_argument('userName'), 'oldPassword': self.get_argument('oldPassword'),
+                     'newPassword': self.get_argument('newPassword'),
+                     'newPasswordSecond': self.get_argument('newPasswordSecond')}
+        # user_info = json.loads(self.request.body.decode("utf-8"))
         result = {}
 
         # 验证旧密码是否一致
