@@ -2,6 +2,13 @@
  * Created by S on 2017/2/16.
  */
 $(function () {
+    $("#logout").click(function () {
+        $.messager.confirm('确定', '注销当前用户？', function (r) {
+            if (r) {
+                window.location.href = '/logout';
+            }
+        });
+    })
 
     //绑定新建支社回车提交
     $('#organNew').textbox('textbox').keydown(function (e) {
@@ -1037,6 +1044,60 @@ $(function () {
                 $.messager.alert('提示', '支社删除失败!', 'error');
             }
         });
+    }
+
+    //修改密码
+    $('#mod-passwd').click(function () {
+        // $("#userNameId").textbox('setValue','admin');
+        $('#userNameId').textbox('textbox').attr('readonly', true);
+        $('#password-modified').dialog({
+            width: 300,
+            height: 230,
+            title: '修改密码',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '确定',
+                handler: function () {
+                    passwordModified();
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#password-form').form('clear');
+                    $('#password-modified').dialog('close');
+                }
+            }]
+        });
+    });
+
+    function passwordModified() {
+        var formData = $("#password-form").serializeArray();
+        var userInfo = {};
+        $.each(formData, function (index, element) {
+            userInfo[element.name] = element.value;
+        });
+
+        if (userInfo.username == "" || userInfo.oldPassword == '' || userInfo.newPassword == '' || userInfo.newPasswordSecond == '') {
+            return false;
+        }
+
+        $.post("/user/", JSON.stringify(userInfo), function (data) {
+            if (data.success) {
+                $('#password-modified').dialog('close');
+                $.messager.alert('提示', '修改密码成功,请重新登录！', 'info', function () {
+                    window.location.href = '/logout'
+                });
+                $('#password-form').form('clear');
+            } else if (!data.success) {
+                $.messager.alert('提示', data.content, 'error');
+            } else {
+                $.messager.alert('提示', "修改密码失败", 'error');
+            }
+        })
     }
 
 });

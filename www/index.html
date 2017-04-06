@@ -44,7 +44,8 @@
     <div data-options="region:'north',border:false">
         <div class="banner">
             <div class="title">九三学社社员信息管理系统</div>
-            <div class="reminder bell"></div>
+            <div class="reminder bell">欢迎 {{user}}，<span id="logout"><u>注销</u></span>，<span
+                    id="mod-passwd"><u>修改密码</u></span></div>
         </div>
     </div>
     <div data-options="region:'west',title:'组织机构'" style="width:15%">
@@ -647,6 +648,21 @@
         </div>
         <input name="_id" hidden="true">
         <!--<input name="_rev" hidden="true">-->
+    </form>
+</div>
+<div id="password-modified" class="member-dialog">
+    <form id="password-form" class="easyui-form member-form" data-options="validate:true" method="post">
+        <div style="margin-bottom:20px;" class="member-property">
+            <input id="userNameId" class="easyui-textbox" name="userName" style="width:90%"
+                   data-options="label:'用户名:',required:true, value:'{{user}}'">
+            <input class="easyui-textbox" name="oldPassword" type="password" style="width:90%"
+                   data-options="label:'旧密码:',required:true">
+            <input class="easyui-textbox" name="newPassword" type="password" style="width:90%"
+                   data-options="label:'新密码:',required:true">
+            <input class="easyui-textbox" name="newPasswordSecond" type="password"
+                   style="width:90%"
+                   data-options="label:'再次输入新密码:',required:true">
+        </div>
     </form>
 </div>
 </body>

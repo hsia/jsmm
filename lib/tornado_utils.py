@@ -8,6 +8,8 @@ Copyright sunhaitao@devTaste.com
 import tornado.web
 from tornado.web import StaticFileHandler
 
+from app.handlers import login_handler
+
 registered_handlers = []
 
 
@@ -18,25 +20,14 @@ def register(pattern, handler):
 def bind_to(pattern):
     def append(handler):
         register(pattern, handler)
-    return append
 
-static_file_dir = 'www'
-default_filename = 'index.html'
+    return append
 
 
 def serve(port, **options):
     from tornado.web import Application
     application = Application(
-        registered_handlers + [
-            (
-                r'/(.*)',
-                StaticFileHandler,
-                {
-                    'path': static_file_dir,
-                    'default_filename': default_filename
-                }
-            )
-        ],
+        registered_handlers,
         **options
     )
     print(registered_handlers)

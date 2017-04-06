@@ -147,4 +147,12 @@ organ = {
         }
     ]
 }
+
 try_(couch_db.post(r'/jsmm/', organ))
+
+user = {
+    "type": "user",
+    "username": "admin",
+    "password": "admin"
+}
+try_(couch_db.post(r'/jsmm/', user))
