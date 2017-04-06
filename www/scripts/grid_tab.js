@@ -33,11 +33,11 @@ GridTab.prototype.addRow = function () {
 };
 
 GridTab.prototype.removeRow = function () {
-    if (!this.editIndex) {
+    // if (!this.editIndex) {
         this.$grid.datagrid('cancelEdit', this.editIndex)
             .datagrid('deleteRow', this.editIndex);
         this.editIndex = null;
-    }
+    // }
 };
 
 GridTab.prototype.saveRow = function () {
