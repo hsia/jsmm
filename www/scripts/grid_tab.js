@@ -34,10 +34,16 @@ GridTab.prototype.addRow = function () {
 
 GridTab.prototype.removeRow = function () {
     // if (!this.editIndex) {
-        this.$grid.datagrid('cancelEdit', this.editIndex)
-            .datagrid('deleteRow', this.editIndex);
-        this.editIndex = null;
+    // this.$grid.datagrid('cancelEdit', this.editIndex)
+    //     .datagrid('deleteRow', this.editIndex);
+    // this.editIndex = null;
     // }
+    if (this.editIndex == undefined) {
+        return
+    }
+    this.$grid.datagrid('cancelEdit', this.editIndex)
+        .datagrid('deleteRow', this.editIndex);
+    this.editIndex = undefined;
 };
 
 GridTab.prototype.saveRow = function () {
