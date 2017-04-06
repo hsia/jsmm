@@ -27,61 +27,61 @@ $(function () {
         $('#gender').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/gender.json',
+            url: 'static/data/gender.json',
             method: 'get'
         })
         $('#nation').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/peoples.json',
+            url: 'static/data/peoples.json',
             method: 'get'
         })
         $('#health').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/health.json',
+            url: 'static/data/health.json',
             method: 'get'
         })
         $('#marriage').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/marriage.json',
+            url: 'static/data/marriage.json',
             method: 'get'
         })
         $('#idType').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/idType.json',
+            url: 'static/data/idType.json',
             method: 'get'
         })
         $('#retire').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#sector').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/sector.json',
+            url: 'static/data/sector.json',
             method: 'get'
         })
         $('#lost').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#stratum').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#highestEducation').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/highestEducation.json',
+            url: 'static/data/highestEducation.json',
             method: 'get'
         })
         $('#newBranch').combotree({
@@ -94,61 +94,61 @@ $(function () {
         $('#genderE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/gender.json',
+            url: 'static/data/gender.json',
             method: 'get'
         })
         $('#nationE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/peoples.json',
+            url: 'static/data/peoples.json',
             method: 'get'
         })
         $('#healthE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/health.json',
+            url: 'static/data/health.json',
             method: 'get'
         })
         $('#marriageE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/marriage.json',
+            url: 'static/data/marriage.json',
             method: 'get'
         })
         $('#idTypeE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/idType.json',
+            url: 'static/data/idType.json',
             method: 'get'
         })
         $('#retireE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#sectorE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/sector.json',
+            url: 'static/data/sector.json',
             method: 'get'
         })
         $('#lostE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#stratumE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#highestEducationE').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/highestEducation.json',
+            url: 'static/data/highestEducation.json',
             method: 'get'
         })
         $('#editBranchE').combotree({
@@ -161,43 +161,43 @@ $(function () {
         $('#genderS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/gender.json',
+            url: 'static/data/gender.json',
             method: 'get'
         })
         $('#sectorS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/sector.json',
+            url: 'static/data/sector.json',
             method: 'get'
         })
         $('#highestEducationS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/highestEducation.json',
+            url: 'static/data/highestEducation.json',
             method: 'get'
         })
         $('#lostS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#stratumS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/retire.json',
+            url: 'static/data/retire.json',
             method: 'get'
         })
         $('#socialPositionLevelS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/socialPositionLevel.json',
+            url: 'static/data/socialPositionLevel.json',
             method: 'get'
         })
         $('#formeOrganizationLevelS').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/formeOrganizationLevel.json',
+            url: 'static/data/formeOrganizationLevel.json',
             method: 'get'
         })
     }
@@ -292,6 +292,7 @@ $(function () {
                 title: '添加社员',
                 closed: false,
                 cache: false,
+                resizable: true,
                 modal: true,
                 buttons: [{
                     iconCls: 'icon-save',
@@ -475,7 +476,7 @@ $(function () {
                         $('#member_image_upload').form('submit', {
                             success: function (data) {
                                 var result = eval('(' + data + ')');
-                                $('#member_image').attr('src', '/image/' + result.fileName);
+                                $('#member_image').attr('src', 'static/image/' + result.fileName);
                                 $('#upload').val('');
                             }
                         });
@@ -500,7 +501,7 @@ $(function () {
         var html = `
 <div class="member-detail">
     <div class="member-picture">
-        <img id="member_image" src="${rowData.picture || '/image/deaulf.jpg'}" style="width:100%;">
+        <img id="member_image" src="${rowData.picture || 'static/image/deaulf.jpg'}" style="width:100%;">
         <form id="member_image_upload" action='/image/upload/' enctype="multipart/form-data" method='post'>
             <input id="create_file" type="file" name="picture" accept="image/*" style="width:100%">
             <input id="create_file" type="hidden" name="picture_id" value="${rowData._id}">
@@ -571,6 +572,7 @@ $(function () {
                     title: '编辑社员',
                     closed: false,
                     cache: false,
+                    resizable: true,
                     modal: true,
                     buttons: [{
                         iconCls: 'icon-ok',
@@ -838,7 +840,6 @@ $(function () {
                 } else {
                     $.messager.alert('提示', data.content, 'warning');
                 }
-
             },
             error: function (data) {
                 $.messager.alert('提示', '新建支社失败!', 'error');

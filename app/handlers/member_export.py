@@ -431,7 +431,7 @@ class MembersExport(tornado.web.RequestHandler):
         for key in keys:
             if key in search:
                 if search[key] != '':
-                    selector_content[key] = {'$eq': search[key]}
+                    selector_content[key] = {'$regex': search[key]}
 
         if 'retireTime' in search:
             if search['retireTime'] != '':

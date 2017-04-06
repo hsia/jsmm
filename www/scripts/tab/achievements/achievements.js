@@ -20,7 +20,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/resultsLevel.json',
+                    url: 'static/data/resultsLevel.json',
                     prompt: '请选择',
                     panelHeight: 'auto'
                 }

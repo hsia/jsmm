@@ -21,7 +21,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/socialOrgType.json',
+                    url: 'static/data/socialOrgType.json',
                     prompt: '请选择'
                 }
             }
@@ -47,7 +47,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/socialPositionLevel.json',
+                    url: 'static/data/socialPositionLevel.json',
                     prompt: '请选择'
                 }
             }

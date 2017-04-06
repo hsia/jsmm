@@ -12,7 +12,7 @@ from commons import couch_db
 def imageCallBack(file):
     loadDb = couch_db.get(r'/jsmm/%(id)s' % {'id': str(file['member_id'], encoding="utf-8")})
     memberInDb = json.loads(loadDb.body.decode('utf-8'))
-    memberInDb['picture'] = '/image/'+file['filename']
+    memberInDb['picture'] = 'static/image/' + file['filename']
     couch_db.put(r'/jsmm/%(id)s' % {"id": str(file['member_id'], encoding="utf-8")}, memberInDb)
 
 

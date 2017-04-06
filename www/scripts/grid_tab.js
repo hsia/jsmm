@@ -137,7 +137,7 @@ GridTab.prototype.buildGrid = function (toolbar, columns) {
     var that = this;
     this.$grid.datagrid({
         iconCls: 'icon-ok',
-        height: height,
+        height: height * 0.89,
         rownumbers: true,
         nowrap: true,
         striped: true,

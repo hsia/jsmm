@@ -232,7 +232,7 @@ $(function () {
         $('#docTypeD').combobox({
             valueField: 'value',
             textField: 'text',
-            url: 'data/documenttype.json',
+            url: 'static/data/documenttype.json',
             method: 'get'
         })
         $('#document-search').dialog({

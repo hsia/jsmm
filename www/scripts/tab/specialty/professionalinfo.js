@@ -28,7 +28,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/projectType.json',
+                    url: 'static/data/projectType.json',
                     prompt: '请选择'
                 }
             }
@@ -51,7 +51,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/roleInProject.json',
+                    url: 'static/data/roleInProject.json',
                     prompt: '请选择'
                 }
             }

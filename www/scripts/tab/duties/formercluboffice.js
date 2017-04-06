@@ -22,7 +22,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/formeOrganizationLevel.json',
+                    url: 'static/data/formeOrganizationLevel.json',
                     prompt: '请选择'
                 }
             }

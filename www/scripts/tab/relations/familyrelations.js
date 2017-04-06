@@ -21,7 +21,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/relationship.json',
+                    url: 'static/data/relationship.json',
                     prompt: '请选择'
                 }
             }
@@ -37,7 +37,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/gender.json',
+                    url: 'static/data/gender.json',
                     prompt: '请选择'
                 }
             }
@@ -57,7 +57,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/party.json',
+                    url: 'static/data/party.json',
                     prompt: '请选择'
                 }
             }

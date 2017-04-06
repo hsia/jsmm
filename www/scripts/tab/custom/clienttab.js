@@ -15,13 +15,13 @@ $(function () {
             removeit();
         }
     }, '-', {
-        text: '保存表',
+        text: '保存tab',
         iconCls: 'icon-save',
         handler: function () {
             save();
         }
     }, '-', {
-        text: '删除表',
+        text: '删除tab',
         iconCls: 'icon-cancel',
         handler: function () {
             deleteTab();

@@ -21,7 +21,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/publicationsType.json',
+                    url: 'static/data/publicationsType.json',
                     panelHeight: 'auto',
                     prompt: '请选择'
                 }
@@ -69,7 +69,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/rolesInPublications.json',
+                    url: 'static/data/rolesInPublications.json',
                     prompt: '请选择',
                     panelHeight: 'auto'
                 }

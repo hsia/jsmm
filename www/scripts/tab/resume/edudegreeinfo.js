@@ -46,7 +46,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/education.json',
+                    url: 'static/data/education.json',
                     prompt: '请选择'
                 }
             }
@@ -62,7 +62,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/degree.json',
+                    url: 'static/data/degree.json',
                     prompt: '请选择'
                 }
             }
@@ -78,7 +78,7 @@ $(function () {
                     valueField: 'value',
                     textField: 'text',
                     method: 'get',
-                    url: 'data/educationType.json',
+                    url: 'static/data/educationType.json',
                     prompt: '请选择',
                     panelHeight: 'auto'
                 }
