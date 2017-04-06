@@ -10,10 +10,6 @@ $(function () {
         });
     })
 
-    $("#modPasswd").click(function () {
-        alert("修改密码")
-    })
-
     $('.easyui-combotree').combotree({
         onShowPanel: function () {
             $(this).combotree({
@@ -618,7 +614,7 @@ $(function () {
     // });
 
     //新建支社
-    $('#newOrgan').click(function () {
+    $('#new-organ').click(function () {
         $('#organ-add').dialog({
             width: 300,
             height: 150,
@@ -675,7 +671,7 @@ $(function () {
     });
 
     //编辑支社
-    $('#editOrgan').click(function () {
+    $('#edit-organ').click(function () {
         var node = $('#organTree').tree('getSelected');
         if (node == null) {
             $.messager.alert('提示', '请选择需要编辑的数据!', 'error');
@@ -747,7 +743,7 @@ $(function () {
     });
 
     //合并支社
-    $('#mergeOrgan').click(function () {
+    $('#merge-organ').click(function () {
         // $('#mergeBranch').combotree({
         //     url: '/organ',
         //     method: 'get',
@@ -821,7 +817,7 @@ $(function () {
     });
 
     //删除支社
-    $('#deleteOrgan').click(function () {
+    $('#delete-organ').click(function () {
         //1、先判断是否有选中的数据行
         var node = $('#organTree').tree('getSelected');
         if (node == null) {
@@ -865,6 +861,58 @@ $(function () {
                 $.messager.alert('提示', '支社删除失败!', 'error');
             }
         });
+    }
+
+    //修改密码
+    $('#mod-passwd').click(function () {
+        // $("#userNameId").textbox('setValue','admin');
+        $('#userNameId').textbox('textbox').attr('readonly', true);
+        $('#password-modified').dialog({
+            width: 300,
+            height: 230,
+            title: '修改密码',
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons: [{
+                iconCls: 'icon-ok',
+                text: '确定',
+                handler: function () {
+                    passwordModified();
+                }
+            }, {
+                iconCls: 'icon-cancel',
+                text: '取消',
+                handler: function () {
+                    $('#password-form').form('clear');
+                    $('#password-modified').dialog('close');
+                }
+            }]
+        });
+    });
+
+    function passwordModified() {
+        var formData = $("#password-form").serializeArray();
+        var userInfo = {};
+        $.each(formData, function (index, element) {
+            userInfo[element.name] = element.value;
+        });
+
+        if (userInfo.username == "" || userInfo.oldPassword == '' || userInfo.newPassword == '' || userInfo.newPasswordSecond == '') {
+            return false;
+        }
+
+        $.post("/user/", JSON.stringify(userInfo), function (data) {
+            if (data.success) {
+                $.messager.alert('提示', '修改密码成功!', 'info');
+                $('#password-modified').dialog('close');
+                $('#password-form').form('clear');
+            } else if (!data.success) {
+                $.messager.alert('提示', data.content, 'error');
+            } else {
+                $.messager.alert('提示', "修改密码失败", 'error');
+            }
+        })
     }
 
 });
