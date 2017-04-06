@@ -904,8 +904,10 @@ $(function () {
 
         $.post("/user/", JSON.stringify(userInfo), function (data) {
             if (data.success) {
-                $.messager.alert('提示', '修改密码成功!', 'info');
                 $('#password-modified').dialog('close');
+                $.messager.alert('提示', '修改密码成功,请重新登录！', 'info', function () {
+                    window.location.href = '/logout'
+                });
                 $('#password-form').form('clear');
             } else if (!data.success) {
                 $.messager.alert('提示', data.content, 'error');
