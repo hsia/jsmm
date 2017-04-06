@@ -1049,7 +1049,8 @@ $(function () {
 
     //修改密码
     $('#mod-passwd').click(function () {
-        // $("#userNameId").textbox('setValue','admin');
+        console.log($('#usernamehide').html())
+        $("#userNameId").textbox('setValue', $('#usernamehide').html());
         $('#userNameId').textbox('textbox').attr('readonly', true);
         $('#password-modified').dialog({
             width: 300,
