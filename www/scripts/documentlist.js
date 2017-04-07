@@ -85,10 +85,14 @@ $(function () {
         border: false,
         onSelect: function (title, index) {
             $("#tb-form").form('clear');
+            var node = $('#organTree').tree('getSelected');
             console.log(title + "," + index);
-            if (index == 1 && organName == null) {
+            if (index == 1) {
                 $dataGrid.datagrid({
                     loader: function (param, success) {
+                        if (node != null) {
+                            param.branch = node.id;
+                        }
                         var defaultUrl = '/documents';
                         $.post(defaultUrl, JSON.stringify(param), function (data) {
                             success(data)

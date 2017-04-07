@@ -215,7 +215,13 @@ $(function () {
             var event = new CustomEvent("tree-row-selection", {
                 detail: node.text
             });
-            window.dispatchEvent(event);
+            //获得当前tab
+            var tab = $('#tabsAll').tabs('getSelected');
+            var index = $('#tabsAll').tabs('getTabIndex', tab);
+            console.log(index)
+            if (index == 1) {
+                window.dispatchEvent(event);
+            }
             buildMemberDetails({});
             search = {};
             search.branch = node.text;
