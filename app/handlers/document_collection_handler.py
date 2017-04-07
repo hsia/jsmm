@@ -33,21 +33,16 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         page_number = params['page']
         page_size = params['rows']
-        if 'sort' in params:
-            sort = params['sort']
-        else:
-            sort = 'fileUploadTime'
-        if 'order' in params:
-            sort_by = params['order']
-            if sort_by == 'desc':
-                sort_by_result = True
-                sort_by_fti = '/fileUploadTime<date>'
-            else:
-                sort_by_result = False
-                sort_by_fti = '\\fileUploadTime<date>'
-        else:
+
+        sort = params.get('sort', 'fileUploadTime')
+        sort_by = params.get('order', 'asc')
+        if sort_by == 'desc':
             sort_by_result = True
-            sort_by_fti = '/fileUploadTime<date>'
+            sort_by_fti = r'/fileUploadTime<date>'
+        else:
+            sort_by_result = False
+            sort_by_fti = r'\fileUploadTime<date>'
+
 
         params_str = ""
         if "documentInfo" in params:
