@@ -34,7 +34,6 @@ class DocumentHandler(tornado.web.RequestHandler):
         page_number = params['page']
         page_size = params['rows']
 
-        sort = params.get('sort', 'fileUploadTime')
         sort_by = params.get('order', 'asc')
         if sort_by == 'desc':
             sort_by_result = True
