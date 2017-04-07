@@ -219,8 +219,11 @@ $(function () {
             buildMemberDetails({});
             search = {};
             search.branch = node.text;
+            console.log('1:' + new Date())
             $.post('/members/search/', JSON.stringify(search), function (data) {
+                console.log('2:' + new Date())
                 $memberList.datagrid('loadData', data.docs);
+                console.log('3:' + new Date())
             })
         }
     });

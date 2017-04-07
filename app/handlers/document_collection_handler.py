@@ -33,6 +33,21 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         page_number = params['page']
         page_size = params['rows']
+        if 'sort' in params:
+            sort = params['sort']
+        else:
+            sort = 'fileUploadTime'
+        if 'order' in params:
+            sort_by = params['order']
+            if sort_by == 'desc':
+                sort_by_result = True
+                sort_by_fti = '/fileUploadTime<date>'
+            else:
+                sort_by_result = False
+                sort_by_fti = '\\fileUploadTime<date>'
+        else:
+            sort_by_result = True
+            sort_by_fti = '/fileUploadTime<date>'
 
         params_str = ""
         if "documentInfo" in params:
@@ -97,13 +112,15 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         if params_str != '':
             response = couchLucene_db.get(
-                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s' % {
+                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s&sort=%(sort_by_fti)s' % {
                     "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
-                    'skip': (page_number - 1) * page_size})
+                    'skip': (page_number - 1) * page_size,
+                    'sort_by_fti': sort_by_fti})
         else:
             response = couch_db.get(
-                '/jsmm/_design/documents/_view/by_memberid?limit=%(page_size)s&skip=%(page_number)s' % {
-                    'page_size': page_size, 'page_number': (page_number - 1) * page_size})
+                r'/jsmm/_design/documents/_view/by_memberid?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
+                    'page_size': page_size, 'page_number': (page_number - 1) * page_size,
+                    'sort_by_result': sort_by_result})
 
         documents_result = {}
         if response.code == 200:

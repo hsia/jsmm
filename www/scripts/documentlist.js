@@ -22,7 +22,7 @@ $(function () {
         loadMsg: '数据装载中......',
         pagination: true,
         allowSorts: true,
-        multiSort: true,
+        multiSort: false,
         singleSelect: true,
         remoteSort: true,
         toolbar: toolbar,
@@ -38,7 +38,7 @@ $(function () {
             },
             {field: 'name', title: '社员姓名', width: 60, sortable: false, align: 'left'},
             {field: 'branch', title: '所属支社', width: 90, sortable: false, align: 'left'},
-            {field: 'fileUploadTime', title: '创建时间', width: 80, sortable: false, align: 'left'},
+            {field: 'fileUploadTime', title: '创建时间', width: 80, sortable: true, align: 'left'},
             {
                 field: 'clickDownload',
                 title: '操作',
