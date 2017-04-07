@@ -14,8 +14,8 @@ if __name__ == "__main__":
     from member_importer import import_info
 
     tornado_utils.registered_handlers += [
-        (r'/members/upload/?', member_upload.UploadHandler, dict(callback=import_info))
-        , (r'/image/upload/?', member_image.UploadImage, dict(callback=member_image.imageCallBack)),
+        (r'/members/upload/?', member_upload.UploadHandler, dict(callback=import_info)),
+        (r'/image/upload/?', member_image.UploadImage, dict(callback=member_image.imageCallBack)),
         (r'/', login_handler.WelcomeHandler),
         (r'/login', login_handler.LoginHandler),
         (r'/logout', login_handler.LogoutHandler),
