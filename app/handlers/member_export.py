@@ -15,7 +15,6 @@ from commons import couch_db
 
 @tornado_utils.bind_to(r'/member/export/([0-9a-f]+)/?')
 class memberInfoExport(tornado.web.RequestHandler):
-
     @tornado.web.addslash
     def get(self, member_id):
 
@@ -80,61 +79,64 @@ class memberInfoExport(tornado.web.RequestHandler):
         ws.write(16, 0, u'爱好', memberInfoStyle)
         ws.write(17, 0, u'专长', memberInfoStyle)
         ws.write_merge(1, 7, 8, 9, '头像', memberInfoStyle)
-        ws.write(1, 1, member['name'], memberInfoStyle)
-        ws.write(1, 3, member['gender'], memberInfoStyle)
-        ws.write_merge(1, 1, 5, 7, member['nativePlace'], memberInfoStyle)
-        ws.write(2, 1, member['nation'], memberInfoStyle)
-        ws.write(2, 3, member['birthPlace'], memberInfoStyle)
-        ws.write_merge(2, 2, 5, 7, member['birthday'], memberInfoStyle)
-        ws.write_merge(3, 3, 1, 2, member['foreignName'], memberInfoStyle)
-        ws.write_merge(3, 3, 4, 7, member['usedName'], memberInfoStyle)
-        ws.write_merge(4, 4, 1, 2, member['health'], memberInfoStyle)
-        ws.write_merge(4, 4, 4, 7, member['marriage'], memberInfoStyle)
-        ws.write_merge(5, 5, 1, 2, member['branch'], memberInfoStyle)
-        ws.write_merge(5, 5, 4, 7, member['organ'], memberInfoStyle)
-        ws.write_merge(6, 6, 1, 2, member['branchTime'], memberInfoStyle)
-        ws.write_merge(6, 6, 4, 7, member['partyCross'], memberInfoStyle)
-        ws.write_merge(7, 7, 1, 2, member['companyName'], memberInfoStyle)
-        ws.write_merge(7, 7, 4, 7, member['department'], memberInfoStyle)
-        ws.write_merge(8, 8, 1, 2, member['duty'], memberInfoStyle)
-        ws.write_merge(8, 8, 4, 9, member['jobTitle'], memberInfoStyle)
-        ws.write_merge(9, 9, 1, 2, member['academic'], memberInfoStyle)
-        ws.write_merge(9, 9, 4, 5, member['jobTime'], memberInfoStyle)
-        ws.write_merge(9, 9, 8, 9, member['retire'], memberInfoStyle)
-        ws.write_merge(10, 10, 1, 2, member['idCard'], memberInfoStyle)
-        ws.write_merge(10, 10, 4, 5, member['idType'], memberInfoStyle)
-        ws.write_merge(10, 10, 8, 9, member['idNo'], memberInfoStyle)
-        ws.write_merge(11, 11, 1, 3, member['homeAddress'], memberInfoStyle)
-        ws.write_merge(11, 11, 5, 9, member['homePost'], memberInfoStyle)
-        ws.write_merge(12, 12, 1, 3, member['companyAddress'], memberInfoStyle)
-        ws.write_merge(12, 12, 5, 9, member['companyPost'], memberInfoStyle)
-        ws.write_merge(13, 13, 1, 3, member['commAddress'], memberInfoStyle)
-        ws.write_merge(13, 13, 5, 9, member['commPost'], memberInfoStyle)
-        ws.write_merge(14, 14, 1, 3, member['mobile'], memberInfoStyle)
-        ws.write_merge(14, 14, 5, 9, member['homeTel'], memberInfoStyle)
-        ws.write_merge(15, 15, 1, 3, member['email'], memberInfoStyle)
-        ws.write_merge(15, 15, 5, 9, member['companyTel'], memberInfoStyle)
-        ws.write_merge(16, 16, 1, 9, member['hobby'], memberInfoStyle)
-        ws.write_merge(17, 17, 1, 9, member['speciality'], memberInfoStyle)
+        ws.write(1, 1, member.get('name', ''), memberInfoStyle)
+        ws.write(1, 3, member.get('gender', ''), memberInfoStyle)
+        ws.write_merge(1, 1, 5, 7, member.get('nativePlace', ''), memberInfoStyle)
+        ws.write(2, 1, member.get('nation', ''), memberInfoStyle)
+        ws.write(2, 3, member.get('birthPlace', ''), memberInfoStyle)
+        ws.write_merge(2, 2, 5, 7, member.get('birthday', ''), memberInfoStyle)
+        ws.write_merge(3, 3, 1, 2, member.get('foreignName', ''), memberInfoStyle)
+        ws.write_merge(3, 3, 4, 7, member.get('usedName', ''), memberInfoStyle)
+        ws.write_merge(4, 4, 1, 2, member.get('health', ''), memberInfoStyle)
+        ws.write_merge(4, 4, 4, 7, member.get('marriage', ''), memberInfoStyle)
+        ws.write_merge(5, 5, 1, 2, member.get('branch', ''), memberInfoStyle)
+        ws.write_merge(5, 5, 4, 7, member.get('organ', ''), memberInfoStyle)
+        ws.write_merge(6, 6, 1, 2, member.get('branchTime', ''), memberInfoStyle)
+        ws.write_merge(6, 6, 4, 7, member.get('partyCross', ''), memberInfoStyle)
+        ws.write_merge(7, 7, 1, 2, member.get('companyName', ''), memberInfoStyle)
+        ws.write_merge(7, 7, 4, 7, member.get('department', ''), memberInfoStyle)
+        ws.write_merge(8, 8, 1, 2, member.get('duty', ''), memberInfoStyle)
+        ws.write_merge(8, 8, 4, 9, member.get('jobTitle', ''), memberInfoStyle)
+        ws.write_merge(9, 9, 1, 2, member.get('academic', ''), memberInfoStyle)
+        ws.write_merge(9, 9, 4, 5, member.get('jobTime', ''), memberInfoStyle)
+        ws.write_merge(9, 9, 8, 9, member.get('retire', ''), memberInfoStyle)
+        ws.write_merge(10, 10, 1, 2, member.get('idCard', ''), memberInfoStyle)
+        ws.write_merge(10, 10, 4, 5, member.get('idType', ''), memberInfoStyle)
+        ws.write_merge(10, 10, 8, 9, member.get('idNo', ''), memberInfoStyle)
+        ws.write_merge(11, 11, 1, 3, member.get('homeAddress', ''), memberInfoStyle)
+        ws.write_merge(11, 11, 5, 9, member.get('homePost', ''), memberInfoStyle)
+        ws.write_merge(12, 12, 1, 3, member.get('companyAddress', ''), memberInfoStyle)
+        ws.write_merge(12, 12, 5, 9, member.get('companyPost', ''), memberInfoStyle)
+        ws.write_merge(13, 13, 1, 3, member.get('commAddress', ''), memberInfoStyle)
+        ws.write_merge(13, 13, 5, 9, member.get('commPost', ''), memberInfoStyle)
+        ws.write_merge(14, 14, 1, 3, member.get('mobile', ''), memberInfoStyle)
+        ws.write_merge(14, 14, 5, 9, member.get('homeTel', ''), memberInfoStyle)
+        ws.write_merge(15, 15, 1, 3, member.get('email', ''), memberInfoStyle)
+        ws.write_merge(15, 15, 5, 9, member.get('companyTel', ''), memberInfoStyle)
+        ws.write_merge(16, 16, 1, 9, member.get('hobby', ''), memberInfoStyle)
+        ws.write_merge(17, 17, 1, 9, member.get('speciality', ''), memberInfoStyle)
 
         for obj in dict(member):
             for case in switch(obj):
                 if case('specializedskill'):
-                    if len(member['specializedskill']) > 0:
+                    if len(member.get('specializedskill', [])) > 0:
                         ws.write_merge(current_row, current_row, 0, 9, u'')
                         ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'业务专长', style)
                         ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'专业分类', memberInfoStyle)
                         ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'专业名称', memberInfoStyle)
                         ws.write_merge(current_row + 2, current_row + 2, 5, 9, u'专业详细名称', memberInfoStyle)
-                        for i in range(0, len(member['specializedskill'])):
-                            obj = member['specializedskill'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['specializedType'],
+                        for i in range(0, len(member.get('specializedskill', []))):
+                            obj = member.get('specializedskill')[i]
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1,
+                                           obj.get('specializedType', ''),
                                            memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4, obj['specializedName'],
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4,
+                                           obj.get('specializedName', ''),
                                            memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 9, obj['specializedDetailName'],
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 9,
+                                           obj.get('specializedDetailName', ''),
                                            memberInfoStyle)
-                        obj_row = 3 + len(member['specializedskill'])
+                        obj_row = 3 + len(member.get('specializedskill', []))
                         current_row += obj_row
                         break
                 if case('educationDegree'):
@@ -354,9 +356,18 @@ class memberInfoExport(tornado.web.RequestHandler):
 
         sio = BytesIO()
         wb.save(sio)
+        # 判断浏览器类型
+        agent = self.request.headers.get('User-Agent')
+        if 'Firefox' in agent:
+            download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+                member.get('branch') + '-' + member.get('name') + '的信息.xls',
+                "utf-8")
+        else:
+            download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                member.get('branch') + '-' + member.get('name') + '的信息.xls', "utf-8")
+
         self.set_header('Content-Type', 'application/vnd.ms-excel')
-        self.set_header('Content-Disposition',
-                        'attachment; filename=' + urllib.parse.quote(member['name'] + '的信息.xls', "utf-8"))
+        self.set_header('Content-Disposition', download_file_name)
         self.write(sio.getvalue())
         self.finish()
 

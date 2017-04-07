@@ -77,9 +77,16 @@ class AttachmentHandler(tornado.web.RequestHandler):
                   'contentLength': content_length,
                   'contentType': content_type}
         if status_code.startswith('200'):
+            agent = self.request.headers.get('User-Agent')
+            if 'Firefox' in agent:
+                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+                    attachment_name, "utf-8")
+            else:
+                download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                    attachment_name, "utf-8")
+
             self.set_header('Content-Type', content_type)
-            self.set_header('Content-Disposition',
-                            'attachment; filename=' + urllib.parse.quote(attachment_name, "utf-8"))
+            self.set_header('Content-Disposition', download_file_name)
             self.write(response.body)
         else:
             self.set_header('Content-Type', 'application/json')
