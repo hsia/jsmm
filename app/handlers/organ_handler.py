@@ -92,8 +92,8 @@ class OrganHandler(tornado.web.RequestHandler):
                 result['content'] = organ_value['organ']
         elif flag == 'merge':
             # 合并支社
-            source_organ_id = self.get_argument('organId')
-            target_organ_id = self.get_argument('organName')
+            source_organ_id = self.get_argument('sourceOrganId')
+            target_organ_id = self.get_argument('targetOrganId')
 
             selector = {"selector": {"branch": {"$eq": source_organ_id}}}
             response_member = couch_db.post(r'/jsmm/_find', selector)

@@ -812,7 +812,34 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-add-form').trigger('submit');
+                    var $submitButton = $(this)
+                    $('#organ-add-form').form('submit', {
+                        url: '/organ/',
+                        onSubmit: function (param) {
+                            var formData = $(this).serializeArray();
+                            param.organName = formData[0].value;
+                            param.flag = 'add';
+
+                            var result = $(this).form('enableValidation').form('validate');
+                            if (result) {
+                                $submitButton.linkbutton({disabled: true});
+                            }
+                            return result;
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.success) {
+                                $('#organ-add').dialog('close');
+                                $('#organ-add-form').form('clear');
+                                //重新加载组织机构数
+                                $('#organTree').tree('loadData', data.content);
+                                $.messager.alert('提示', '新建支社成功!', 'info');
+                            } else {
+                                $.messager.alert('提示', data.content, 'warning');
+                                $submitButton.linkbutton({disabled: false});
+                            }
+                        }
+                    });
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -825,35 +852,6 @@ $(function () {
         });
         $('#organNew').next('span').find('input').focus();
 
-    });
-
-    $("#organ-add-form").submit(function (event) {
-        event.preventDefault();
-        var formData = $(this).serializeArray();
-        if (formData[0].value == '') {
-            $.messager.alert('提示', '请输入组织机构名称!', 'info');
-            return false;
-        }
-
-        $.ajax({
-            url: '/organ/' + formData[0].value,
-            type: 'PUT',
-            success: function (data) {
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                if (data.success) {
-                    $('#organ-add').dialog('close');
-                    $('#organ-add-form').form('clear');
-
-                    $('#organTree').tree('loadData', data.content);
-                    $.messager.alert('提示', '新建支社成功!', 'info');
-                } else {
-                    $.messager.alert('提示', data.content, 'warning');
-                }
-            },
-            error: function (data) {
-                $.messager.alert('提示', '新建支社失败!', 'error');
-            }
-        });
     });
 
     //编辑支社
@@ -880,7 +878,40 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-edit-form').trigger('submit');
+                    var $submitButton = $(this)
+                    $('#organ-edit-form').form('submit', {
+                        url: '/organ/',
+                        onSubmit: function (param) {
+                            var node = $('#organTree').tree('getSelected');
+                            var formData = $(this).serializeArray();
+                            param.organName = formData[0].value; //新的机构名
+                            param.organId = node.id;//旧的机构id
+                            param.flag = 'edit';
+
+                            var result = $(this).form('enableValidation').form('validate');
+                            if (result) {
+                                $submitButton.linkbutton({disabled: true});
+                            }
+                            return result;
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data.success) {
+                                $('#organ-edit').dialog('close');
+                                $('#organ-edit-form').form('clear');
+                                //修改成功以后，重新加载树。
+                                $('#organTree').tree('loadData', data.content);
+                                //重新加载会员列表/文档列表
+                                $memberList.datagrid('reload');
+                                refreshDocumentListEvent();
+
+                                $.messager.alert('提示', '修改支社成功!', 'info');
+                            } else {
+                                $.messager.alert('提示', data.content, 'warning');
+                                $submitButton.linkbutton({disabled: false});
+                            }
+                        }
+                    });
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -894,55 +925,12 @@ $(function () {
         $('#organEdit').next('span').find('input').focus();
     })
 
-    $("#organ-edit-form").submit(function (event) {
-        event.preventDefault();
-        var node = $('#organTree').tree('getSelected');
-        var formData = $(this).serializeArray();
-        if (formData[0].value == '') {
-            $.messager.alert('提示', '请输入组织机构名称!', 'info');
-            return false;
-        }
-
-        $.ajax({
-            url: '/organ/update/' + node.id + '/' + formData[0].value,
-            type: 'PUT',
-            success: function (data) {
-                if (data.success) {
-                    $('#organ-edit').dialog('close');
-                    $('#organ-edit-form').form('clear');
-                    //修改成功以后，重新加载数据，并将choiceRows置为空。
-                    $('#organTree').tree('loadData', data.content);
-                    //重新加载会员列表/文档列表
-                    $memberList.datagrid('reload');
-                    refreshDocumentListEvent();
-
-                    $.messager.alert('提示', '修改支社成功!', 'info');
-                } else {
-                    $.messager.alert('提示', data.content, 'warning');
-                }
-
-            },
-            error: function (data) {
-                $.messager.alert('提示', '修改支社失败!', 'error');
-            }
-        });
-    });
-
     //合并支社
     $('#mergeOrgan').click(function () {
-
-        // $('#mergeBranch').combotree({
-        //     url: '/organ',
-        //     method: 'get',
-        //     required: true
-        // });
-
-        // $('#mergeBranch').combotree('reload')
         $('#mergeBranch').combotree({
             url: '/organ',
             method: 'get'
         });
-        $('#mergeBranch').textbox('textbox').focus()
         var node = $('#organTree').tree('getSelected');
         if (node == null) {
             $.messager.alert('提示', '请选择需要合并的支社!', 'error');
@@ -954,7 +942,7 @@ $(function () {
         $('#organ-merge').dialog({
             width: 300,
             height: 150,
-            title: '编辑支社',
+            title: '合并支社',
             closed: false,
             cache: false,
             modal: true,
@@ -962,7 +950,34 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-merge-form').trigger('submit');
+                    var $submitButton = $(this)
+                    $('#organ-merge-form').form('submit', {
+                        url: '/organ/',
+                        onSubmit: function (param) {
+                            var formData = $(this).serializeArray();
+                            param.targetOrganId = formData[0].value; //目标支社
+                            param.sourceOrganId = node.id;//旧支社
+                            param.flag = 'merge';
+
+                            var result = $(this).form('enableValidation').form('validate');
+                            if (result) {
+                                $submitButton.linkbutton({disabled: true});
+                            }
+                            return result;
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            $('#organ-merge').dialog('close');
+                            $('#organ-merge-form').form('clear');
+                            //删除成功以后，重新加载机构树。
+                            $('#organTree').tree('loadData', data);
+                            //重新加载会员列表/文档列表
+                            $memberList.datagrid('reload');
+                            refreshDocumentListEvent();
+
+                            $.messager.alert('提示', '支社合并成功!', 'info');
+                        }
+                    });
                 }
             }, {
                 iconCls: 'icon-cancel',
@@ -975,39 +990,6 @@ $(function () {
         });
         $('#mergeBranch').next('span').find('input').focus();
     })
-
-    $("#organ-merge-form").submit(function (event) {
-        event.preventDefault();
-        var node = $('#organTree').tree('getSelected');
-        var formData = $(this).serializeArray();
-        if (formData[0].value == '') {
-            $.messager.alert('提示', '请输入组织机构名称!', 'info');
-            return false;
-        }
-        if (node.id == formData[0].value) {
-            $.messager.alert('提示', '选择的目标支社和原支社相同，请选择不同的支社!', 'warning');
-            return false;
-        }
-
-        $('#organ-merge').dialog('close');
-        $('#organ-merge-form').form('clear');
-        $.ajax({
-            url: '/organ/merge/' + node.id + '/' + formData[0].value,
-            type: 'PUT',
-            success: function (data) {
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                $('#organTree').tree('loadData', data);
-                //重新加载会员列表/文档列表
-                $memberList.datagrid('reload');
-                refreshDocumentListEvent();
-
-                $.messager.alert('提示', '支社合并成功!', 'info');
-            },
-            error: function (data) {
-                $.messager.alert('提示', '修改合并失败!', 'error');
-            }
-        });
-    });
 
     //删除支社
     $('#deleteOrgan').click(function () {
