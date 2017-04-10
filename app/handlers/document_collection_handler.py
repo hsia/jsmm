@@ -46,7 +46,7 @@ class DocumentHandler(tornado.web.RequestHandler):
             docType = params["documentInfo"]["docType"]
 
             if keyWordAttachment != '':
-                paramsStr += '"' + keyWordAttachment + '"'
+                paramsStr += keyWordAttachment
             else:
                 pass
 
