@@ -1,0 +1,125 @@
+[
+  {
+    "id": "北京市",
+    "text": "北京市",
+    "attributes": {
+      "alias": ""
+    },
+    "children": [
+      {
+        "id": "朝阳区",
+        "text": "朝阳区",
+        "attributes": {
+          "alias": ""
+        },
+        "children": [
+          {
+            "id": "朝阳综合支社",
+            "text": "朝阳综合支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "科技馆支社",
+            "text": "科技馆支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "煤科院支社",
+            "text": "煤科院支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "对外经贸大学支社",
+            "text": "对外经贸大学支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "轻工支社",
+            "text": "轻工支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "北京商务中心区支社",
+            "text": "北京商务中心区支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "北京中医药大学支社",
+            "text": "北京中医药大学支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "朝阳医院支社",
+            "text": "朝阳医院支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "冶金支社",
+            "text": "冶金支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "北京化工研究院支社",
+            "text": "北京化工研究院支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "化工信息中心支社",
+            "text": "化工信息中心支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "生物制品研究所支社",
+            "text": "生物制品研究所支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "朝阳法律支社",
+            "text": "朝阳法律支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "安贞医院支社",
+            "text": "安贞医院支社",
+            "attributes": {
+              "alias": ""
+            }
+          },
+          {
+            "id": "朝阳医药卫生支社",
+            "text": "朝阳医药卫生支社",
+            "attributes": {
+              "alias": ""
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
