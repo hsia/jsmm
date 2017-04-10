@@ -954,7 +954,7 @@ $(function () {
         $('#organ-merge').dialog({
             width: 300,
             height: 150,
-            title: '编辑支社',
+            title: '合并支社',
             closed: false,
             cache: false,
             modal: true,
