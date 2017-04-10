@@ -112,25 +112,25 @@ class OrganHandler(tornado.web.RequestHandler):
             couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
 
             result = organ_value['organ']
-        elif flag == 'delete':
-            # 删除支社
-            organ_id = self.get_argument('')
-
-            selector = {"selector": {"branch": {"$eq": organ_id}}}
-            response_member = couch_db.post(r'/jsmm/_find', selector)
-            members = json.loads(response_member.body.decode('utf-8'))['docs']
-            if len(members) < 1:
-                for organ in organ_cy['children']:
-                    if organ['id'] == organ_id:
-                        organ_cy['children'].remove(organ)
-
-                couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
-
-                result['success'] = True
-                result['content'] = organ_value['organ']
-            else:
-                result['success'] = False
-                result['content'] = u'该支社拥有社员，请将"该支社下社员删除"或者"将该支社合并到其他支社"或者"修改会员所属支社"！'
+        # elif flag == 'delete':
+        #     # 删除支社
+        #     organ_id = self.get_argument('')
+        #
+        #     selector = {"selector": {"branch": {"$eq": organ_id}}}
+        #     response_member = couch_db.post(r'/jsmm/_find', selector)
+        #     members = json.loads(response_member.body.decode('utf-8'))['docs']
+        #     if len(members) < 1:
+        #         for organ in organ_cy['children']:
+        #             if organ['id'] == organ_id:
+        #                 organ_cy['children'].remove(organ)
+        #
+        #         couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+        #
+        #         result['success'] = True
+        #         result['content'] = organ_value['organ']
+        #     else:
+        #         result['success'] = False
+        #         result['content'] = u'该支社拥有社员，请将"该支社下社员删除"或者"将该支社合并到其他支社"或者"修改会员所属支社"！'修改会员所属支社
         else:
             result = {"success": False, 'content': "操作错误"}
 
