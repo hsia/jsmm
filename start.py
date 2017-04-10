@@ -22,8 +22,8 @@ if __name__ == "__main__":
         # ,(r'/doc/upload/?', member_doc.UploadDoc, dict(callback=member_doc.docCallBack))
     ]
     settings = {
-        'template_path': os.path.join(os.path.dirname(__file__), 'www'),
-        'static_path': os.path.join(os.path.dirname(__file__), 'www'),
+        'template_path': os.path.join(os.path.dirname(__file__), 'www/templates'),
+        'static_path': os.path.join(os.path.dirname(__file__), 'www/statics'),
         'login_url': '/login',
         'cookie_secret': "2379874hsdhf0234990sdhsaiuofyasop977djdj",
         'debug': True

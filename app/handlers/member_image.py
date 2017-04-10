@@ -28,7 +28,7 @@ class UploadImage(tornado.web.RequestHandler):
         :return:
         """
         # 文件的保存路径
-        inbox_path = os.path.join(os.path.dirname(__file__), '../../www/image')
+        inbox_path = os.path.join(os.path.dirname(__file__), '../../www/statics/image')
         # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
         # 'content_type': 'application/vnd.ms-excel'}]}
         file_infos = self.request.files['picture']

@@ -103,23 +103,13 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         print('params_str = ' + params_str)
 
-
         if params_str != '':
-            print(
-                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s&sort=%(sort_by_fti)s' % {
-                    "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
-                    'skip': (page_number - 1) * page_size,
-                    'sort_by_fti': sort_by_fti})
             response = couchLucene_db.get(
                 r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s&sort=%(sort_by_fti)s' % {
                     "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
                     'skip': (page_number - 1) * page_size,
                     'sort_by_fti': sort_by_fti})
         else:
-            print(
-                r'/jsmm/_design/documents/_view/by_memberid?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
-                    'page_size': page_size, 'page_number': (page_number - 1) * page_size,
-                    'sort_by_result': sort_by_result})
             response = couch_db.get(
                 r'/jsmm/_design/documents/_view/by_memberid?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
                     'page_size': page_size, 'page_number': (page_number - 1) * page_size,
