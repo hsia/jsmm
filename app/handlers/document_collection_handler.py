@@ -39,7 +39,7 @@ class DocumentHandler(tornado.web.RequestHandler):
         if "documentInfo" in params:
             # name = params["documentInfo"]["name"]
             # fileName = params["documentInfo"]["fileName"]
-            keyWorld = params["documentInfo"]["keyWord"]
+            keyWorld = params["documentInfo"]["keyWord"].replace(' ', '')
             keyWordAttachment = params["documentInfo"]["keyWordAttachment"]
             startDate = params["documentInfo"]["startDate"]
             endDate = params["documentInfo"]["endDate"]
@@ -64,9 +64,9 @@ class DocumentHandler(tornado.web.RequestHandler):
             # else:
             #     pass
             if keyWorld != '' and paramsStr != '':
-                paramsStr += ' AND (fileName:"' + keyWorld + '" OR name:"' + keyWorld + '")'
+                paramsStr += ' AND (fileName:' + keyWorld + ' OR name:' + keyWorld + ')'
             elif keyWorld != '' and paramsStr == '':
-                paramsStr += '(fileName:"' + keyWorld + '" OR name:"' + keyWorld + '")'
+                paramsStr += '(fileName:' + keyWorld + ' OR name:' + keyWorld + ')'
             else:
                 pass
 
@@ -107,10 +107,11 @@ class DocumentHandler(tornado.web.RequestHandler):
                 '/jsmm/_design/documents/_view/by_memberid?limit=%(pageSize)s&skip=%(pageNumber)s' % {
                     'pageSize': pageSize, 'pageNumber': (pageNumber - 1) * pageSize})
 
-        documentsResult = {};
+        documentsResult = {}
         if response.code == 200:
             documents = []
             documentList = json.loads(response.body.decode('utf-8'))
+            print(documentList)
 
             if paramsStr != '':
                 for row in documentList['rows']:
