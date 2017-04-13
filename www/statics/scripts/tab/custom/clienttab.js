@@ -42,10 +42,10 @@ $(function () {
         singleSelect: true,
         toolbar: toolbar,
         columns: [[
-            {field: 'title', title: '名称', width: 200, align: 'left', editor: 'textbox'},
+            {field: 'title', title: '列名', width: 200, align: 'left', editor: 'textbox'},
             {
                 field: 'editor',
-                title: '文本/时间',
+                title: '列类型(文本/时间)',
                 width: 200,
                 align: 'left',
                 editor: {
@@ -115,17 +115,21 @@ $(function () {
     function save() {
         if (endEditing()) {
             var tab = {};
-            var gridTitle = $('#tab_title').val();
+            // var gridTitle = $('#tab_title').val();
+            var gridTitle = $('#tab_title').combobox('getText');
+            var gridTitleValue = $('#tab_title').combobox('getValue');
             if (gridTitle == null || gridTitle == '') {
                 return;
             }
+
             var list = $dataGrid.datagrid('getRows');
             for (var i = 0; i < list.length; i++) {
                 list[i].align = 'left';
                 list[i].width = 100;
                 list[i].field = 'file_' + i;
             }
-            tab.gridTitle = gridTitle;
+            tab.gridTitleName = gridTitle;
+            tab.gridTitleId = gridTitleValue;
             tab.columns = list;
             $.post('/tab/', JSON.stringify(tab), function (data) {
                 if (data.success) {

@@ -16,7 +16,9 @@ class NewMemberCollectionHandler(tornado.web.RequestHandler):
         keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'titleLevel', 'highestEducation']
         obj = {
             "selector": {},
-            "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ", "branchTime"]
+            "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ",
+                       "branchTime"],
+            "sort": [{"name": "asc"}],
         }
         objC = obj["selector"]
         search = json.loads(self.request.body.decode('utf-8'))

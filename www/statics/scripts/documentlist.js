@@ -185,5 +185,6 @@ $(function () {
                 }
             }]
         });
+        $('#documentSearchKeyWord').next('span').find('input').focus();
     }
 });

@@ -173,13 +173,15 @@
     </div>
 </div>
 <div id="client_add_tab" style="width:500px;height:500px;">
-    <input class="easyui-textbox" id="tab_title" style="width:90%" data-options="label:'tab名称:',required:true">
+    <input class="easyui-combobox" id="tab_title" style="width:90%"
+           data-options="label:'tab名称:',required:true,prompt:'输入tab名称新建tab。如果修改或删除，点击下拉框选中tab'">
     <table id="client_add_tab_table" style="width:100%;height:100%"></table>
 </div>
 <div id="member_upload">
     <div style="margin: 45px 0 0 40px">
         <form id="member_upload_form" action='/members/upload/' enctype="multipart/form-data" method='post'>
-            <input class="easyui-filebox" name='members' data-options="prompt:'请选择文件'" style="width: 80%"
+            <input id="memeberUploadName" class="easyui-filebox" name='members' data-options="prompt:'请选择文件'"
+                   style="width: 80%"
                    accept=".xls,.xlsx" multiple/><br/>
         </form>
     </div>
@@ -212,14 +214,15 @@
     <form id="organ-merge-form" class="easyui-form member-form" data-options="validate:true" method='post'>
         <div style="margin-bottom:20px;" class="member-property">
             <input id="mergeBranch" class="easyui-combotree" name="organName" style="width:100%"
-                   data-options="label:'目标支社:',required:false,prompt:'请选择'">
+                   data-options="label:'目标支社:',required:true,prompt:'请选择'">
         </div>
     </form>
 </div>
 <div id="member-search" class="member-dialog">
     <form id="member-search-form" class="easyui-form member-form" data-options="novalidate:true" method='post'>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
+            <input id="memberSearchName" class="easyui-textbox" name="name" style="width:100%"
+                   data-options="label:'姓名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input id="genderS" class="easyui-combobox" data-url="data/gender.json" name="gender" style="width:100%"
@@ -285,7 +288,7 @@
 <div id="document-search" class="member-dialog">
     <form id="document-search-form" class="easyui-form member-form" data-options="novalidate:true" method='post'>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="keyWord" style="width:100%"
+            <input id="documentSearchKeyWord" class="easyui-textbox" name="keyWord" style="width:100%"
                    data-options="label:'检索关键字:',required:true,prompt:'输入文件名或社员名'">
         </div>
         <div style="margin-bottom:20px" class="member-property">
@@ -329,7 +332,8 @@
     <form id="member-form" class="easyui-form member-form" data-options="validate:true"
           enctype="multipart/form-data" method='post'>
         <div style="margin-bottom:20px" class="member-property">
-            <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
+            <input id="memberAddName" class="easyui-textbox" name="name" style="width:100%"
+                   data-options="label:'姓名:',required:true">
         </div>
         <div style="margin-bottom:20px" class="member-property">
             <input class="easyui-textbox" name="foreignName" style="width:100%"
@@ -492,7 +496,8 @@
 <div id="memberEdit-dialog" class="member-dialog">
     <form id="memberEdit-form" class="easyui-form member-form" data-options="validate:true" method='post'>
         <div style="margin-bottom:20px;" class="member-property">
-            <input class="easyui-textbox" name="name" style="width:100%" data-options="label:'姓名:',required:true">
+            <input id="memberEditName" class="easyui-textbox" name="name" style="width:100%"
+                   data-options="label:'姓名:',required:true">
         </div>
         <div style="margin-bottom:20px;" class="member-property">
             <input class="easyui-textbox" name="foreignName" style="width:100%"

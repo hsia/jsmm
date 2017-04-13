@@ -10,11 +10,11 @@ import uuid
 from datetime import datetime
 from dateutil.relativedelta import *
 
-
 os.chdir(os.path.dirname(__file__))
 sys.path[:0] = ['app', 'lib']
 
 from couchdb import CouchDB
+
 couch_db = CouchDB('http://127.0.0.1:5984')
 couchLucene_db = CouchDB('http://127.0.0.1:5986')
 
@@ -39,3 +39,10 @@ def get_retire_time(birthday, gender):
         return (start_date + relativedelta(years=+65)).strftime('%Y-%m-%d')
     else:
         return (start_date + relativedelta(years=+60)).strftime('%Y-%m-%d')
+
+
+def formatter_time(input_date, formatter, formatter2='%Y.%m.%d'):
+    if input_date:
+        return datetime.strptime(input_date, formatter).strftime(formatter2)
+    else:
+        return input_date

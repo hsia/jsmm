@@ -9,7 +9,6 @@ import tornado.web
 
 
 class UploadHandler(tornado.web.RequestHandler):
-
     def initialize(self, callback):
         '''
         callback(file_info)，其中file_info格式为：
@@ -53,10 +52,11 @@ class UploadHandler(tornado.web.RequestHandler):
             with open(path, 'wb') as file:
                 file.write(file_info['body'])
             msgs = self._callback({'filename': filename, 'path': path, 'content_type': file_info['content_type']})
-            if not msgs["success"]:
-                error_message.append({"name": msgs["name"], "idCard": msgs["idCard"]})
+            if not msgs["success"] and msgs.get('content', False):
+                error_message.append({'content': msgs['content']})
+            elif not msgs['success']:
+                error_message.append({"name": msgs["name"], "birthday": msgs["birthday"]})
         if len(error_message):
             self.write({"success": False, "msg": error_message})
         else:
             self.write({"success": True, "msg": error_message})
-

@@ -10,7 +10,7 @@ import tornado.web
 import tornado_utils
 import xlwt
 
-from commons import couch_db
+from commons import couch_db, formatter_time
 
 
 @tornado_utils.bind_to(r'/member/export/([0-9a-f]+)/?')
@@ -84,21 +84,21 @@ class memberInfoExport(tornado.web.RequestHandler):
         ws.write_merge(1, 1, 5, 7, member.get('nativePlace', ''), memberInfoStyle)
         ws.write(2, 1, member.get('nation', ''), memberInfoStyle)
         ws.write(2, 3, member.get('birthPlace', ''), memberInfoStyle)
-        ws.write_merge(2, 2, 5, 7, member.get('birthday', ''), memberInfoStyle)
+        ws.write_merge(2, 2, 5, 7, formatter_time(member.get('birthday', ''), '%Y-%m-%d'), memberInfoStyle)
         ws.write_merge(3, 3, 1, 2, member.get('foreignName', ''), memberInfoStyle)
         ws.write_merge(3, 3, 4, 7, member.get('usedName', ''), memberInfoStyle)
         ws.write_merge(4, 4, 1, 2, member.get('health', ''), memberInfoStyle)
         ws.write_merge(4, 4, 4, 7, member.get('marriage', ''), memberInfoStyle)
         ws.write_merge(5, 5, 1, 2, member.get('branch', ''), memberInfoStyle)
         ws.write_merge(5, 5, 4, 7, member.get('organ', ''), memberInfoStyle)
-        ws.write_merge(6, 6, 1, 2, member.get('branchTime', ''), memberInfoStyle)
+        ws.write_merge(6, 6, 1, 2, formatter_time(member.get('branchTime', ''), '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
         ws.write_merge(6, 6, 4, 7, member.get('partyCross', ''), memberInfoStyle)
         ws.write_merge(7, 7, 1, 2, member.get('companyName', ''), memberInfoStyle)
         ws.write_merge(7, 7, 4, 7, member.get('department', ''), memberInfoStyle)
         ws.write_merge(8, 8, 1, 2, member.get('duty', ''), memberInfoStyle)
         ws.write_merge(8, 8, 4, 9, member.get('jobTitle', ''), memberInfoStyle)
         ws.write_merge(9, 9, 1, 2, member.get('academic', ''), memberInfoStyle)
-        ws.write_merge(9, 9, 4, 5, member.get('jobTime', ''), memberInfoStyle)
+        ws.write_merge(9, 9, 4, 5, formatter_time(member.get('jobTime', ''), '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
         ws.write_merge(9, 9, 8, 9, member.get('retire', ''), memberInfoStyle)
         ws.write_merge(10, 10, 1, 2, member.get('idCard', ''), memberInfoStyle)
         ws.write_merge(10, 10, 4, 5, member.get('idType', ''), memberInfoStyle)
@@ -154,7 +154,8 @@ class memberInfoExport(tornado.web.RequestHandler):
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['eduSchoolName'],
                                            memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3,
-                                           obj['eduStartingDate'] + ' - ' + obj['eduGraduateDate'], memberInfoStyle)
+                                           formatter_time(obj['eduStartingDate'], '%Y-%m-%d', '%Y.%m') + ' - ' +
+                                           formatter_time(obj['eduGraduateDate'], '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['eduMajor'],
                                            memberInfoStyle)
                             ws.write(current_row + 3 + i, 6, obj['eduEducation'], memberInfoStyle)
@@ -181,12 +182,14 @@ class memberInfoExport(tornado.web.RequestHandler):
                             ws.write(current_row + 3 + i, 0, obj['familyName'], memberInfoStyle)
                             ws.write(current_row + 3 + i, 1, obj['familyRelation'], memberInfoStyle)
                             ws.write(current_row + 3 + i, 2, obj['familyGender'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 3, obj['familyBirthDay'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 3, formatter_time(obj['familyBirthDay'], '%Y-%m-%d'),
+                                     memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['familyCompany'],
                                            memberInfoStyle)
                             ws.write(current_row + 3 + i, 6, obj['familyJob'], memberInfoStyle)
                             ws.write(current_row + 3 + i, 7, obj['familyNationality'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['familyPolitical'],
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9,
+                                           obj.get('familyPolitical', ''),
                                            memberInfoStyle)
                         obj_row = 3 + len(member['familyRelations'])
                         current_row += obj_row
@@ -212,7 +215,9 @@ class memberInfoExport(tornado.web.RequestHandler):
                             ws.write(current_row + 3 + i, 5, obj['jobTitle'], memberInfoStyle)
                             ws.write(current_row + 3 + i, 6, obj['jobAcademic'], memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8,
-                                           obj['jobStartTime'] + ' - ' + obj['jobEndTime'], memberInfoStyle)
+                                           formatter_time(obj.get('jobStartTime', ''), '%Y-%m-%d', '%Y.%m') + ' - ' +
+                                           formatter_time(obj.get('jobEndTime', ''), '%Y-%m-%d', '%Y.%m'),
+                                           memberInfoStyle)
                             ws.write(current_row + 3 + i, 9, obj['jobReterence'], memberInfoStyle)
                         obj_row = 3 + len(member['jobResumes'])
                         current_row += obj_row
@@ -231,7 +236,8 @@ class memberInfoExport(tornado.web.RequestHandler):
                             obj = member['award'][i]
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['awardProjectName'],
                                            memberInfoStyle)
-                            ws.write(current_row + 3 + i, 3, obj['awardDate'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 3, formatter_time(obj['awardDate'], '%Y-%m-%d', '%Y.%m'),
+                                     memberInfoStyle)
                             ws.write(current_row + 3 + i, 4, obj['awardNameAndLevel'], memberInfoStyle)
                             ws.write(current_row + 3 + i, 5, obj['awardRoleInProject'], memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['awardCompany'],
@@ -252,7 +258,8 @@ class memberInfoExport(tornado.web.RequestHandler):
                             obj = member['patents'][i]
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['patentName'],
                                            memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['patentDate'],
+                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5,
+                                           formatter_time(obj['patentDate'], '%Y-%m-%d'),
                                            memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 9, obj['patenNo'],
                                            memberInfoStyle)
@@ -277,7 +284,8 @@ class memberInfoExport(tornado.web.RequestHandler):
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 6, obj['paperPress'],
                                            memberInfoStyle)
                             ws.write(current_row + 3 + i, 7, obj['paperAuthorSort'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 8, obj['paperPressDate'], memberInfoStyle)
+                            ws.write(current_row + 3 + i, 8, formatter_time(obj['paperPressDate'], '%Y-%m-%d', '%Y.%m'),
+                                     memberInfoStyle)
                             ws.write(current_row + 3 + i, 9, obj['paperRoleDetail'], memberInfoStyle)
                         obj_row = 3 + len(member['paper'])
                         current_row += obj_row
@@ -300,7 +308,8 @@ class memberInfoExport(tornado.web.RequestHandler):
                                            memberInfoStyle)
                             ws.write(current_row + 3 + i, 7, obj['proRolesInProject'], memberInfoStyle)
                             ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9,
-                                           obj['proStartDate'] + ' - ' + obj['porEndDate'], memberInfoStyle)
+                                           formatter_time(obj['proStartDate'], '%Y-%m-%d', '%Y.%m') + ' - ' +
+                                           formatter_time(obj['porEndDate'], '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
                         obj_row = 3 + len(member['professionalSkill'])
                         current_row += obj_row
                         break
@@ -357,14 +366,24 @@ class memberInfoExport(tornado.web.RequestHandler):
         sio = BytesIO()
         wb.save(sio)
         # 判断浏览器类型
+
         agent = self.request.headers.get('User-Agent')
         if 'Firefox' in agent:
-            download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
-                member.get('branch') + '-' + member.get('name') + '的信息.xls',
-                "utf-8")
+            if self.request.arguments:
+                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+                    member.get('branch') + '-' + member.get('name') + '的信息-自定义.xls',
+                    "utf-8")
+            else:
+                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+                    member.get('branch') + '-' + member.get('name') + '的信息.xls',
+                    "utf-8")
         else:
-            download_file_name = 'attachment; filename=' + urllib.parse.quote(
-                member.get('branch') + '-' + member.get('name') + '的信息.xls', "utf-8")
+            if self.request.arguments:
+                download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                    member.get('branch') + '-' + member.get('name') + '的信息-自定义.xls', "utf-8")
+            else:
+                download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                    member.get('branch') + '-' + member.get('name') + '的信息.xls', "utf-8")
 
         self.set_header('Content-Type', 'application/vnd.ms-excel')
         self.set_header('Content-Disposition', download_file_name)

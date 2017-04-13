@@ -36,10 +36,10 @@ class DocumentHandler(tornado.web.RequestHandler):
 
         sort_by = params.get('order', 'asc')
         if sort_by == 'desc':
-            sort_by_result = True
-            sort_by_fti = '\/fileUploadTime<date>'
-        else:
             sort_by_result = False
+            sort_by_fti = '/fileUploadTime<date>'
+        else:
+            sort_by_result = True
             sort_by_fti = '\\fileUploadTime<date>'
 
         params_str = ""
@@ -111,7 +111,7 @@ class DocumentHandler(tornado.web.RequestHandler):
                     'sort_by_fti': sort_by_fti})
         else:
             response = couch_db.get(
-                r'/jsmm/_design/documents/_view/by_memberid?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
+                r'/jsmm/_design/documents/_view/by_fileUploadTime?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
                     'page_size': page_size, 'page_number': (page_number - 1) * page_size,
                     'sort_by_result': sort_by_result})
 
