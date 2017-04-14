@@ -434,8 +434,11 @@ def customizeObj(obj, current_row, ws, style, memberInfoStyle, member):
 
             for i in range(0, len(member[obj])):
                 memberObj = member[obj][i]
-                for z in range(0, len(columns)):
-                    ws.write(current_row + 3 + i, z, memberObj['file_' + str(z)], memberInfoStyle)
+                x = 0
+                for z in columns:
+                    print(z.get('title') + ":" + memberObj.get(z.get('field'), ''))
+                    ws.write(current_row + 3 + i, x, memberObj.get(z.get('field'), ''), memberInfoStyle)
+                    x += 1
 
             obj_row = 3 + len(member[obj])
             current_row += obj_row

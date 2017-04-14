@@ -39,6 +39,10 @@ class TabCollectionHandler(tornado.web.RequestHandler):
         tab['_id'] = make_uuid()
         tab['tab_id'] = 'custab_' + ''.join(lazy_pinyin(tab['gridTitle']))
 
+        for column in tab.get('columns', []):
+            column['col_id'] = make_uuid()
+            column['field'] = column['col_id']
+
         # 判断自定义tab名称是否已经存在
         obj = {
             "selector": {
@@ -75,14 +79,8 @@ class TabDeleteHandler(tornado.web.RequestHandler):
             member_selector = {
                 "selector": {
                     "$and": [
-                        {"type": {
-                            "$eq": "member"
-                        }
-                        },
-                        {tab_column: {
-                            "$ne": "null"
-                        }
-                        }
+                        {"type": {"$eq": "member"}},
+                        {tab_column: {"$ne": "null"}}
                     ]
                 }
             }
@@ -102,18 +100,21 @@ class TabDeleteHandler(tornado.web.RequestHandler):
         self.write(result)
 
 
-@tornado_utils.bind_to(r'/tabcombobox/?')
-class TabComboboxHandler(tornado.web.RequestHandler):
+@tornado_utils.bind_to(r'/tabcombtree/?')
+class TabComtreeHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self):
         response = couch_db.get(r'/jsmm/_design/tab/_view/tab-combtree')
-        tab = json.loads(response.body.decode('utf-8')).get('rows', [])
+        tabs = json.loads(response.body.decode('utf-8')).get('rows', [])
+        trees = []
+        for tab in tabs:
+            trees.append(tab['value'])
 
         self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(tab))
+        self.write(json.dumps(trees))
 
 
-@tornado_utils.bind_to(r'/tabcombobox/(.+)')
+@tornado_utils.bind_to(r'/tabcombtree/(.+)')
 class TabInfoHandler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self, tab_id):
@@ -122,3 +123,72 @@ class TabInfoHandler(tornado.web.RequestHandler):
 
         self.set_header('Content-Type', 'application/json')
         self.write(tab_info)
+
+
+@tornado_utils.bind_to(r'/tabedit/?')
+class TabEditHandler(tornado.web.RequestHandler):
+    @tornado.web.addslash
+    def post(self):
+        """
+        更新tab对象。
+        """
+        tab = json.loads(self.request.body.decode('utf-8'))
+        tab['type'] = 'tab'
+        tab['tab_id'] = 'custab_' + ''.join(lazy_pinyin(tab['gridTitle']))
+
+        for column in tab.get('columns', []):
+            if 'col_id' not in column:
+                column['col_id'] = make_uuid()
+                column['field'] = column['col_id']
+
+        # 判断自定义tab名称是否已经存在
+        obj = {
+            "selector": {
+                "tab_id": {
+                    "$eq": tab['tab_id']
+                }
+            }
+        }
+
+        response = couch_db.post(r'/jsmm/_find/', obj)
+        tabs = json.loads(response.body.decode('utf-8'))
+        if len(tabs["docs"]) > 1:
+            result = {"success": False, "content": u"该tab名称已经存在，请重新输入！"}
+        else:
+            # 更新tab信息
+            tab['_rev'] = tabs["docs"][0]['_rev']
+            couch_db.put(r'/jsmm/%(id)s' % {'id': tab['_id']}, tab)
+
+            '''
+            根据更新后的tab，修改member中的数据,主要是处理tab删除行的情况
+            '''
+            # 经修改后的列名取出
+            columns_name = []
+            for column in tab['columns']:
+                columns_name.append(column.get('field'))
+
+            member_selector = {
+                "selector": {
+                    "$and": [
+                        {"type": {"$eq": "member"}},
+                        {tab['tab_id']: {"$ne": "null"}}
+                    ]
+                }
+            }
+
+            response = couch_db.post('/jsmm/_find', member_selector)
+            members_list = json.loads(response.body.decode('utf-8')).get('docs')
+
+            if members_list:
+                for member in members_list:
+                    custom_tab = member.get(tab['tab_id'])
+                    for custom_columns in custom_tab:
+                        keys = list(custom_columns.keys())
+                        for key in keys:
+                            if key not in columns_name:
+                                del custom_columns[key]
+
+                    couch_db.put(r'/jsmm/%(id)s' % {'id': member['_id']}, member)
+
+            result = {"success": True}
+        self.write(result)

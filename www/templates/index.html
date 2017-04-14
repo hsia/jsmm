@@ -37,6 +37,7 @@
     <script type="text/javascript" src="{{ static_url('scripts/tab/documents/propaganda.js')}}"></script>
     <script type="text/javascript" src="{{ static_url('scripts/documentlist.js')}}"></script>
     <script type="text/javascript" src="{{ static_url('scripts/tab/custom/clienttab.js')}}"></script>
+    <script type="text/javascript" src="{{ static_url('scripts/tab/custom/clientedittab.js')}}"></script>
     <script type="text/javascript" src="{{ static_url('scripts/tab/custom/addtab.js')}}"></script>
 </head>
 <body>
@@ -173,9 +174,14 @@
     </div>
 </div>
 <div id="client_add_tab" style="width:500px;height:500px;">
-    <input class="easyui-combobox" id="tab_title" style="width:90%"
-           data-options="label:'tab名称:',required:true,prompt:'输入tab名称新建tab。如果修改或删除，点击下拉框选中tab'">
+    <input class="easyui-textbox" id="tab_title" style="width:90%"
+           data-options="label:'tab名称:',required:true,prompt:'输入tab名称新建tab，tab名称不能和已有的tab重复！'">
     <table id="client_add_tab_table" style="width:100%;height:100%"></table>
+</div>
+<div id="client_edit_tab" style="width:500px;height:500px;">
+    <input class="easyui-combotree" id="tab_edit_title" style="width:90%"
+           data-options="label:'tab名称:',required:true,prompt:'点击下拉框选中tab,进行编辑或者修改。'">
+    <table id="client_edit_tab_table" style="width:100%;height:100%"></table>
 </div>
 <div id="member_upload">
     <div style="margin: 45px 0 0 40px">

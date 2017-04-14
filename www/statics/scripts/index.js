@@ -228,14 +228,6 @@ $(function () {
             $.post('/members/search/', JSON.stringify(search), function (data) {
                 $memberList.datagrid('loadData', data.docs);
             })
-            // $memberList.datagrid({
-            //     loader: function (param, success) {
-            //         $.post('/members/search/', JSON.stringify(search), function (data) {
-            //             success(data.docs)
-            //         },'json');
-            //     },
-            // });
-
         }
     });
 
@@ -437,11 +429,11 @@ $(function () {
             text: '编辑自定义tab',
             iconCls: 'icon-add',
             handler: function () {
-                client_add_tab();
+                client_edit_tab();
             }
         }];
 
-    var defaultUrl = '/members/search/';
+    var defaultUrl = '/members/';
 
     $memberList.datagrid({
         iconCls: 'icon-ok',
@@ -471,9 +463,9 @@ $(function () {
             {field: 'branchTime', title: '入社时间', width: 120, sortable: true, align: 'left'}
         ]],
         loader: function (param, success) {
-            $.post(defaultUrl, JSON.stringify(param), function (data) {
-                success(data.docs)
-            }, 'json');
+            $.get(defaultUrl, function (data) {
+                success(data)
+            });
         },
         loadFilter: function (data) {
             if (typeof data.length == 'number' && typeof data.splice == 'function') {
@@ -724,31 +716,42 @@ $(function () {
         $('#memberSearchName').next('span').find('input').focus();
     }
 
-
     //添加tab页
     function client_add_tab() {
         var gridHeight = ($("#member-info").height()) + 77;
-        // $("#tab_title").textbox('setValue', '');
-        $('#tab_title').combobox({
-            valueField: 'key',
-            textField: 'value',
-            url: '/tabcombobox/',
+        $("#tab_title").textbox('setValue', '');
+
+        $('#client_add_tab').dialog({
+            title: '新建自定义tab',
+            closed: false,
+            cache: false,
+            modal: true,
+            height: gridHeight
+        })
+    }
+
+    choiceNode = '';
+    //编辑tab页
+    function client_edit_tab() {
+        var gridHeight = ($("#member-info").height()) + 77;
+        $('#tab_edit_title').combotree({
+            url: '/tabcombtree/',
             method: 'get',
             onSelect: function (node) {
-                console.log(node.id + ':' + node.value)
-                $('#client_add_tab_table').datagrid({
+                choiceNode = node;
+                console.log(node.id + ':' + node.text)
+                $('#client_edit_tab_table').datagrid({
                     loader: function (param, success) {
-                        var defaultUrl = '/tabcombobox/' + node.id;
+                        var defaultUrl = '/tabcombtree/' + node.id;
                         $.get(defaultUrl, function (data) {
                             success(data.columns)
                         }, 'json');
-                    }
-
+                    },
                 })
             }
         })
-        $('#client_add_tab').dialog({
-            title: '管理自定义tab',
+        $('#client_edit_tab').dialog({
+            title: '编辑自定义tab',
             closed: false,
             cache: false,
             modal: true,
@@ -887,14 +890,12 @@ $(function () {
             url: '/organ/' + formData[0].value,
             type: 'PUT',
             success: function (data) {
-                //新建成功以后，重新加载数据，并将choiceRows置为空。
+                //删除成功以后，重新加载数据，并将choiceRows置为空。
                 if (data.success) {
                     $('#organ-add').dialog('close');
                     $('#organ-add-form').form('clear');
 
                     $('#organTree').tree('loadData', data.content);
-                    // 重新加载
-                    $memberList.datagrid('reload');
                     // $.messager.alert('提示', '新建支社成功!', 'info');
                 } else {
                     $.messager.alert('提示', data.content, 'warning');

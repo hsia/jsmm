@@ -1,6 +1,6 @@
 $(function () {
 
-    var $dataGrid = $('#client_add_tab_table');
+    var $dataGrid = $('#client_edit_tab_table');
 
     var toolbar = [{
         text: '添加列',
@@ -20,6 +20,12 @@ $(function () {
         handler: function () {
             save();
         }
+    }, '-', {
+        text: '删除tab',
+        iconCls: 'icon-cancel',
+        handler: function () {
+            deleteTab();
+        }
     }];
 
     $dataGrid.datagrid({
@@ -36,6 +42,8 @@ $(function () {
         singleSelect: true,
         toolbar: toolbar,
         columns: [[
+            {field: 'col_id', title: 'col_id', width: 20, hidden: true},
+            {field: 'field', title: 'field', width: 20, hidden: true},
             {field: 'title', title: '列名', width: 200, align: 'left', editor: 'textbox'},
             {
                 field: 'editor',
@@ -109,31 +117,68 @@ $(function () {
     function save() {
         if (endEditing()) {
             var tab = {};
-            var gridTitle = $('#tab_title').val();
+            var tree = $("#tab_edit_title").combotree('tree'); // 得到树对象
+            var choiceNode = tree.tree('getSelected');
+            var gridTitle = choiceNode.text;
             if (gridTitle == null || gridTitle == '') {
                 return;
             }
 
-            var list = $dataGrid.datagrid('getRows');
+            var list = $dataGrid.datagrid('getRows')
             for (var i = 0; i < list.length; i++) {
                 list[i].align = 'left';
                 list[i].width = 100;
                 // list[i].field = 'file_' + i;
             }
             tab.gridTitle = gridTitle;
+            tab._id = choiceNode.id;
             tab.columns = list;
-            $.post('/tab/', JSON.stringify(tab), function (data) {
+            $.post('/tabedit/', JSON.stringify(tab), function (data) {
                 if (data.success) {
-                    $('#client_add_tab').dialog('close');
+                    $('#client_edit_tab').dialog('close');
+                    $.messager.alert('提示信息', '更新tab成功！', 'info');
                     window.location.href = '/'; //成功以后刷新页面
-                    $.messager.alert('提示信息', '添加tab成功！', 'info');
                 } else if (!data.success) {
                     $.messager.alert('提示信息', data.content, 'warning');
                 } else {
-                    $.messager.alert('提示信息', "添加自定义tab失败", 'error');
+                    $.messager.alert('提示信息', "更新tab失败", 'error');
                 }
 
             })
         }
+    }
+
+    function deleteTab() {
+
+        var tab = {};
+        var tree = $("#tab_edit_title").combotree('tree'); // 得到树对象
+        var choiceNode = tree.tree('getSelected');
+        var gridTitle = choiceNode.id;
+        if (gridTitle == null || gridTitle == '') {
+            return;
+        }
+        $.messager.confirm('删除提示', '该删除操作将会删除自定义tab及社员中包含该自定义tab数据，请谨慎删除！如确定删除，请点击“确定按钮”', function (r) {
+            if (r) {
+                $.ajax({
+                    type: "DELETE",
+                    url: '/tab/' + gridTitle,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success) {
+                            window.location.href = '/'; //成功以后刷新页面
+                            $('#client_edit_tab').dialog('close');
+                            $.messager.alert('提示信息', '删除tab成功！', 'info');
+                        } else {
+                            $.messager.alert('提示信息', data.content, 'warning');
+                        }
+                    },
+                    error: function () {
+                        $('#client_edit_tab').dialog('close');
+                        $.messager.alert('提示信息', "刪除tab失败", 'error');
+                    }
+
+                });
+            }
+        });
     }
 });
