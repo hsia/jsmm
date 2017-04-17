@@ -186,7 +186,7 @@ class MemberCollectionPageHandler(tornado.web.RequestHandler):
         """
         通过view获取对象列表。
         """
-        param = self.request.arguments;
+        param = self.request.arguments
         page_number = int((param.get('page')[0]).decode('utf-8'))
         page_size = int((param.get('rows')[0]).decode('utf-8'))
         order = (param.get('order', [b'desc'])[0]).decode('utf-8')

@@ -41,7 +41,7 @@ class LoginHandler(BaseHandler):
             response_content = json.loads(user_response.body.decode('utf-8'))
             user_in_db = response_content['docs']
             if len(user_in_db) > 0:
-                self.set_secure_cookie("username", username, expires_days=None, expires=time.time() + 3600)
+                self.set_secure_cookie("username", username, expires_days=None, expires=time.time() + 36000)
                 # self.redirect("/")
                 result = {"success": True}
             else:

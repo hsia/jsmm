@@ -905,6 +905,13 @@ $(function () {
 
                     $('#organTree').tree('loadData', data.content);
                     // $.messager.alert('提示', '新建支社成功!', 'info');
+                    //重新加载会员列表/文档列表
+                    var getCurrentRows = $memberList.datagrid('options').pageSize;
+                    $memberList.datagrid('load', {
+                        'page': 1,
+                        'rows': getCurrentRows,
+                    })
+                    refreshDocumentListEvent();
                 } else {
                     $.messager.alert('提示', data.content, 'warning');
                 }
@@ -972,7 +979,11 @@ $(function () {
                     //修改成功以后，重新加载数据，并将choiceRows置为空。
                     $('#organTree').tree('loadData', data.content);
                     //重新加载会员列表/文档列表
-                    $memberList.datagrid('reload');
+                    var getCurrentRows = $memberList.datagrid('options').pageSize;
+                    $memberList.datagrid('load', {
+                        'page': 1,
+                        'rows': getCurrentRows,
+                    })
                     refreshDocumentListEvent();
 
                     // $.messager.alert('提示', '修改支社成功!', 'info');
@@ -1057,7 +1068,11 @@ $(function () {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 $('#organTree').tree('loadData', data);
                 //重新加载会员列表/文档列表
-                $memberList.datagrid('reload');
+                var getCurrentRows = $memberList.datagrid('options').pageSize;
+                $memberList.datagrid('load', {
+                    'page': 1,
+                    'rows': getCurrentRows,
+                })
                 refreshDocumentListEvent();
 
                 // $.messager.alert('提示', '支社合并成功!', 'info');
@@ -1100,7 +1115,11 @@ $(function () {
                     //删除成功以后，重新加载数据。
                     $('#organTree').tree('loadData', data.content);
                     //重新加载会员列表/文档列表
-                    $memberList.datagrid('reload');
+                    var getCurrentRows = $memberList.datagrid('options').pageSize;
+                    $memberList.datagrid('load', {
+                        'page': 1,
+                        'rows': getCurrentRows,
+                    })
                     refreshDocumentListEvent();
 
                     // $.messager.alert('提示', '支社删除成功!', 'info');

@@ -26,6 +26,8 @@ $(function () {
         singleSelect: true,
         remoteSort: true,
         toolbar: toolbar,
+        url: '/documents1',
+        method: 'GET',
         columns: [[
             {field: 'fileName', title: '文件名称', width: 110, sortable: false, align: 'left'},
             {
@@ -53,32 +55,28 @@ $(function () {
         ]]
     });
 
+    //点击组织机构触发事件
     var organName = null;
     window.addEventListener("tree-row-selection", function (event) {
         organName = event.detail;
         if (organName != null) {
-            $dataGrid.datagrid({
-                loader: function (param, success) {
-                    param.branch = organName;
-                    $.post('/documents', JSON.stringify(param), function (data) {
-                        success(data)
-                    }, 'json');
-                }
-            });
+            var getCurrentRows = $dataGrid.datagrid('options').pageSize;
+            $dataGrid.datagrid('load', {
+                'page': 1,
+                'rows': getCurrentRows,
+                'branch': organName
+            })
         } else {
             return false;
         }
     });
 
     window.addEventListener("organ-tree-operation", function (event) {
-        $dataGrid.datagrid({
-            loader: function (param, success) {
-                param.branch = '';
-                $.post('/documents', JSON.stringify(param), function (data) {
-                    success(data)
-                }, 'json');
-            }
-        });
+        var getCurrentRows = $dataGrid.datagrid('options').pageSize;
+        $dataGrid.datagrid('load', {
+            'page': 1,
+            'rows': getCurrentRows
+        })
     });
 
     $('#tabsAll').tabs({
@@ -88,17 +86,12 @@ $(function () {
             var node = $('#organTree').tree('getSelected');
             console.log(title + "," + index);
             if (index == 1) {
-                $dataGrid.datagrid({
-                    loader: function (param, success) {
-                        if (node != null) {
-                            param.branch = node.id;
-                        }
-                        var defaultUrl = '/documents';
-                        $.post(defaultUrl, JSON.stringify(param), function (data) {
-                            success(data)
-                        }, 'json');
-                    }
-                })
+                var param = {'page': 1, 'rows': getCurrentRows};
+                if (node != null) {
+                    param.branch = node.id;
+                }
+                var getCurrentRows = $dataGrid.datagrid('options').pageSize;
+                $dataGrid.datagrid('load', param);
             }
         }
     });
@@ -143,16 +136,26 @@ $(function () {
         }
         $('#document-search').dialog('close');
         $('#document-search-form').form('clear');
-        $dataGrid.datagrid({
-            loader: function (param, success) {
-                param.documentInfo = documentInfo;
-                param.branch = (organName == null ? '' : organName);
-                var defaultUrl = '/documents';
-                $.post(defaultUrl, JSON.stringify(param), function (data) {
-                    success(data)
-                }, 'json');
-            }
-        })
+
+        var getCurrentRows = $dataGrid.datagrid('options').pageSize;
+        var param = {
+            'page': 1,
+            'rows': getCurrentRows,
+            'documentInfo': JSON.stringify(documentInfo),
+            'branch': (organName == null ? '' : organName)
+        };
+        $dataGrid.datagrid('load', param);
+
+        // $dataGrid.datagrid({
+        //     loader: function (param, success) {
+        //         param.documentInfo = documentInfo;
+        //         param.branch = (organName == null ? '' : organName);
+        //         var defaultUrl = '/documents';
+        //         $.post(defaultUrl, JSON.stringify(param), function (data) {
+        //             success(data)
+        //         }, 'json');
+        //     }
+        // })
     });
 
     function documentsSearch() {

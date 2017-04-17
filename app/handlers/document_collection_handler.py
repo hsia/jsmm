@@ -9,6 +9,121 @@ import tornado_utils
 from commons import couch_db, couchLucene_db
 
 
+@tornado_utils.bind_to(r'/documents1/?')
+class Document1Handler(tornado.web.RequestHandler):
+    def get(self):
+        param = self.request.arguments
+        page_number = int((param.get('page')[0]).decode('utf-8'))
+        page_size = int((param.get('rows')[0]).decode('utf-8'))
+        sort_by = (param.get('order', [b'desc'])[0]).decode('utf-8')
+
+        if sort_by == 'asc':
+            sort_by_result = False
+            sort_by_fti = '/fileUploadTime<date>'
+        else:
+            sort_by_result = True
+            sort_by_fti = '\\fileUploadTime<date>'
+
+        params_str = ""
+        if "documentInfo" in param:
+            documentsInfo = json.loads((param.get('documentInfo')[0]).decode('utf-8'))
+            # name = params["documentInfo"]["name"]
+            # fileName = params["documentInfo"]["fileName"]
+            key_word = documentsInfo.get('keyWord').replace(' ', '')
+            key_word_attachment = documentsInfo.get('keyWordAttachment')
+            start_date = documentsInfo.get('startDate')
+            end_date = documentsInfo.get('end_date')
+            doc_type = documentsInfo.get('docType')
+
+            if key_word_attachment != '':
+                params_str += key_word_attachment
+            else:
+                pass
+
+            # if name != '' and params_str != '':
+            #     params_str += ' AND name:"' + name + '"'
+            # elif name != '' and params_str == '':
+            #     params_str += 'name:"' + name + '"'
+            # else:
+            #     pass
+            #
+            # if fileName != '' and params_str != '':
+            #     params_str += ' AND fileName:"' + fileName + '"'
+            # elif fileName != '' and params_str == '':
+            #     params_str += 'fileName:"' + fileName + '"'
+            # else:
+            #     pass
+            if key_word != '' and params_str != '':
+                params_str += ' AND (fileName:' + key_word + ' OR name:' + key_word + ')'
+            elif key_word != '' and params_str == '':
+                params_str += '(fileName:' + key_word + ' OR name:' + key_word + ')'
+            else:
+                pass
+
+            if start_date != '' and end_date != '' and params_str != '':
+                params_str += ' AND fileUploadTime<date>:[' + start_date + ' TO ' + end_date + ']'
+            elif start_date != '' and end_date != '' and params_str == '':
+                params_str += 'fileUploadTime<date>:[' + start_date + ' TO ' + end_date + ']'
+            else:
+                pass
+
+            if doc_type != '' and params_str != '':
+                params_str += ' AND docType:"' + doc_type + '"'
+            elif doc_type != '' and params_str == '':
+                params_str += 'docType:"' + doc_type + '"'
+            else:
+                pass
+
+        if "branch" in param:
+            branch = (param.get('branch', [b''])[0]).decode('utf-8')
+
+            if branch != '' and params_str != '' and branch != '北京市' and branch != '朝阳区':
+                params_str += ' AND branch:"' + branch + '"'
+            elif branch != '' and params_str == '' and branch != '北京市' and branch != '朝阳区':
+                params_str += 'branch:"' + branch + '"'
+            else:
+                pass
+
+        print('params_str = ' + params_str)
+
+        if params_str != '':
+            response = couchLucene_db.get(
+                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s&sort=%(sort_by_fti)s' % {
+                    "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
+                    'skip': (page_number - 1) * page_size,
+                    'sort_by_fti': sort_by_fti})
+        else:
+            response = couch_db.get(
+                r'/jsmm/_design/documents/_view/by_fileUploadTime?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
+                    'page_size': page_size, 'page_number': (page_number - 1) * page_size,
+                    'sort_by_result': sort_by_result})
+
+        documents_result = {}
+        if response.code == 200:
+            documents = []
+            document_list = json.loads(response.body.decode('utf-8'))
+            print(document_list)
+
+            if params_str != '':
+                for row in document_list['rows']:
+                    row['fields']['_id'] = row['id']
+                    documents.append(row['fields'])
+            else:
+                for row in document_list['rows']:
+                    documents.append(row['value'])
+
+            documents_result['total'] = document_list['total_rows']
+            documents_result['rows'] = documents
+        else:
+            documents_result['total'] = 0
+            documents_result['rows'] = []
+
+        documents_result['page_size'] = page_size
+        documents_result['page_number'] = page_number
+
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(documents_result))
+
 @tornado_utils.bind_to(r'/documents/?')
 class DocumentHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
