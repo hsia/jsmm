@@ -21,7 +21,7 @@ class LoginHandler(BaseHandler):
         result = {}
 
         username = self.get_argument('username', None)
-        password = self.get_argument('password', None)
+        password = self.get_argument('passwd', None)
 
         # user = json.loads(self.request.body.decode('utf-8'))
         # username = user["username"]

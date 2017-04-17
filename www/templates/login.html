@@ -25,14 +25,12 @@
                     </tr>
                     <tr>
                         <td style="font-size: 13px;font: inherit;">用户名:</td>
-                        <td><input id="username" class="easyui-textbox" type="text" name="username"
-                                   data-options="required:true">
+                        <td><input id="username" class="easyui-textbox" type="text" name="username">
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 13px;font: inherit;">密&nbsp;&nbsp;&nbsp;码:</td>
-                        <td><input id="password" class="easyui-textbox" type="password" name="password"
-                                   data-options="required:true">
+                        <td><input id="passwd" class="easyui-textbox" type="password" name="passwd">
                         </td>
                     </tr>
                     <tr>
@@ -63,7 +61,7 @@
     }
     browerType();
     //绑定密码框回车提交
-    $('#password').textbox({
+    $('#passwd').textbox({
         inputEvents: $.extend({}, $.fn.textbox.defaults.inputEvents, {
             keyup: function (event) {
                 if (event.keyCode == 13) {
@@ -82,8 +80,12 @@
         }
         $('#ff').form('submit', {
             url: '/login',
-            onSubmit: function () {
-                return $(this).form('enableValidation').form('validate');
+            onSubmit: function (param) {
+                console.log($('#username').val())
+                if ($('#username').val() == '' || $('#passwd').val() == '') {
+                    $('#error-msg').append('用户名或密码不能为空!')
+                    return false;
+                }
             },
             success: function (data) {
                 var result = JSON.parse(data);
