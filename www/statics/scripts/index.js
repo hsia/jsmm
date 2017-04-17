@@ -207,7 +207,7 @@ $(function () {
     $('#organTree').tree({
         loader: function (param, success) {
             $.get('/organ', function (data) {
-                success(data)
+                success(data);
             });
         },
         onClick: function (node) {
@@ -218,16 +218,13 @@ $(function () {
             //获得当前tab
             var tab = $('#tabsAll').tabs('getSelected');
             var index = $('#tabsAll').tabs('getTabIndex', tab);
-            console.log(index)
+            // console.log(index)
             if (index == 1) {
                 window.dispatchEvent(event);
             }
             buildMemberDetails({});
-            search = {};
-            search.branch = node.text;
-            $.post('/members/search/', JSON.stringify(search), function (data) {
-                $memberList.datagrid('loadData', data.docs);
-            })
+            var getCurrentRows = $memberList.datagrid('options').pageSize;
+            $memberList.datagrid('load', {'branch': node.text, 'page': 1, 'rows': getCurrentRows, 'flag': 'search'})
         }
     });
 
@@ -433,7 +430,7 @@ $(function () {
             }
         }];
 
-    var defaultUrl = '/members/';
+    var defaultUrl = '/members1/';
 
     $memberList.datagrid({
         iconCls: 'icon-ok',
@@ -449,7 +446,9 @@ $(function () {
         multiSort: false,
         singleSelect: true,
         toolbar: toolbar,
-        remoteSort: false,
+        remoteSort: true,
+        url: defaultUrl,
+        method: 'GET',
         columns: [[
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
@@ -462,39 +461,39 @@ $(function () {
             {field: 'organ', title: '所属基层组织', width: 120, sortable: true, align: 'left'},
             {field: 'branchTime', title: '入社时间', width: 120, sortable: true, align: 'left'}
         ]],
-        loader: function (param, success) {
-            $.get(defaultUrl, function (data) {
-                success(data)
-            });
-        },
-        loadFilter: function (data) {
-            if (typeof data.length == 'number' && typeof data.splice == 'function') {
-                data = {
-                    total: data.length,
-                    rows: data
-                }
-            }
-            var opts = $memberList.datagrid('options');
-            var pager = $memberList.datagrid('getPager');
-            pager.pagination({
-                onSelectPage: function (pageNum, pageSize) {
-                    opts.pageNumber = pageNum;
-                    opts.pageSize = pageSize;
-                    pager.pagination('refresh', {
-                        pageNumber: pageNum,
-                        pageSize: pageSize
-                    });
-                    $memberList.datagrid('loadData', data);
-                }
-            });
-            if (!data.originalRows) {
-                data.originalRows = (data.rows);
-            }
-            var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
-            var end = start + parseInt(opts.pageSize);
-            data.rows = (data.originalRows.slice(start, end));
-            return data;
-        },
+        // loader: function (param, success) {
+        //     $.get(defaultUrl, param, function (data) {
+        //         success(data);
+        //     });
+        // },
+        // loadFilter: function (data) {
+        //     if (typeof data.length == 'number' && typeof data.splice == 'function') {
+        //         data = {
+        //             total: data.length,
+        //             rows: data
+        //         }
+        //     }
+        //     var opts = $memberList.datagrid('options');
+        //     var pager = $memberList.datagrid('getPager');
+        //     pager.pagination({
+        //         onSelectPage: function (pageNum, pageSize) {
+        //             opts.pageNumber = pageNum;
+        //             opts.pageSize = pageSize;
+        //             pager.pagination('refresh', {
+        //                 pageNumber: pageNum,
+        //                 pageSize: pageSize
+        //             });
+        //             $memberList.datagrid('loadData', data);
+        //         }
+        //     });
+        //     if (!data.originalRows) {
+        //         data.originalRows = (data.rows);
+        //     }
+        //     var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+        //     var end = start + parseInt(opts.pageSize);
+        //     data.rows = (data.originalRows.slice(start, end));
+        //     return data;
+        // },
         onSelect: function (rowIndex, rowData) {
             getRow = rowIndex;
             var memberId = rowData._id;
@@ -681,12 +680,21 @@ $(function () {
             memberInfo['endAge'] = moment().subtract($end_age, 'y').format("YYYY-MM-DD");
         }
         memberInfo.branch = (branch == null ? '' : branch);
-        $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
-            $('#member-search').dialog('close');
+        var getCurrentRows = $memberList.datagrid('options').pageSize;
 
-            $memberList.datagrid('loadData', data.docs);
+        memberInfo.page = 1;
+        memberInfo.rows = getCurrentRows;
+        memberInfo.flag = 'search'
+        // $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
+        //     $('#member-search').dialog('close');
+        //
+        //     $memberList.datagrid('loadData', data.docs);
+        //
+        // })
 
-        })
+        $memberList.datagrid('load', memberInfo)
+        buildMemberDetails({});
+        $('#member-search').dialog('close');
     });
 
     function memberSearch() {
