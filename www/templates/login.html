@@ -25,12 +25,12 @@
                     </tr>
                     <tr>
                         <td style="font-size: 13px;font: inherit;">用户名:</td>
-                        <td><input id="username" class="easyui-textbox" type="text" name="username">
+                        <td><input id="username" type="text" name="username">
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 13px;font: inherit;">密&nbsp;&nbsp;&nbsp;码:</td>
-                        <td><input id="passwd" class="easyui-textbox" type="password" name="passwd">
+                        <td><input id="pw" type="password" name="passwd">
                         </td>
                     </tr>
                     <tr>
@@ -82,8 +82,14 @@
             url: '/login',
             onSubmit: function (param) {
                 console.log($('#username').val())
-                if ($('#username').val() == '' || $('#passwd').val() == '') {
-                    $('#error-msg').append('用户名或密码不能为空!')
+                if ($('#username').val() == '') {
+                    $('#error-msg').append('用户名不能为空!')
+                    $('#username').focus();
+                    return false;
+                }
+                if ($('#pw').val() == '') {
+                    $('#error-msg').append('密码不能为空!')
+                    $('#pw').focus();
                     return false;
                 }
             },
