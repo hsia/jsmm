@@ -286,7 +286,7 @@ try_(couch_db.put('/jsmm/_design/documents', {
     }
 }))
 
-try_(couch_db.put('/jsmm/_design/organ', {
+try_(couch_db.put('/jsmm/_design/tab', {
     "views": {
         "all": {
             "map": '''
@@ -311,7 +311,7 @@ try_(couch_db.put('/jsmm/_design/organ', {
     }
 }))
 
-try_(couch_db.put('/jsmm/_design/tab', {
+try_(couch_db.put('/jsmm/_design/organ', {
     "views": {
         "getOrgan": {
             "map": "function (doc) {\n  if(doc.typeFlag == 'organ'){\n    emit(doc.typeFlag,doc);\n  }\n}"
