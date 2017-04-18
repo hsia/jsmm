@@ -453,9 +453,10 @@ $(function () {
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
             {
-                field: 'name', title: '姓名', width: 110, sortable: true, align: 'left'/*, sorter:function (a,b) {
-             return makePy(a)[0] > makePy(b)[0]?1:-1
-             }*/
+                field: 'name', title: '姓名', width: 110, sortable: true, align: 'left',
+                sorter: function (a, b) {
+                    return makePy(a)[0] > makePy(b)[0] ? 1 : -1
+                }
             },
             {field: 'gender', title: '性别', width: 50, sortable: true, align: 'left',},
             {field: 'birthday', title: '出生日期', width: 120, sortable: true, align: 'left'},

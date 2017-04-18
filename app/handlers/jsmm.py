@@ -6,6 +6,8 @@ import json
 import tornado.web
 
 import tornado_utils
+from pypinyin import lazy_pinyin
+
 from commons import couch_db, get_retire_time, make_uuid
 
 
@@ -394,25 +396,24 @@ class MemberCollectionPage2Handler(tornado.web.RequestHandler):
             else:
                 sort_by_result = True
 
-            if sort == 'gender':
-                views = 'sort-by-gender'
-            elif sort == 'birthday':
-                views = 'sort-by-birthday'
-            elif sort == 'nation':
-                views = 'sort-by-nation'
-            elif sort == 'idCard':
-                views = 'sort-by-idCard'
-            elif sort == 'branch':
-                views = 'sort-by-branch'
-            elif sort == 'organ':
-                views = 'sort-by-organ'
-            elif sort == 'branchTime':
-                views = 'sort-by-branchTime'
-            else:
-                views = 'sort-by-name'
+            # if sort == 'gender':
+            #     views = 'sort-by-gender'
+            # elif sort == 'birthday':
+            #     views = 'sort-by-birthday'
+            # elif sort == 'nation':
+            #     views = 'sort-by-nation'
+            # elif sort == 'idCard':
+            #     views = 'sort-by-idCard'
+            # elif sort == 'branch':
+            #     views = 'sort-by-branch'
+            # elif sort == 'organ':
+            #     views = 'sort-by-organ'
+            # elif sort == 'branchTime':
+            #     views = 'sort-by-branchTime'
+            # else:
+            #     views = 'sort-by-name'
             response = couch_db.get(
                 r'/jsmm/_design/members/_view/sort-by-name?descending=%(sort_by_result)s' % {
-                    'views': views,
                     'sort_by_result': sort_by_result})
             members = json.loads(response.body.decode('utf-8'))
             member_rows = members.get('rows')
@@ -422,6 +423,8 @@ class MemberCollectionPage2Handler(tornado.web.RequestHandler):
                 result.append(member.get('value'))
 
             member_result = result
+
+        member_result.sort(key=lambda k: lazy_pinyin(k.get('name')))
 
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(member_result))
