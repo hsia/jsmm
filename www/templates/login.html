@@ -61,7 +61,7 @@
     }
     browerType();
     //绑定密码框回车提交
-    $('#passwd').textbox({
+    $('#pw').textbox({
         inputEvents: $.extend({}, $.fn.textbox.defaults.inputEvents, {
             keyup: function (event) {
                 if (event.keyCode == 13) {
@@ -81,7 +81,6 @@
         $('#ff').form('submit', {
             url: '/login',
             onSubmit: function (param) {
-                console.log($('#username').val())
                 if ($('#username').val() == '') {
                     $('#error-msg').append('用户名不能为空!')
                     $('#username').focus();
