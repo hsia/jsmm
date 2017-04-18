@@ -26,13 +26,13 @@ try_(couch_db.put('/jsmm/_design/members', {
                       }
                     }'''
         },
-        'by-name': {
-            'map': '''
+        "by-birthday": {
+            "map": '''
                     function (doc) {
                       if (doc.type == 'member') {
-                        if(doc.name) {
-                        var name = doc.name.replace(/^(A|The) /, '');
-                        emit(name, doc);
+                        var birthday = doc.birthday.split('-');
+                        if (birthday.length == 3) {
+                          emit([parseInt(birthday[1], 10), parseInt(birthday[2], 10)], doc);
                         }
                       }
                     }'''
@@ -45,17 +45,177 @@ try_(couch_db.put('/jsmm/_design/members', {
                       }
                     }'''
         },
-        "by-birthday": {
-            "map": '''
+        'by-name': {
+            'map': '''
                     function (doc) {
                       if (doc.type == 'member') {
-                        var birthday = doc.birthday.split('-');
-                        if (birthday.length == 3) {
-                          emit([parseInt(birthday[1], 10), parseInt(birthday[2], 10)], doc);
+                        if(doc.name) {
+                        var name = doc.name.replace(/^(A|The) /, '');
+                        emit(name, doc);
                         }
                       }
                     }'''
-        }
+        },
+        'sort-by-birthday': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.birthday, obj);
+  }
+}
+'''
+        },
+        'sort-by-branchTime': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.branchTime, obj);
+  }
+}
+'''
+        },
+        'sort-by-gender': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.gender, obj);
+  }
+}
+'''
+        },
+        'sort-by-idCard': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.idCard, obj);
+  }
+}
+'''
+        },
+        'sort-by-name': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.name, obj);
+  }
+}
+'''
+        },
+        'sort-by-nation': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.nation, obj);
+  }
+}
+'''
+        },
+        'sort-by-branch': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.gender = doc.gender;
+    obj.name = doc.name;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.branch, obj);
+  }
+}
+'''
+        },
+        'sort-by-organ': {
+            'map': '''
+function (doc) {
+  if(doc.type=='member'){
+    obj = {}
+    obj._id = doc._id;
+    obj._rev = doc._rev;
+    obj.name = doc.name;
+    obj.gender = doc.gender;
+    obj.birthday = doc.birthday;
+    obj.nation = doc.nation;
+    obj.idCard = doc.idCard;
+    obj.branch = doc.branch;
+    obj.organ = doc.organ;
+    obj.branchTime = doc.branchTime;
+    emit(doc.organ, obj);
+  }
+}
+'''
+        },
     },
     'fulltext': {
         'by_basic_info': {
@@ -108,6 +268,9 @@ try_(couch_db.put('/jsmm/_design/documents', {
         "by_branch": {
             "map": "\nfunction (doc) {\n  if(doc.type == 'document'){\n    emit(doc.branch, doc);\n  }\n}"
         },
+        "by_fileUploadTime": {
+            "map": "function (doc) {\n  if(doc.type == 'document'){\n    emit(doc.fileUploadTime, doc);\n  }\n}"
+        },
         "by_memberid": {
             "map": "\nfunction (doc) {\n  if(doc.type == 'document'){\n    emit(doc.memberId, doc);\n  }\n}"
         }
@@ -124,6 +287,31 @@ try_(couch_db.put('/jsmm/_design/documents', {
 }))
 
 try_(couch_db.put('/jsmm/_design/organ', {
+    "views": {
+        "all": {
+            "map": '''
+    function (doc) {
+      if(doc.type=="tab"){
+        emit(doc._id, doc);
+      }
+    }'''
+        },
+        "tab-combtree": {
+            "map": '''
+    function (doc) {
+      if(doc.type=='tab'){
+        obj = {}
+        obj.id = doc._id;
+        obj.text = doc.gridTitle;
+        emit('tree', obj)
+      }
+    }
+    '''
+        }
+    }
+}))
+
+try_(couch_db.put('/jsmm/_design/tab', {
     "views": {
         "getOrgan": {
             "map": "function (doc) {\n  if(doc.typeFlag == 'organ'){\n    emit(doc.typeFlag,doc);\n  }\n}"
