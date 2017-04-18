@@ -262,7 +262,7 @@ class MemberCollectionPageHandler(tornado.web.RequestHandler):
             member_result['total'] = len(members_count['docs'])
             member_result['rows'] = members_page['docs']
         else:
-            if order == 'desc':
+            if order == 'asc':
                 sort_by_result = False
             else:
                 sort_by_result = True
@@ -283,7 +283,6 @@ class MemberCollectionPageHandler(tornado.web.RequestHandler):
                 views = 'sort-by-branchTime'
             else:
                 views = 'sort-by-name'
-
             response = couch_db.get(
                 r'/jsmm/_design/members/_view/%(views)s?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
                     'views': views,
