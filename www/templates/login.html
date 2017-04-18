@@ -7,15 +7,13 @@
     <link rel="stylesheet" type="text/css" href="{{ static_url('lib/easyui/themes/icon.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ static_url('lib/easyui/demo/demo.css')}}">
     <script type="text/javascript" src="{{ static_url('lib/jquery/jquery.min.js')}}"></script>
-    <script type="text/javascript" src="{{ static_url('lib/easyui/jquery.easyui.min.js')}}"></script>
-    <script type="text/javascript" src="{{ static_url('lib/easyui/locale/easyui-lang-zh_CN.js')}}"></script>
 </head>
 <body style="text-align:center; background:#F4F4F4 url('static/resources/loginbg.jpg') no-repeat left top;
   background-size:100%;">
-<div style="margin:150px auto;width:400px;height:100px;">
-    <div class="easyui-panel" style="width:100%;background: #F7F7F7">
+<div style="margin:150px auto;width:400px;height:100px">
+    <div style="width:100%;background: #F7F7F7;border:1px solid #95b8e7;">
         <div style="padding:10px 60px 20px 60px;">
-            <form id="ff" class="easyui-form" method="post" data-options="novalidate:true">
+            <form id="ff" method="post">
                 <div style="text-align: center; font-size: 30px;color: #478fca">九三学社</div>
                 <div style="text-align: center; font-size: 30px;color: #478fca">社员信息管理系统</div>
                 <hr style="border-top:1px solid #D5E3EF;">
@@ -25,12 +23,14 @@
                     </tr>
                     <tr>
                         <td style="font-size: 13px;font: inherit;">用户名:</td>
-                        <td><input id="username" type="text" name="username">
+                        <td><input id="username" type="text" name="username" autocomplete="off"
+                                   style="border:1px solid #95b8e7; height: 20px; line-height: 20px;width: 171px;border-radius: 5px 5px 5px 5px;">
                         </td>
                     </tr>
                     <tr>
                         <td style="font-size: 13px;font: inherit;">密&nbsp;&nbsp;&nbsp;码:</td>
-                        <td><input id="pw" type="password" name="passwd">
+                        <td><input id="pw" type="password" name="passwd" autocomplete="off"
+                                   style="border:1px solid #95b8e7; height: 20px; line-height: 20px;width: 171px;border-radius: 5px 5px 5px 5px;">
                         </td>
                     </tr>
                     <tr>
@@ -52,7 +52,7 @@
     </div>
 </div>
 <script>
-    //
+
     function browerType() {
         var explorer = navigator.userAgent;
         if (explorer.indexOf("Firefox") <= 0 && explorer.indexOf("Chrome") <= 0) {
@@ -60,15 +60,11 @@
         }
     }
     browerType();
-    //绑定密码框回车提交
-    $('#pw').textbox({
-        inputEvents: $.extend({}, $.fn.textbox.defaults.inputEvents, {
-            keyup: function (event) {
-                if (event.keyCode == 13) {
-                    submitForm()
-                }
-            }
-        })
+
+    $('#pw').bind('keypress', function (event) {
+        if (event.keyCode == "13") {
+            submitForm()
+        }
     });
 
     function submitForm() {
@@ -78,29 +74,27 @@
             $('#error-msg').append('请使用Chrome或Firefox浏览器')
             return false;
         }
-        $('#ff').form('submit', {
-            url: '/login',
-            onSubmit: function (param) {
-                if ($('#username').val() == '') {
-                    $('#error-msg').append('用户名不能为空!')
-                    $('#username').focus();
-                    return false;
-                }
-                if ($('#pw').val() == '') {
-                    $('#error-msg').append('密码不能为空!')
-                    $('#pw').focus();
-                    return false;
-                }
-            },
-            success: function (data) {
-                var result = JSON.parse(data);
-                if (result.success) {
-                    window.location.href = '/';
-                } else {
-                    $('#error-msg').append('用户名或密码错误!')
-                }
+        if ($('#username').val() == '') {
+            $('#error-msg').append('用户名不能为空!')
+            $('#username').focus();
+            return false;
+        }
+        if ($('#pw').val() == '') {
+            $('#error-msg').append('密码不能为空!')
+            $('#pw').focus();
+            return false;
+        }
+        var param = {};
+        param.username = $('#username').val();
+        param.passwd = $('#pw').val();
+        $.post('/login', param, function (data) {
+            console.log(data);
+            if (data.success) {
+                window.location.href = '/';
+            } else {
+                $('#error-msg').append('用户名或密码错误!');
             }
-        });
+        })
     }
 </script>
 </body>
