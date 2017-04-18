@@ -430,7 +430,7 @@ $(function () {
             }
         }];
 
-    var defaultUrl = '/members1/';
+    var defaultUrl = '/members2/';
 
     $memberList.datagrid({
         iconCls: 'icon-ok',
@@ -446,14 +446,18 @@ $(function () {
         multiSort: false,
         singleSelect: true,
         toolbar: toolbar,
-        remoteSort: true,
-        url: defaultUrl,
-        method: 'GET',
+        remoteSort: false,
+        // url: defaultUrl,
+        // method: 'GET',
         columns: [[
             {field: '_id', hidden: true},
             {field: '_rev', hidden: true},
-            {field: 'name', title: '姓名', width: 110, sortable: true, align: 'left'},
-            {field: 'gender', title: '性别', width: 50, sortable: true, align: 'left'},
+            {
+                field: 'name', title: '姓名', width: 110, sortable: true, align: 'left'/*, sorter:function (a,b) {
+             return makePy(a)[0] > makePy(b)[0]?1:-1
+             }*/
+            },
+            {field: 'gender', title: '性别', width: 50, sortable: true, align: 'left',},
             {field: 'birthday', title: '出生日期', width: 120, sortable: true, align: 'left'},
             {field: 'nation', title: '民族', width: 120, sortable: true, align: 'left'},
             {field: 'idCard', title: '身份证号', width: 120, sortable: true, align: 'left'},
@@ -461,39 +465,39 @@ $(function () {
             {field: 'organ', title: '所属基层组织', width: 120, sortable: true, align: 'left'},
             {field: 'branchTime', title: '入社时间', width: 120, sortable: true, align: 'left'}
         ]],
-        // loader: function (param, success) {
-        //     $.get(defaultUrl, param, function (data) {
-        //         success(data);
-        //     });
-        // },
-        // loadFilter: function (data) {
-        //     if (typeof data.length == 'number' && typeof data.splice == 'function') {
-        //         data = {
-        //             total: data.length,
-        //             rows: data
-        //         }
-        //     }
-        //     var opts = $memberList.datagrid('options');
-        //     var pager = $memberList.datagrid('getPager');
-        //     pager.pagination({
-        //         onSelectPage: function (pageNum, pageSize) {
-        //             opts.pageNumber = pageNum;
-        //             opts.pageSize = pageSize;
-        //             pager.pagination('refresh', {
-        //                 pageNumber: pageNum,
-        //                 pageSize: pageSize
-        //             });
-        //             $memberList.datagrid('loadData', data);
-        //         }
-        //     });
-        //     if (!data.originalRows) {
-        //         data.originalRows = (data.rows);
-        //     }
-        //     var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
-        //     var end = start + parseInt(opts.pageSize);
-        //     data.rows = (data.originalRows.slice(start, end));
-        //     return data;
-        // },
+        loader: function (param, success) {
+            $.get(defaultUrl, param, function (data) {
+                success(data);
+            });
+        },
+        loadFilter: function (data) {
+            if (typeof data.length == 'number' && typeof data.splice == 'function') {
+                data = {
+                    total: data.length,
+                    rows: data
+                }
+            }
+            var opts = $memberList.datagrid('options');
+            var pager = $memberList.datagrid('getPager');
+            pager.pagination({
+                onSelectPage: function (pageNum, pageSize) {
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh', {
+                        pageNumber: pageNum,
+                        pageSize: pageSize
+                    });
+                    $memberList.datagrid('loadData', data);
+                }
+            });
+            if (!data.originalRows) {
+                data.originalRows = (data.rows);
+            }
+            var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+            var end = start + parseInt(opts.pageSize);
+            data.rows = (data.originalRows.slice(start, end));
+            return data;
+        },
         onSelect: function (rowIndex, rowData) {
             getRow = rowIndex;
             var memberId = rowData._id;
@@ -521,6 +525,18 @@ $(function () {
     function refreshDocumentListEvent() {
         var event = new CustomEvent("organ-tree-operation", {});
         window.dispatchEvent(event);
+    }
+
+    function pinyinSort(py1, py2) {
+        pyjx1 = makePy(py1)[0];
+        pyjx2 = makePy(py2)[0];
+        console.log(pyjx1 + ' > ' + pyjx2 + ' = ' + pyjx1 > pyjx2);
+        // if(pyjx1 > pyjx2){
+        //     return 1;
+        // } else {
+        //     return -1;
+        // }
+
     }
 
 
@@ -1032,7 +1048,11 @@ $(function () {
                 iconCls: 'icon-ok',
                 text: '确定',
                 handler: function () {
-                    $('#organ-merge-form').trigger('submit');
+                    $.messager.confirm('合并提示', '合并后原有支社的所有人员自动转到目标支社，确定吗？', function (r) {
+                        if (r) {
+                            $('#organ-merge-form').trigger('submit');
+                        }
+                    });
                 }
             }, {
                 iconCls: 'icon-cancel',

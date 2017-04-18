@@ -36,7 +36,7 @@ class Document1Handler(tornado.web.RequestHandler):
             doc_type = documentsInfo.get('docType')
 
             if key_word_attachment != '':
-                params_str += key_word_attachment
+                params_str += key_word_attachment + '*'
             else:
                 pass
 
@@ -54,9 +54,9 @@ class Document1Handler(tornado.web.RequestHandler):
             # else:
             #     pass
             if key_word != '' and params_str != '':
-                params_str += ' AND (fileName:' + key_word + ' OR name:' + key_word + ')'
+                params_str += ' AND (fileName:' + key_word + '* OR name:' + key_word + '*)'
             elif key_word != '' and params_str == '':
-                params_str += '(fileName:' + key_word + ' OR name:' + key_word + ')'
+                params_str += '(fileName:' + key_word + '* OR name:' + key_word + '*)'
             else:
                 pass
 
@@ -87,12 +87,21 @@ class Document1Handler(tornado.web.RequestHandler):
         print('params_str = ' + params_str)
 
         if params_str != '':
+            print(
+                r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s&sort=%(sort_by_fti)s' % {
+                    "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
+                    'skip': (page_number - 1) * page_size,
+                    'sort_by_fti': sort_by_fti})
             response = couchLucene_db.get(
                 r'/_fti/local/jsmm/_design/documents/by_doc_info?q=%(params_str)s&limit=%(limit)s&skip=%(skip)s&sort=%(sort_by_fti)s' % {
                     "params_str": urllib.parse.quote(params_str, "utf-8"), 'limit': page_size,
                     'skip': (page_number - 1) * page_size,
                     'sort_by_fti': sort_by_fti})
         else:
+            print(
+                r'/jsmm/_design/documents/_view/by_fileUploadTime?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
+                    'page_size': page_size, 'page_number': (page_number - 1) * page_size,
+                    'sort_by_result': sort_by_result})
             response = couch_db.get(
                 r'/jsmm/_design/documents/_view/by_fileUploadTime?limit=%(page_size)s&skip=%(page_number)s&descending=%(sort_by_result)s' % {
                     'page_size': page_size, 'page_number': (page_number - 1) * page_size,
@@ -123,6 +132,7 @@ class Document1Handler(tornado.web.RequestHandler):
 
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(documents_result))
+
 
 @tornado_utils.bind_to(r'/documents/?')
 class DocumentHandler(tornado.web.RequestHandler):
@@ -161,7 +171,7 @@ class DocumentHandler(tornado.web.RequestHandler):
         if "documentInfo" in params:
             # name = params["documentInfo"]["name"]
             # fileName = params["documentInfo"]["fileName"]
-            key_world = params["documentInfo"]["keyWord"].replace(' ', '')
+            key_world = params["documentInfo"]["keyWord"]
             key_word_attachment = params["documentInfo"]["keyWordAttachment"]
             start_date = params["documentInfo"]["startDate"]
             end_date = params["documentInfo"]["endDate"]

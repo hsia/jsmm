@@ -180,7 +180,7 @@ class MemberHandlerTab(tornado.web.RequestHandler):
 
 
 @tornado_utils.bind_to(r'/members1/?')
-class MemberCollectionPageHandler(tornado.web.RequestHandler):
+class MemberCollectionPage1Handler(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self):
         """
@@ -303,3 +303,125 @@ class MemberCollectionPageHandler(tornado.web.RequestHandler):
 
         self.set_header('Content-Type', 'application/json')
         self.write(member_result)
+
+
+@tornado_utils.bind_to(r'/members2/?')
+class MemberCollectionPage2Handler(tornado.web.RequestHandler):
+    @tornado.web.addslash
+    def get(self):
+        """
+        通过view获取对象列表。
+        """
+        param = self.request.arguments
+        page_number = int((param.get('page')[0]).decode('utf-8'))
+        page_size = int((param.get('rows')[0]).decode('utf-8'))
+        order = (param.get('order', [b'desc'])[0]).decode('utf-8')
+        sort = (param.get('sort', [b'name'])[0]).decode('utf-8')
+        flag = (param.get('flag', [b''])[0]).decode('utf-8')
+
+        member_result = {}
+
+        if flag:
+            keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'jobTitle', 'titleLevel',
+                    'highestEducation']
+            obj = {
+                "selector": {},
+                "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ",
+                           "branchTime"],
+                "sort": [{sort: order}]
+            }
+            objC = obj["selector"]
+            objC['type'] = {"$eq": "member"}
+
+            if 'branch' in param:
+                if (param.get('branch', [b''])[0]).decode('utf-8') != '' and (param.get('branch', [b''])[0]).decode(
+                        'utf-8') != u'北京市' and (param.get('branch', [b''])[0]).decode('utf-8') != u'朝阳区':
+                    objC['branch'] = {"$eq": (param["branch"][0]).decode('utf-8')}
+
+            for key in keys:
+                if key in param:
+                    if param.get(key, [b''])[0] != b'':
+                        objC[key] = {'$regex': (param.get(key)[0]).decode("utf-8")}
+
+            if 'retireTime' in param:
+                if param.get('retireTime', [b''])[0] != b'':
+                    objC['retireTime'] = {"$lt": (param.get("retireTime")[0]).decode('utf-8')}
+
+            if 'socialPositionName' in param:
+                if param.get('socialPositionName', [b''])[0] != b'':
+                    objC['social'] = {
+                        "$elemMatch": {
+                            "socialPositionName": {"$regex": (param.get('socialPositionName')[0]).decode('utf-8')}}}
+
+            if 'socialPositionLevel' in param:
+                if param.get('socialPositionLevel', [b''])[0] != b'':
+                    objC['social'] = {
+                        "$elemMatch": {
+                            "socialPositionLevel": {"$regex": (param.get('socialPositionLevel')[0]).decode('utf-8')}}}
+
+            if 'formeOrganizationJob' in param:
+                if param.get('formeOrganizationJob', [b''])[0] != b'':
+                    objC['formercluboffice'] = {
+                        "$elemMatch": {
+                            "formeOrganizationJob": {"$regex": (param.get('formeOrganizationJob')[0]).decode('utf-8')}}}
+
+            if 'formeOrganizationLevel' in param:
+                if param.get('formeOrganizationLevel', [b''])[0] != b'':
+                    objC['formeOrganizationLevel'] = {
+                        "$elemMatch": {"formeOrganizationLevel": {
+                            "$regex": (param.get('formeOrganizationLevel')[0]).decode('utf-8')}}}
+
+            if 'startAge' in param and 'endAge' in param:
+                if param.get('startAge', [b''])[0] != b'' and param.get('endAge', [b''])[0] != b'':
+                    objC['birthday'] = {"$gte": (param.get('endAge')[0]).decode('utf-8'),
+                                        "$lte": (param.get('startAge')[0]).decode('utf-8')}
+
+            # 查询结果总数
+            response = couch_db.post(r'/jsmm/_find/', obj)
+            members = json.loads(response.body.decode('utf-8'))
+            # 查询分页数据
+            # obj['limit'] = page_size
+            # obj['skip'] = (page_number - 1) * page_size
+            # response_page = couch_db.post(r'/jsmm/_find/', obj)
+            # members_page = json.loads(response_page.body.decode('utf-8'))
+
+            # member_result['total'] = len(members_count['docs'])
+            # member_result['rows'] = members_page['docs']
+            member_result = members.get('docs')
+        else:
+            if order == 'asc':
+                sort_by_result = False
+            else:
+                sort_by_result = True
+
+            if sort == 'gender':
+                views = 'sort-by-gender'
+            elif sort == 'birthday':
+                views = 'sort-by-birthday'
+            elif sort == 'nation':
+                views = 'sort-by-nation'
+            elif sort == 'idCard':
+                views = 'sort-by-idCard'
+            elif sort == 'branch':
+                views = 'sort-by-branch'
+            elif sort == 'organ':
+                views = 'sort-by-organ'
+            elif sort == 'branchTime':
+                views = 'sort-by-branchTime'
+            else:
+                views = 'sort-by-name'
+            response = couch_db.get(
+                r'/jsmm/_design/members/_view/sort-by-name?descending=%(sort_by_result)s' % {
+                    'views': views,
+                    'sort_by_result': sort_by_result})
+            members = json.loads(response.body.decode('utf-8'))
+            member_rows = members.get('rows')
+
+            result = []
+            for member in member_rows:
+                result.append(member.get('value'))
+
+            member_result = result
+
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(member_result))
