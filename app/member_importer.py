@@ -35,13 +35,21 @@ def format_date(date_str):
 
 
 def import_info(file_info):
-    member_info_importer = MemberInfoImporter(file_info['path'])
-    member_info_importer.get_basic_info()
-    member_info_importer.main_function()
-    return member_info_importer.save_member()
+    if 'excel' not in file_info['content_type']:
+        result = {"success": False, "filename": file_info["filename"]}
+    else:
+        member_info_importer = MemberInfoImporter(file_info['path'])
+        member_info_importer.get_basic_info()
+        if member_info_importer.member.get('name') and member_info_importer.member.get('birthday'):
+            member_info_importer.main_function()
+            result = member_info_importer.save_member()
+        else:
+            result = {"success": False, "filecontent": file_info["filename"]}
+
+    return result
 
 
-class MemberInfoImporter():
+class MemberInfoImporter:
     """
     导入社员信息。
     """
@@ -433,9 +441,13 @@ class MemberInfoImporter():
                 result = {'success': True}
             except Exception as e:
                 print(Exception, ":", e)
-                result = {'success': False, 'content': '日期格式错误，请检查文件中的日期格式:年.月.日(1980.01.01)'}
+                result = {'success': False, 'content': '日期错误，请检查文件中的日期格式(年.月.日(1980.01.01))或者日期超出正常范围'}
             finally:
                 return result
+
+    @property
+    def member(self):
+        return self._member
 
 # if __name__ == "__main__":
 #     import sys

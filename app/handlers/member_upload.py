@@ -42,6 +42,7 @@ class UploadHandler(tornado.web.RequestHandler):
         # 结构为：{'members': [{'filename': 'xxx.xls', 'body': b'...',
         # 'content_type': 'application/vnd.ms-excel'}]}
         file_infos = self.request.files['members']
+
         error_message = []
         for file_info in file_infos:
             filename = file_info['filename']
@@ -54,8 +55,13 @@ class UploadHandler(tornado.web.RequestHandler):
             msgs = self._callback({'filename': filename, 'path': path, 'content_type': file_info['content_type']})
             if not msgs["success"] and msgs.get('content', False):
                 error_message.append({'content': msgs['content']})
+            elif not msgs['success'] and msgs.get('filename', False):
+                error_message.append({'filename': msgs['filename']})
+            elif not msgs['success'] and msgs.get('filecontent', False):
+                error_message.append({'filecontent': msgs['filecontent']})
             elif not msgs['success']:
                 error_message.append({"name": msgs["name"], "birthday": msgs["birthday"]})
+
         if len(error_message):
             self.write({"success": False, "msg": error_message})
         else:

@@ -371,7 +371,7 @@ $(function () {
                             success: function (data) {
                                 var member = JSON.parse(data);
                                 if (member.success == false && ('name' in member.msg[0])) {
-                                    var error_members = "以下社员导入失败(姓名和出生日期重复)：<br/>";
+                                    var error_members = "<b>以下社员导入失败(姓名和出生日期重复):</b><br/>";
                                     member.msg.forEach(function (obj) {
                                         error_members += obj.name + "【" + obj.birthday + "】<br/>"
                                     });
@@ -382,6 +382,22 @@ $(function () {
                                     // $memberList.datagrid('reload');
                                     $.messager.progress('close');
                                     $.messager.alert('提示信息', member.msg[0].content);
+                                } else if (member.success == false && ('filename' in member.msg[0])) {
+                                    var error_members = "<b>以下导入文件类型错误，只能导入Excel:</b><br/>";
+                                    member.msg.forEach(function (obj) {
+                                        error_members += obj.filename + "<br/>"
+                                    });
+                                    // $memberList.datagrid('reload');
+                                    $.messager.progress('close');
+                                    $.messager.alert('提示信息', error_members);
+                                } else if (member.success == false && ('filecontent' in member.msg[0])) {
+                                    var error_members = "<b>以下Excel文件内容不符合要求(年龄和生日不能为空)，请检查！</b><br/>";
+                                    member.msg.forEach(function (obj) {
+                                        error_members += obj.filecontent + "<br/>"
+                                    });
+                                    // $memberList.datagrid('reload');
+                                    $.messager.progress('close');
+                                    $.messager.alert('提示信息', error_members);
                                 } else {
                                     $memberList.datagrid('reload');
                                     $.messager.progress('close');
