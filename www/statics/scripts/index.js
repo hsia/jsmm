@@ -771,7 +771,7 @@ $(function () {
     function client_add_tab() {
         var gridHeight = ($("#member-info").height()) + 77;
         $("#tab_title").textbox('setValue', '');
-
+        $('#client_add_tab_table').datagrid('loadData', []);
         $('#client_add_tab').dialog({
             title: '新建自定义tab',
             closed: false,
