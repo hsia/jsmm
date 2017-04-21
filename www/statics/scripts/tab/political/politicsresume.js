@@ -26,7 +26,7 @@ $(function () {
         },
         {
             field: 'resumeTime',
-            title: '时间',
+            title: '天数',
             width: 80,
             align: 'left',
             editor: {type: 'textbox', options: {}}

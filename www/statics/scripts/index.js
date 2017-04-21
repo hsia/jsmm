@@ -222,6 +222,8 @@ $(function () {
             if (index == 1) {
                 window.dispatchEvent(event);
             }
+            //清空页签内容
+            window.dispatchEvent(eventDelete);
             buildMemberDetails({});
             var getCurrentRows = $memberList.datagrid('options').pageSize;
             $memberList.datagrid('load', {'branch': node.text, 'page': 1, 'rows': getCurrentRows, 'flag': 'search'})
@@ -255,6 +257,8 @@ $(function () {
                 $('#member-dialog').dialog('close');
                 $('#member-form').form('clear');
                 $memberList.datagrid('reload');
+                //清空页签内容
+                window.dispatchEvent(eventDelete);
                 // $.messager.alert('提示信息', '添加社员成功！', 'info');
             }
         })
@@ -281,6 +285,8 @@ $(function () {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 // console.log(getRow);
                 $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
+                //清空页签内容
+                window.dispatchEvent(eventDelete);
                 // $memberList.datagrid('selectRow', getRow);
                 // $.messager.alert('提示', '数据更新成功!', 'info');
             },
@@ -544,6 +550,11 @@ $(function () {
         window.dispatchEvent(event);
     }
 
+    //自定义event，用来清空页签中的数据
+    var eventDelete = new CustomEvent("grid-row-deleteRow", {
+        detail: {success: true}
+    });
+
     function pinyinSort(py1, py2) {
         pyjx1 = makePy(py1)[0];
         pyjx2 = makePy(py2)[0];
@@ -683,9 +694,6 @@ $(function () {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 $memberList.datagrid('reload');
 
-                var eventDelete = new CustomEvent("grid-row-deleteRow", {
-                    detail: {success: true}
-                });
                 window.dispatchEvent(eventDelete);
 
                 buildMemberDetails({});
@@ -726,6 +734,8 @@ $(function () {
         // })
 
         $memberList.datagrid('load', memberInfo)
+        //清空页签内容
+        window.dispatchEvent(eventDelete);
         buildMemberDetails({});
         $('#member-search').dialog('close');
     });
@@ -774,6 +784,7 @@ $(function () {
     choiceNode = '';
     //编辑tab页
     function client_edit_tab() {
+        $('#client_edit_tab_table').datagrid('loadData', []);
         var gridHeight = ($("#member-info").height()) + 77;
         $('#tab_edit_title').combotree({
             url: '/tabcombtree/',
@@ -944,6 +955,8 @@ $(function () {
                         'page': 1,
                         'rows': getCurrentRows,
                     })
+                    //清空页签内容
+                    window.dispatchEvent(eventDelete);
                     refreshDocumentListEvent();
                 } else {
                     $.messager.alert('提示', data.content, 'warning');
@@ -1017,6 +1030,8 @@ $(function () {
                         'page': 1,
                         'rows': getCurrentRows,
                     })
+                    //清空页签内容
+                    window.dispatchEvent(eventDelete);
                     refreshDocumentListEvent();
 
                     // $.messager.alert('提示', '修改支社成功!', 'info');
@@ -1110,6 +1125,8 @@ $(function () {
                     'page': 1,
                     'rows': getCurrentRows,
                 })
+                //清空页签内容
+                window.dispatchEvent(eventDelete);
                 refreshDocumentListEvent();
 
                 // $.messager.alert('提示', '支社合并成功!', 'info');

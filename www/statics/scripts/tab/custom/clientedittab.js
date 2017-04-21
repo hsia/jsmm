@@ -60,6 +60,15 @@ $(function () {
                         panelHeight: 'auto',
                         prompt: '请选择'
                     }
+                },
+                formatter: function (value, row, index) {
+                    var result = '';
+                    if (value == 'datebox') {
+                        result = '时间';
+                    } else {
+                        result = '文本';
+                    }
+                    return result;
                 }
             }
         ]],
