@@ -36,7 +36,7 @@ def format_date(date_str):
 
 def import_info(file_info):
     try:
-        if 'excel' not in file_info['content_type']:
+        if 'excel' not in file_info['content_type'] and 'sheet' not in file_info['content_type']:
             result = {"success": False, "filename": file_info["filename"]}
         else:
 
@@ -49,7 +49,7 @@ def import_info(file_info):
                 result = {"success": False, "filecontent": file_info["filename"]}
     except Exception as e:
         print(Exception, ":", e)
-        result = {"success": False, "content": "导入文件错误，请检查导入文件内容和格式"}
+        result = {"success": False, "content": file_info["filename"]}
     finally:
         return result
 

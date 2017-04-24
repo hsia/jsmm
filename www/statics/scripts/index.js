@@ -376,6 +376,7 @@ $(function () {
                         $('#member_upload_form').form('submit', {
                             success: function (data) {
                                 var member = JSON.parse(data);
+                                $memberList.datagrid('reload');
                                 if (member.success == false && ('name' in member.msg[0])) {
                                     var error_members = "<b>以下社员导入失败(姓名和出生日期重复):</b><br/>";
                                     member.msg.forEach(function (obj) {
@@ -385,9 +386,13 @@ $(function () {
                                     $.messager.progress('close');
                                     $.messager.alert('提示信息', error_members);
                                 } else if (member.success == false && ('content' in member.msg[0])) {
+                                    var error_members = "<b>以下导入文件内容错误，请检查:</b><br/>";
+                                    member.msg.forEach(function (obj) {
+                                        error_members += obj.content + "<br/>"
+                                    });
                                     // $memberList.datagrid('reload');
                                     $.messager.progress('close');
-                                    $.messager.alert('提示信息', member.msg[0].content);
+                                    $.messager.alert('提示信息', error_members);
                                 } else if (member.success == false && ('filename' in member.msg[0])) {
                                     var error_members = "<b>以下导入文件类型错误，只能导入Excel:</b><br/>";
                                     member.msg.forEach(function (obj) {
@@ -405,7 +410,7 @@ $(function () {
                                     $.messager.progress('close');
                                     $.messager.alert('提示信息', error_members);
                                 } else {
-                                    $memberList.datagrid('reload');
+                                    // $memberList.datagrid('reload');
                                     $.messager.progress('close');
                                     // $.messager.alert('提示信息', '导入社员成功！', 'info');
                                 }

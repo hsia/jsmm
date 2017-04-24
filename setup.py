@@ -56,86 +56,6 @@ try_(couch_db.put('/jsmm/_design/members', {
                       }
                     }'''
         },
-        'sort-by-birthday': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.name = doc.name;
-    obj.gender = doc.gender;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.birthday, obj);
-  }
-}
-'''
-        },
-        'sort-by-branchTime': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.name = doc.name;
-    obj.gender = doc.gender;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.branchTime, obj);
-  }
-}
-'''
-        },
-        'sort-by-gender': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.name = doc.name;
-    obj.gender = doc.gender;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.gender, obj);
-  }
-}
-'''
-        },
-        'sort-by-idCard': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.name = doc.name;
-    obj.gender = doc.gender;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.idCard, obj);
-  }
-}
-'''
-        },
         'sort-by-name': {
             'map': '''
 function (doc) {
@@ -155,68 +75,7 @@ function (doc) {
   }
 }
 '''
-        },
-        'sort-by-nation': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.name = doc.name;
-    obj.gender = doc.gender;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.nation, obj);
-  }
-}
-'''
-        },
-        'sort-by-branch': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.gender = doc.gender;
-    obj.name = doc.name;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.branch, obj);
-  }
-}
-'''
-        },
-        'sort-by-organ': {
-            'map': '''
-function (doc) {
-  if(doc.type=='member'){
-    obj = {}
-    obj._id = doc._id;
-    obj._rev = doc._rev;
-    obj.name = doc.name;
-    obj.gender = doc.gender;
-    obj.birthday = doc.birthday;
-    obj.nation = doc.nation;
-    obj.idCard = doc.idCard;
-    obj.branch = doc.branch;
-    obj.organ = doc.organ;
-    obj.branchTime = doc.branchTime;
-    emit(doc.organ, obj);
-  }
-}
-'''
-        },
-    },
+        }},
     'fulltext': {
         'by_basic_info': {
             'analyzer': 'chinese',
@@ -329,7 +188,22 @@ organ = {
                 {
                     "id": "朝阳区",
                     "text": "朝阳区",
-                    "children": []
+                    "children": [
+                        {
+                            "id": "煤科院支社",
+                            "text": "煤科院支社",
+                            "children": []
+                        },
+                        {
+                            "id": "科技馆支社",
+                            "text": "科技馆支社",
+                            "children": []
+                        }, {
+                            "id": "朝阳综合支社",
+                            "text": "朝阳综合支社",
+                            "children": []
+                        }
+                    ]
                 }
             ]
         }

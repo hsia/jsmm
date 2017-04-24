@@ -164,7 +164,7 @@ class AttachmentHandler(tornado.web.RequestHandler):
             'type': 'document',
             'branch': member_in_db['branch'],
             'organ': member_in_db['organ'],
-            'fileUploadTime': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+            'fileUploadTime': time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
             'docType': doc_type,
             'fileName': doc_name
         }

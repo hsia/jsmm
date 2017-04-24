@@ -32,7 +32,7 @@ class Document1Handler(tornado.web.RequestHandler):
             key_word = documentsInfo.get('keyWord').replace(' ', '')
             key_word_attachment = documentsInfo.get('keyWordAttachment')
             start_date = documentsInfo.get('startDate')
-            end_date = documentsInfo.get('end_date')
+            end_date = documentsInfo.get('endDate')
             doc_type = documentsInfo.get('docType')
 
             if key_word_attachment != '':
@@ -61,8 +61,12 @@ class Document1Handler(tornado.web.RequestHandler):
                 pass
 
             if start_date != '' and end_date != '' and params_str != '':
+                start_date += 'T00:00:00'
+                end_date += 'T23:59:59'
                 params_str += ' AND fileUploadTime<date>:[' + start_date + ' TO ' + end_date + ']'
             elif start_date != '' and end_date != '' and params_str == '':
+                start_date += 'T00:00:00'
+                end_date += 'T23:59:59'
                 params_str += 'fileUploadTime<date>:[' + start_date + ' TO ' + end_date + ']'
             else:
                 pass
@@ -116,9 +120,11 @@ class Document1Handler(tornado.web.RequestHandler):
             if params_str != '':
                 for row in document_list['rows']:
                     row['fields']['_id'] = row['id']
+                    row['fields']['fileUploadTime'] = row.get('fields').get('fileUploadTime').replace('T', ' ')
                     documents.append(row['fields'])
             else:
                 for row in document_list['rows']:
+                    row['value']['fileUploadTime'] = row.get('value').get('fileUploadTime').replace('T', ' ')
                     documents.append(row['value'])
 
             documents_result['total'] = document_list['total_rows']

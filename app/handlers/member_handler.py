@@ -33,6 +33,21 @@ class MemberHandler(tornado.web.RequestHandler):
             'rows'] if doc['value']['docType'] == 'politicsInfo']
         member['propaganda'] = [doc['value'] for doc in documents[
             'rows'] if doc['value']['docType'] == 'propaganda']
+        # 处理文档上传日期，使用空格代替T
+        for researchReport in member.get('researchReport', []):
+            researchReport['fileUploadTime'] = (researchReport.get('fileUploadTime')).replace('T', ' ')
+        for researchReport in member.get('unitedTheory', []):
+            researchReport['fileUploadTime'] = (researchReport.get('fileUploadTime')).replace('T', ' ')
+        for researchReport in member.get('politicsInfo', []):
+            researchReport['fileUploadTime'] = (researchReport.get('fileUploadTime')).replace('T', ' ')
+        for researchReport in member.get('propaganda', []):
+            researchReport['fileUploadTime'] = (researchReport.get('fileUploadTime')).replace('T', ' ')
+
+        member['educationDegree'].sort(key=lambda k: k.get('eduStartingDate'), reverse=True)
+        member['researchReport'].sort(key=lambda k: k.get('fileUploadTime'), reverse=True)
+        member['unitedTheory'].sort(key=lambda k: k.get('fileUploadTime'), reverse=True)
+        member['politicsInfo'].sort(key=lambda k: k.get('fileUploadTime'), reverse=True)
+        member['propaganda'].sort(key=lambda k: k.get('fileUploadTime'), reverse=True)
         self.write(member)
 
     def put(self, member_id):
