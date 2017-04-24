@@ -42,11 +42,6 @@ GridTab.prototype.moveUp = function () {
     var row = this.$grid.datagrid('getSelected');
     var index = this.$grid.datagrid('getRowIndex', row);
     mySort(index, 'up', this.$grid);
-
-
-    // this.$grid.datagrid('cancelEdit', this.editIndex)
-    //     .datagrid('deleteRow', this.editIndex);
-    // this.editIndex = undefined;
 };
 
 //下移记录
@@ -58,11 +53,6 @@ GridTab.prototype.moveDown = function () {
     var row = this.$grid.datagrid('getSelected');
     var index = this.$grid.datagrid('getRowIndex', row);
     mySort(index, 'down', this.$grid);
-
-
-    // this.$grid.datagrid('cancelEdit', this.editIndex)
-    //     .datagrid('deleteRow', this.editIndex);
-    // this.editIndex = undefined;
 };
 
 
@@ -72,12 +62,20 @@ GridTab.prototype.removeRow = function () {
     //     .datagrid('deleteRow', this.editIndex);
     // this.editIndex = null;
     // }
-    if (this.editIndex == undefined) {
+    if (this.editIndex == undefined || this.editIndex < 0) {
         return
     }
     this.$grid.datagrid('cancelEdit', this.editIndex)
         .datagrid('deleteRow', this.editIndex);
-    this.editIndex = undefined;
+
+    rows = this.$grid.datagrid('getRows')
+
+    if (this.editIndex >= rows.length) {
+        this.editIndex = (rows.length - 1);
+        this.$grid.datagrid('selectRow', this.editIndex);
+    } else {
+        this.$grid.datagrid('selectRow', this.editIndex);
+    }
 };
 
 GridTab.prototype.saveRow = function () {
