@@ -25,6 +25,18 @@ $(function () {
                 gridTab.addRow();
             }
         }, '-', {
+            text: '上移记录',
+            iconCls: 'icon-move-up',
+            handler: function () {
+                gridTab.moveUp();
+            }
+        }, '-', {
+            text: '下移记录',
+            iconCls: 'icon-move-down',
+            handler: function () {
+                gridTab.moveDown();
+            }
+        }, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {

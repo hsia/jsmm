@@ -32,6 +32,40 @@ GridTab.prototype.addRow = function () {
     }
 };
 
+//上移记录
+GridTab.prototype.moveUp = function () {
+    if (this.editIndex == undefined) {
+        return
+    }
+
+    this.$grid.datagrid('endEdit', this.editIndex)
+    var row = this.$grid.datagrid('getSelected');
+    var index = this.$grid.datagrid('getRowIndex', row);
+    mySort(index, 'up', this.$grid);
+
+
+    // this.$grid.datagrid('cancelEdit', this.editIndex)
+    //     .datagrid('deleteRow', this.editIndex);
+    // this.editIndex = undefined;
+};
+
+//下移记录
+GridTab.prototype.moveDown = function () {
+    if (this.editIndex == undefined) {
+        return
+    }
+    this.$grid.datagrid('endEdit', this.editIndex)
+    var row = this.$grid.datagrid('getSelected');
+    var index = this.$grid.datagrid('getRowIndex', row);
+    mySort(index, 'down', this.$grid);
+
+
+    // this.$grid.datagrid('cancelEdit', this.editIndex)
+    //     .datagrid('deleteRow', this.editIndex);
+    // this.editIndex = undefined;
+};
+
+
 GridTab.prototype.removeRow = function () {
     // if (!this.editIndex) {
     // this.$grid.datagrid('cancelEdit', this.editIndex)
@@ -239,3 +273,30 @@ GridTab.prototype.registerListeners = function () {
         that.reloadGrid(true);
     });
 };
+
+function mySort(index, type, $grid) {
+    if ("up" == type) {
+        if (index != 0) {
+            var toup = $grid.datagrid('getData').rows[index];
+            var todown = $grid.datagrid('getData').rows[index - 1];
+            $grid.datagrid('getData').rows[index] = todown;
+            $grid.datagrid('getData').rows[index - 1] = toup;
+            $grid.datagrid('refreshRow', index);
+            $grid.datagrid('refreshRow', index - 1);
+            $grid.datagrid('selectRow', index - 1);
+        }
+    } else if ("down" == type) {
+        var rows = $grid.datagrid('getRows').length;
+        if (index != rows - 1) {
+            var todown = $grid.datagrid('getData').rows[index];
+            var toup = $grid.datagrid('getData').rows[index + 1];
+            $grid.datagrid('getData').rows[index + 1] = todown;
+            $grid.datagrid('getData').rows[index] = toup;
+            $grid.datagrid('refreshRow', index);
+            $grid.datagrid('refreshRow', index + 1);
+            $grid.datagrid('selectRow', index + 1);
+        }
+        $grid
+    }
+
+}

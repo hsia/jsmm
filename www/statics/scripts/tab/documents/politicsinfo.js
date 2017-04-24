@@ -39,6 +39,18 @@ $(function () {
             gridTab.docUpload()
         }
     }, '-', {
+        text: '上移文档',
+        iconCls: 'icon-move-up',
+        handler: function () {
+            gridTab.moveUp();
+        }
+    }, '-', {
+        text: '下移文档',
+        iconCls: 'icon-move-down',
+        handler: function () {
+            gridTab.moveDown();
+        }
+    }, '-', {
         text: '文档删除',
         iconCls: 'icon-cancel',
         handler: function () {

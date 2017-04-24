@@ -145,3 +145,11 @@
 .save-excel {
     background: url('icons/save-excel.png') no-repeat center center;
 }
+
+.icon-move-up {
+    background: url('icons/move_up.png') no-repeat center center;
+}
+
+.icon-move-down {
+    background: url('icons/move_down.png') no-repeat center center;
+}

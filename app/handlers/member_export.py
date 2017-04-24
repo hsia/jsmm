@@ -542,7 +542,7 @@ class MembersExport(tornado.web.RequestHandler):
                             bottom thin;
                         """)
 
-        workbook = xlwt.Workbook(encoding='utf-8')
+        workbook = xlwt.Workbook()
         worksheet = workbook.add_sheet('社员信息简表')
 
         column = 0
@@ -568,7 +568,25 @@ class MembersExport(tornado.web.RequestHandler):
 
         sio = BytesIO()
         workbook.save(sio)
+
+        agent = self.request.headers.get('User-Agent')
+        if 'Firefox' in agent:
+            if self.request.arguments:
+                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+                    '社员信息汇总表.xls',
+                    "utf-8")
+            else:
+                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+                    '社员信息汇总表.xls',
+                    "utf-8")
+        else:
+            if self.request.arguments:
+                download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                    '社员信息汇总表.xls', "utf-8")
+            else:
+                download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                    '社员信息汇总表.xls', "utf-8")
         self.set_header('Content-Type', 'application/vnd.ms-excel')
-        self.set_header('Content-Disposition', 'attachment; filename=' + urllib.parse.quote('社员信息简表.xls', "utf-8"))
+        self.set_header('Content-Disposition', download_file_name)
         self.write(sio.getvalue())
         self.finish()

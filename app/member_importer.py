@@ -35,18 +35,23 @@ def format_date(date_str):
 
 
 def import_info(file_info):
-    if 'excel' not in file_info['content_type']:
-        result = {"success": False, "filename": file_info["filename"]}
-    else:
-        member_info_importer = MemberInfoImporter(file_info['path'])
-        member_info_importer.get_basic_info()
-        if member_info_importer.member.get('name') and member_info_importer.member.get('birthday'):
-            member_info_importer.main_function()
-            result = member_info_importer.save_member()
+    try:
+        if 'excel' not in file_info['content_type']:
+            result = {"success": False, "filename": file_info["filename"]}
         else:
-            result = {"success": False, "filecontent": file_info["filename"]}
 
-    return result
+            member_info_importer = MemberInfoImporter(file_info['path'])
+            member_info_importer.get_basic_info()
+            if member_info_importer.member.get('name') and member_info_importer.member.get('birthday'):
+                member_info_importer.main_function()
+                result = member_info_importer.save_member()
+            else:
+                result = {"success": False, "filecontent": file_info["filename"]}
+    except Exception as e:
+        print(Exception, ":", e)
+        result = {"success": False, "content": "导入文件错误，请检查导入文件内容和格式"}
+    finally:
+        return result
 
 
 class MemberInfoImporter:

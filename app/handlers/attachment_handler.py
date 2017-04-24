@@ -155,7 +155,7 @@ class AttachmentHandler(tornado.web.RequestHandler):
         member_in_db = json.loads(response_member.body.decode('utf-8'))
 
         docs = self.request.files['docs']
-        doc_name = docs[0]['filename']
+        doc_name = (docs[0]['filename']).replace(' ', '')
 
         document_info = {
             '_id': make_uuid(),
@@ -164,7 +164,7 @@ class AttachmentHandler(tornado.web.RequestHandler):
             'type': 'document',
             'branch': member_in_db['branch'],
             'organ': member_in_db['organ'],
-            'fileUploadTime': time.strftime("%Y-%m-%d", time.localtime()),
+            'fileUploadTime': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
             'docType': doc_type,
             'fileName': doc_name
         }
