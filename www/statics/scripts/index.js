@@ -223,10 +223,8 @@ $(function () {
                 window.dispatchEvent(event);
             }
             //清空页签内容
-            window.dispatchEvent(eventDelete);
-            //清空社员信息
-            window.dispatchEvent(eventRefreshDG);
-            buildMemberDetails({});
+            // window.dispatchEvent(eventDelete);
+            // buildMemberDetails({});
             var getCurrentRows = $memberList.datagrid('options').pageSize;
             $memberList.datagrid('load', {'branch': node.text, 'page': 1, 'rows': getCurrentRows, 'flag': 'search'})
         }
@@ -261,8 +259,6 @@ $(function () {
                 $memberList.datagrid('reload');
                 //清空页签内容
                 window.dispatchEvent(eventDelete);
-                //清空社员信息
-                window.dispatchEvent(eventRefreshDG);
                 // $.messager.alert('提示信息', '添加社员成功！', 'info');
             }
         })
@@ -290,9 +286,7 @@ $(function () {
                 // console.log(getRow);
                 $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
                 //清空页签内容
-                window.dispatchEvent(eventDelete);
-                //清空社员信息
-                window.dispatchEvent(eventRefreshDG);
+                // window.dispatchEvent(eventDelete);
                 // $memberList.datagrid('selectRow', getRow);
                 // $.messager.alert('提示', '数据更新成功!', 'info');
             },
@@ -379,8 +373,6 @@ $(function () {
                             title: 'Please waiting',
                             msg: 'Loading data...'
                         });
-                        //清空选中社员信息
-                        window.dispatchEvent(eventRefreshDG);
                         $('#member_upload_form').form('submit', {
                             success: function (data) {
                                 var member = JSON.parse(data);
@@ -505,8 +497,28 @@ $(function () {
             $.get(defaultUrl, param, function (data) {
                 success(data);
             });
+            //清空选中社员信息
+            window.dispatchEvent(new CustomEvent("grid-dg-refresh", {
+                detail: {success: true}
+            }));
+            //清空页签内容
+            window.dispatchEvent(new CustomEvent("grid-row-deleteRow", {
+                detail: {success: true}
+            }));
+            //清空社员详情内容
+            buildMemberDetails({});
         },
         loadFilter: function (data) {
+            //清空选中社员信息
+            window.dispatchEvent(new CustomEvent("grid-dg-refresh", {
+                detail: {success: true}
+            }));
+            //清空页签内容
+            window.dispatchEvent(new CustomEvent("grid-row-deleteRow", {
+                detail: {success: true}
+            }));
+            //清空社员详情内容
+            buildMemberDetails({});
             if (typeof data.length == 'number' && typeof data.splice == 'function') {
                 data = {
                     total: data.length,
@@ -565,11 +577,6 @@ $(function () {
 
     //自定义event，用来清空页签中的数据
     var eventDelete = new CustomEvent("grid-row-deleteRow", {
-        detail: {success: true}
-    });
-
-    //自定义event，用来刷新社員数据
-    var eventRefreshDG = new CustomEvent("grid-dg-refresh", {
         detail: {success: true}
     });
 
@@ -691,8 +698,6 @@ $(function () {
         //3、提示删除确认
         $.messager.confirm('删除提示', '确定删除选中的数据?', function (r) {
             if (r) {
-                //清空选中社员信息
-                window.dispatchEvent(eventRefreshDG);
                 //4、确认后，删除选中的数据
                 removeItem(id)
             }
@@ -708,9 +713,9 @@ $(function () {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 $memberList.datagrid('reload');
 
-                window.dispatchEvent(eventDelete);
+                // window.dispatchEvent(eventDelete);
 
-                buildMemberDetails({});
+                // buildMemberDetails({});
 
                 // $.messager.alert('提示', '数据删除成功!', 'info');
             },
@@ -749,10 +754,8 @@ $(function () {
 
         $memberList.datagrid('load', memberInfo)
         //清空页签内容
-        window.dispatchEvent(eventDelete);
-        //清空选中社员信息
-        window.dispatchEvent(eventRefreshDG);
-        buildMemberDetails({});
+        // window.dispatchEvent(eventDelete);
+        // buildMemberDetails({});
         $('#member-search').dialog('close');
     });
 
@@ -785,8 +788,6 @@ $(function () {
 
     //添加tab页
     function client_add_tab() {
-        //清空选中社员信息
-        window.dispatchEvent(eventRefreshDG);
         var gridHeight = ($("#member-info").height()) + 77;
         $("#tab_title").textbox('setValue', '');
         $('#client_add_tab_table').datagrid('loadData', []);
@@ -802,8 +803,6 @@ $(function () {
     choiceNode = '';
     //编辑tab页
     function client_edit_tab() {
-        //清空选中社员信息
-        window.dispatchEvent(eventRefreshDG);
         $('#client_edit_tab_table').datagrid('loadData', []);
         var gridHeight = ($("#member-info").height()) + 77;
         $('#tab_edit_title').combotree({
@@ -976,9 +975,7 @@ $(function () {
                         'rows': getCurrentRows,
                     })
                     //清空页签内容
-                    window.dispatchEvent(eventDelete);
-                    //清空社员信息
-                    window.dispatchEvent(eventRefreshDG);
+                    // window.dispatchEvent(eventDelete);
                     refreshDocumentListEvent();
                 } else {
                     $.messager.alert('提示', data.content, 'warning');
@@ -1053,9 +1050,7 @@ $(function () {
                         'rows': getCurrentRows,
                     })
                     //清空页签内容
-                    window.dispatchEvent(eventDelete);
-                    //清空社员信息
-                    window.dispatchEvent(eventRefreshDG);
+                    // window.dispatchEvent(eventDelete);
                     refreshDocumentListEvent();
 
                     // $.messager.alert('提示', '修改支社成功!', 'info');
@@ -1150,9 +1145,7 @@ $(function () {
                     'rows': getCurrentRows,
                 })
                 //清空页签内容
-                window.dispatchEvent(eventDelete);
-                //清空社员信息
-                window.dispatchEvent(eventRefreshDG);
+                // window.dispatchEvent(eventDelete);
                 refreshDocumentListEvent();
 
                 // $.messager.alert('提示', '支社合并成功!', 'info');
