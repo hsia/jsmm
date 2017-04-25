@@ -21,6 +21,7 @@ GridTab.prototype.endEditing = function () {
 };
 
 GridTab.prototype.addRow = function () {
+    console.log(this.memberId);
     if (!this.memberId) {
         $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
         return;
@@ -109,6 +110,7 @@ GridTab.prototype.docUpload = function () {
         $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
         return;
     }
+    console.log(this.memberId);
     var that = this;
     $('#doc_upload_form').form('clear');
     $('#member_doc').dialog({
@@ -260,6 +262,11 @@ GridTab.prototype.registerListeners = function () {
     window.addEventListener("grid-row-selection", function (event) {
         that.member = event.detail;
         that.memberId = that.member._id;
+        that.reloadGrid();
+    });
+    window.addEventListener("grid-dg-refresh", function (event) {
+        that.member = null;
+        that.memberId = null;
         that.reloadGrid();
     });
     window.addEventListener("grid-row-deleteRow", function (event) {
