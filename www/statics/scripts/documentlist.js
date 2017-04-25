@@ -145,17 +145,6 @@ $(function () {
             'branch': (organName == null ? '' : organName)
         };
         $dataGrid.datagrid('load', param);
-
-        // $dataGrid.datagrid({
-        //     loader: function (param, success) {
-        //         param.documentInfo = documentInfo;
-        //         param.branch = (organName == null ? '' : organName);
-        //         var defaultUrl = '/documents';
-        //         $.post(defaultUrl, JSON.stringify(param), function (data) {
-        //             success(data)
-        //         }, 'json');
-        //     }
-        // })
     });
 
     function documentsSearch() {

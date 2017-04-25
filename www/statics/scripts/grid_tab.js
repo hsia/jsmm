@@ -68,11 +68,6 @@ GridTab.prototype.moveDown = function () {
 
 
 GridTab.prototype.removeRow = function () {
-    // if (!this.editIndex) {
-    // this.$grid.datagrid('cancelEdit', this.editIndex)
-    //     .datagrid('deleteRow', this.editIndex);
-    // this.editIndex = null;
-    // }
     if (this.editIndex == undefined || this.editIndex < 0) {
         return
     }

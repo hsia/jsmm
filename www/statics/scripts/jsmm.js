@@ -24480,11 +24480,6 @@ GridTab.prototype.moveDown = function () {
 
 
 GridTab.prototype.removeRow = function () {
-    // if (!this.editIndex) {
-    // this.$grid.datagrid('cancelEdit', this.editIndex)
-    //     .datagrid('deleteRow', this.editIndex);
-    // this.editIndex = null;
-    // }
     if (this.editIndex == undefined || this.editIndex < 0) {
         return
     }
@@ -25137,36 +25132,26 @@ $(function () {
                     }
                 }]
             })
-            // $('#tab_title').next('span').find('input').focus();
         }
-    }
-        // , '-', {
-        //     text: '提醒',
-        //     iconCls: 'icon-clock',
-        //     handler: function () {
-        //         reminderBirthday();
-        //     }
-        //
-        // }
-        , '-', {
-            text: '社员导出',
-            iconCls: 'save-excel',
-            handler: function () {
-                exportMembersExcel();
-            }
-        }, '-', {
-            text: '新建自定义tab',
-            iconCls: 'icon-add',
-            handler: function () {
-                client_add_tab();
-            }
-        }, '-', {
-            text: '编辑自定义tab',
-            iconCls: 'icon-add',
-            handler: function () {
-                client_edit_tab();
-            }
-        }];
+    }, '-', {
+        text: '社员导出',
+        iconCls: 'save-excel',
+        handler: function () {
+            exportMembersExcel();
+        }
+    }, '-', {
+        text: '新建自定义tab',
+        iconCls: 'icon-add',
+        handler: function () {
+            client_add_tab();
+        }
+    }, '-', {
+        text: '编辑自定义tab',
+        iconCls: 'icon-add',
+        handler: function () {
+            client_edit_tab();
+        }
+    }];
 
     var defaultUrl = '/members2/';
 
@@ -25423,11 +25408,8 @@ $(function () {
             success: function (data) {
                 //删除成功以后，重新加载数据，并将choiceRows置为空。
                 $memberList.datagrid('reload');
-
                 // window.dispatchEvent(eventDelete);
-
                 // buildMemberDetails({});
-
                 // $.messager.alert('提示', '数据删除成功!', 'info');
             },
             error: function (data) {
@@ -25458,11 +25440,8 @@ $(function () {
         memberInfo.flag = 'search'
         // $.post('/members/search/', JSON.stringify(memberInfo), function (data) {
         //     $('#member-search').dialog('close');
-        //
         //     $memberList.datagrid('loadData', data.docs);
-        //
         // })
-
         $memberList.datagrid('load', memberInfo)
         //清空页签内容
         // window.dispatchEvent(eventDelete);
@@ -25541,34 +25520,6 @@ $(function () {
         })
     }
 
-// function reminderBirthday() {
-//     $('#reminder_dialog').dialog({
-//         title: '提醒',
-//         closed: false,
-//         cache: false,
-//         modal: true,
-//         height: 200,
-//         width: 200
-//     })
-// }
-//
-// $('#reminder_birthday').click(function () {
-//     var now = moment().format("M-D");
-//     var end = moment().add(7, 'd').format("M-D");
-//     $.get('/members/?startTime=' + now + '&endTime=' + end, function (data) {
-//         $memberList.datagrid('loadData', data);
-//         $('#reminder_dialog').dialog("close")
-//     });
-// });
-//
-// $('#reminder_retire').click(function () {
-//    var now = moment().format("YYYY-MM-DD");
-//     $.get('/members/reminder/' + now,function (data) {
-//         $memberList.datagrid('loadData', data.docs);
-//         $('#reminder_dialog').dialog("close")
-//     })
-// });
-
     $('#retire_time_div').click(function () {
         var now = moment().format("YYYY-MM-DD");
         $('#retire_time_input').textbox("setValue", now);
@@ -25624,15 +25575,7 @@ $(function () {
         $('#members_export_excel').dialog('close');
     });
 
-// $('#reminder_retire').click(function () {
-//     var now = moment().format("YYYY-MM-DD");
-//     $.get('/members/reminder/' + now, function (data) {
-//         $memberList.datagrid('loadData', data.docs);
-//         $('#reminder_dialog').dialog("close")
-//     })
-// });
-
-//新建支社
+    //新建支社
     $('#newOrgan').click(function () {
         $('#organ-add').dialog({
             width: 300,
@@ -25778,14 +25721,6 @@ $(function () {
 
 //合并支社
     $('#mergeOrgan').click(function () {
-
-        // $('#mergeBranch').combotree({
-        //     url: '/organ',
-        //     method: 'get',
-        //     required: true
-        // });
-
-        // $('#mergeBranch').combotree('reload')
         $('#mergeBranch').combotree({
             url: '/organ',
             method: 'get'
@@ -25858,7 +25793,6 @@ $(function () {
                 //清空页签内容
                 // window.dispatchEvent(eventDelete);
                 refreshDocumentListEvent();
-
                 // $.messager.alert('提示', '支社合并成功!', 'info');
             },
             error: function (data) {
@@ -25909,7 +25843,6 @@ $(function () {
                 } else {
                     $.messager.alert('提示', data.content, 'warning');
                 }
-
             },
             error: function (data) {
                 $.messager.alert('提示', '支社删除失败!', 'error');
@@ -25971,9 +25904,7 @@ $(function () {
             }
         })
     }
-
-})
-;
+});
 $(function () {
 
     var gridHeight = $('#membersinfo').height();
@@ -26121,17 +26052,6 @@ $(function () {
             'branch': (organName == null ? '' : organName)
         };
         $dataGrid.datagrid('load', param);
-
-        // $dataGrid.datagrid({
-        //     loader: function (param, success) {
-        //         param.documentInfo = documentInfo;
-        //         param.branch = (organName == null ? '' : organName);
-        //         var defaultUrl = '/documents';
-        //         $.post(defaultUrl, JSON.stringify(param), function (data) {
-        //             success(data)
-        //         }, 'json');
-        //     }
-        // })
     });
 
     function documentsSearch() {
