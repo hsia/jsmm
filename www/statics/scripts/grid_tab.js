@@ -21,7 +21,6 @@ GridTab.prototype.endEditing = function () {
 };
 
 GridTab.prototype.addRow = function () {
-    console.log(this.memberId);
     if (!this.memberId) {
         $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
         return;
