@@ -26,9 +26,20 @@ GridTab.prototype.addRow = function () {
         return;
     }
     if (this.endEditing()) {
-        this.$grid.datagrid('appendRow', {});
-        this.editIndex = this.$grid.datagrid('getRows').length - 1;
-        this.$grid.datagrid('selectRow', this.editIndex).datagrid('beginEdit', this.editIndex);
+        var row = this.$grid.datagrid('getSelected');
+        if (row != null) {
+            this.editIndex = this.$grid.datagrid('getRowIndex', row);
+            console.log(this.editIndex)
+            this.$grid.datagrid('insertRow', {
+                index: this.editIndex,	// index start with 0
+                row: {}
+            });
+            this.$grid.datagrid('selectRow', this.editIndex).datagrid('beginEdit', this.editIndex);
+        } else {
+            this.$grid.datagrid('appendRow', {});
+            this.editIndex = this.$grid.datagrid('getRows').length - 1;
+            this.$grid.datagrid('selectRow', this.editIndex).datagrid('beginEdit', this.editIndex);
+        }
     }
 };
 
