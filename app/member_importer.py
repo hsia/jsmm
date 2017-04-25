@@ -46,10 +46,10 @@ def import_info(file_info):
                 member_info_importer.main_function()
                 result = member_info_importer.save_member()
             else:
-                result = {"success": False, "filecontent": file_info["filename"]}
+                result = {"success": False, "filename": file_info["filename"]}
     except Exception as e:
         print(Exception, ":", e)
-        result = {"success": False, "content": file_info["filename"]}
+        result = {"success": False, "filename": file_info["filename"]}
     finally:
         return result
 

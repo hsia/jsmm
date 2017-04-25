@@ -377,40 +377,22 @@ $(function () {
                             success: function (data) {
                                 var member = JSON.parse(data);
                                 $memberList.datagrid('reload');
-                                if (member.success == false && ('name' in member.msg[0])) {
-                                    var error_members = "<b>以下社员导入失败(姓名和出生日期重复):</b><br/>";
-                                    member.msg.forEach(function (obj) {
-                                        error_members += obj.name + "【" + obj.birthday + "】<br/>"
-                                    });
-                                    // $memberList.datagrid('reload');
-                                    $.messager.progress('close');
-                                    $.messager.alert('提示信息', error_members);
-                                } else if (member.success == false && ('content' in member.msg[0])) {
-                                    var error_members = "<b>以下导入文件内容错误，请检查:</b><br/>";
-                                    member.msg.forEach(function (obj) {
-                                        error_members += obj.content + "<br/>"
-                                    });
-                                    // $memberList.datagrid('reload');
-                                    $.messager.progress('close');
-                                    $.messager.alert('提示信息', error_members);
-                                } else if (member.success == false && ('filename' in member.msg[0])) {
-                                    var error_members = "<b>以下导入文件类型错误，只能导入Excel:</b><br/>";
-                                    member.msg.forEach(function (obj) {
-                                        error_members += obj.filename + "<br/>"
-                                    });
-                                    // $memberList.datagrid('reload');
-                                    $.messager.progress('close');
-                                    $.messager.alert('提示信息', error_members);
-                                } else if (member.success == false && ('filecontent' in member.msg[0])) {
-                                    var error_members = "<b>以下Excel文件内容不符合要求(年龄和生日不能为空)，请检查！</b><br/>";
-                                    member.msg.forEach(function (obj) {
-                                        error_members += obj.filecontent + "<br/>"
-                                    });
-                                    // $memberList.datagrid('reload');
-                                    $.messager.progress('close');
-                                    $.messager.alert('提示信息', error_members);
+                                if (member.success == false) {
+                                    var error_members = ''
+                                    if ('name' in member.msg[0]) {
+                                        error_members += "<b>以下社员导入失败(姓名和出生日期重复):</b><br/>";
+                                        member.msg.forEach(function (obj) {
+                                            error_members += obj.name + "【" + obj.birthday + "】<br/>"
+                                        });
+                                    } else if ('filename' in member.msg[0]) {
+                                        error_members += "<b>以下导入文件发生错误,请检查文件内容或者文件格式:</b><br/>";
+                                        member.msg.forEach(function (obj) {
+                                            error_members += obj.filename + "<br/>"
+                                        });
+                                        $.messager.progress('close');
+                                        $.messager.alert('提示信息', error_members);
+                                    }
                                 } else {
-                                    // $memberList.datagrid('reload');
                                     $.messager.progress('close');
                                     // $.messager.alert('提示信息', '导入社员成功！', 'info');
                                 }
