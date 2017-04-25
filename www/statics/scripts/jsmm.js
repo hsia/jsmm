@@ -25102,20 +25102,26 @@ $(function () {
                                 var member = JSON.parse(data);
                                 $memberList.datagrid('reload');
                                 if (member.success == false) {
-                                    var error_members = ''
-                                    if ('name' in member.msg[0]) {
-                                        error_members += "<b>以下社员导入失败(姓名和出生日期重复):</b><br/>";
-                                        member.msg.forEach(function (obj) {
-                                            error_members += obj.name + "【" + obj.birthday + "】<br/>"
-                                        });
-                                    } else if ('filename' in member.msg[0]) {
-                                        error_members += "<b>以下导入文件发生错误,请检查文件内容或者文件格式:</b><br/>";
-                                        member.msg.forEach(function (obj) {
-                                            error_members += obj.filename + "<br/>"
-                                        });
-                                        $.messager.progress('close');
-                                        $.messager.alert('提示信息', error_members);
+                                    var error1_members = '';
+                                    var error2_members = '';
+                                    member.msg.forEach(function (obj) {
+                                        if (obj.name != undefined) {
+                                            error1_members += obj.name + "【" + obj.birthday + "】<br/>";
+                                        }
+                                        if (obj.filename != undefined) {
+                                            error2_members += obj.filename + "<br/>";
+                                        }
+                                    });
+                                    error_members = '';
+                                    if (error1_members != '') {
+                                        error_members += '<b>以下社员导入失败(姓名和出生日期重复):</b><br/>' + error1_members;
                                     }
+                                    if (error2_members != '') {
+                                        error_members += '<b>以下导入文件发生错误,请检查文件内容或者文件格式:</b><br/>' + error2_members;
+                                    }
+
+                                    $.messager.progress('close');
+                                    $.messager.alert('提示信息', error_members);
                                 } else {
                                     $.messager.progress('close');
                                     // $.messager.alert('提示信息', '导入社员成功！', 'info');
