@@ -83,7 +83,7 @@ $(function () {
             handler: function () {
                 gridTab.addRow();
             }
-        }, '-', {
+        }/*, '-', {
             text: '上移记录',
             iconCls: 'icon-move-up',
             handler: function () {
@@ -95,7 +95,7 @@ $(function () {
             handler: function () {
                 gridTab.moveDown();
             }
-        }, '-', {
+         }*/, '-', {
             text: '移除记录',
             iconCls: 'icon-remove',
             handler: function () {

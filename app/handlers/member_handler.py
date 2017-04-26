@@ -43,7 +43,6 @@ class MemberHandler(tornado.web.RequestHandler):
         for researchReport in member.get('propaganda', []):
             researchReport['fileUploadTime'] = (researchReport.get('fileUploadTime')).replace('T', ' ')
 
-        member.get('educationDegree', []).sort(key=lambda k: k.get('eduStartingDate', ''), reverse=True)
         member.get('researchReport', []).sort(key=lambda k: k.get('fileUploadTime', ''), reverse=True)
         member.get('unitedTheory', []).sort(key=lambda k: k.get('fileUploadTime', ''), reverse=True)
         member.get('politicsInfo', []).sort(key=lambda k: k.get('fileUploadTime', ''), reverse=True)

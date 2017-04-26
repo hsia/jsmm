@@ -82,7 +82,7 @@ class AttachmentHandler(tornado.web.RequestHandler):
                 download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
                     attachment_name, "utf-8")
             else:
-                download_file_name = 'attachment; filename=' + urllib.parse.quote(
+                download_file_name = 'attachment; filename*=UTF-8' + urllib.parse.quote(
                     attachment_name, "utf-8")
 
             self.set_header('Content-Type', content_type)

@@ -329,7 +329,8 @@ class MemberCollectionPage2Handler(tornado.web.RequestHandler):
             obj = {
                 "selector": {},
                 "fields": ["_id", "_rev", "name", "gender", "birthday", "nation", "idCard", "branch", "organ",
-                           "branchTime"]
+                           "branchTime"],
+                "limit": 10000
             }
             objC = obj["selector"]
             objC['type'] = {"$eq": "member"}
