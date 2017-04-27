@@ -10,10 +10,10 @@ $(function () {
     var gridTab = new GridTab(tabId, $grid);
 
     var columns = [
-        {field: 'formeOrganizationCategory', title: '社内组织类别', width: 110, align: 'left', editor: 'textbox'},
-        {field: 'formeOrganizationName', title: '社内组织名称', width: 110, align: 'left', editor: 'textbox'},
+        {field: 'formerOrganizationCategory', title: '社内组织类别', width: 110, align: 'left', editor: 'textbox'},
+        {field: 'formerOrganizationName', title: '社内组织名称', width: 110, align: 'left', editor: 'textbox'},
         {
-            field: 'formeOrganizationLevel',
+            field: 'formerOrganizationLevel',
             title: '社内组织级别',
             width: 120, align: 'left',
             editor: {
@@ -27,10 +27,10 @@ $(function () {
                 }
             }
         },
-        {field: 'formeOrganizationJob', title: '社内职务名称', width: 120, align: 'left', editor: 'textbox'},
-        {field: 'formeTheTime', title: '届次', width: 120, align: 'left', editor: 'textbox'},
-        {field: 'formeStartTime', title: '开始时间', width: 120, align: 'left', editor: 'datebox'},
-        {field: 'formeEndTime', title: '结束时间', width: 120, align: 'left', editor: 'datebox'}
+        {field: 'formerOrganizationJob', title: '社内职务名称', width: 120, align: 'left', editor: 'textbox'},
+        {field: 'formerTheTime', title: '届次', width: 120, align: 'left', editor: 'textbox'},
+        {field: 'formerStartTime', title: '开始时间', width: 120, align: 'left', editor: 'datebox'},
+        {field: 'formerEndTime', title: '结束时间', width: 120, align: 'left', editor: 'datebox'}
     ];
     var toolbar = [
         {

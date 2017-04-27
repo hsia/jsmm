@@ -53,10 +53,13 @@ class UploadHandler(tornado.web.RequestHandler):
             with open(path, 'wb') as file:
                 file.write(file_info['body'])
             msgs = self._callback({'filename': filename, 'path': path, 'content_type': file_info['content_type']})
-            if not msgs['success'] and msgs.get('filename', False):
-                error_message.append({'filename': msgs['filename']})
-            elif not msgs['success'] and msgs.get('name', False):
-                error_message.append({"name": msgs["name"], "birthday": msgs["birthday"]})
+            # if not msgs['success'] and msgs.get('filename', False):
+            #     error_message.append({'filename': msgs['filename']})
+            # elif not msgs['success'] and msgs.get('name', False):
+            #     error_message.append({"name": msgs["name"], "birthday": msgs["birthday"]})
+
+            if not msgs['success']:
+                error_message.append({"fileName": msgs["fileName"], "errorContent": msgs["errorContent"]})
 
         if len(error_message):
             self.write({"success": False, "msg": error_message})
