@@ -18,8 +18,6 @@ class memberInfoExport(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self, member_id):
 
-        current_row = 18
-
         response = couch_db.get(r'/jsmm/%(id)s' % {"id": member_id})
         member = json.loads(response.body.decode('utf-8'))
 
@@ -27,341 +25,152 @@ class memberInfoExport(tornado.web.RequestHandler):
         pattern.pattern = xlwt.Pattern.SOLID_PATTERN
         pattern.pattern_fore_colour = 22
         style = xlwt.XFStyle()
+        style.borders.THIN
         style.pattern = pattern
-        style.font.height = 240
+        style.font.height = 220
         style.font.name = '宋体'
 
+        borders = xlwt.Borders()
+        borders.left = 1
+        borders.right = 1
+        borders.top = 1
+        borders.bottom = 1
+        borders.bottom_colour = 0x3A
+
         memberInfoStyle = xlwt.XFStyle()
+        memberInfoStyle.borders = borders
         memberInfoStyle.font.name = '宋体'
-        memberInfoStyle.font.height = 240
+        memberInfoStyle.font.height = 220
 
         wb = xlwt.Workbook()
-        ws = wb.add_sheet(member['name'] + '的信息', cell_overwrite_ok=True)
+        basic_head_width = {u'title': 10, u'content': 6, u'说明': 10, u'标准代码': 12}
+        # 基本信息
+        basic_info_properties = {"name": u"姓名", "foreignName": u"外文姓名", "usedName": u"曾用名", "gender": u"性别",
+                                 "birthday": "出生日期", "nativePlace": u"籍贯", "birthPlace": u"出生地", "nation": u"民族",
+                                 "health": u"健康状态", "marriage": u"婚姻状态", "idCard": u"公民身份证号码",
+                                 "idType": u"有效证件类别", "idNo": u"证件号码", "branch": u"所属支社",
+                                 "organ": u"所属基层组织名称", "branchTime": u"入社时间", "partyCross": u"党派交叉",
+                                 "companyName": u"单位名称", "jobTime": u"参加工作时间", "department": u"工作部门",
+                                 "retire": u"是否办理退休手续", "duty": u"职务", "jobTitle": u"职称", "academic": u"学术职务",
+                                 "homeAddress": u"家庭地址", "homePost": u"家庭地址邮编", "homeTel": u"家庭电话",
+                                 "companyAddress": u"单位地址", "companyPost": u"单位地址邮编", "commAddress": u"通信地址",
+                                 "commPost": u"通信地址邮编", "mobile": u"移动电话", "email": u"电子信箱",
+                                 "companyTel": u"单位电话", "hobby": u"爱好", "speciality": u"专长"}
+        # 学历信息
+        educationDegree_header = {"eduSchoolName": u"学校（单位）名称 A0435",
+                                  "eduStartingDate": u"入学日期 A0415",
+                                  "eduGraduateDate": u"毕业日期 A0430",
+                                  "eduMajor": u"所学专业 A0410",
+                                  "eduEducation": u"学历 A0405",
+                                  "eduDegree": u"学位 A0440",
+                                  "eduEducationType": u"教育类别 A0449"}
+        # 工作履历
+        jobResumes_header = {"jobCompanyName": u"单位名称 A1915",
+                             "jobDep": u"工作部门",
+                             "jobDuties": u"职务 A1920",
+                             "jobTitle": u"职称",
+                             "jobAcademic": u"学术职务",
+                             "jobStartTime": u"开始时间 A1905",
+                             "jobEndTime": u"结束时间 A1910",
+                             "jobReterence": u"证明人 A1925"}
+        # 专业技术工作
+        professionalSkill_header = {"proProjectName": u"项目名称 A4305",
+                                    "proProjectType": u"项目类别 A4315",
+                                    "proProjectCompany": u"项目下达单位 A4320",
+                                    "proRolesInProject": u"项目中所任角色 A4340",
+                                    "proStartDate": u"开始时间 A4330",
+                                    "porEndDate": u"结束时间 A4335"}
+        # 家庭社会关系
+        familyRelations_header = {"familyName": u"姓名 A7905",
+                                  "familyRelation": u"与本人的关系 A7910",
+                                  "familyGender": u"性别",
+                                  "familyBirthDay": u"出生年月 A7915",
+                                  "familyCompany": u"工作单位 A7920",
+                                  "familyJob": u"职务",
+                                  "familyNationality": u"国籍 A7907",
+                                  "familyPolitical": u"政治面貌 A7925"}
+        # 论文著作
+        paper_header = {"paperPublications": u"论文/著作 A4505",
+                        "paperName": u"作品名称 A4515",
+                        "paperPress": u"刊物/出版社 A4525",
+                        "paperAuthorSort": u"第几作者",
+                        "paperPressDate": u"发行时间 A4510",
+                        "paperRoleDetail": u"角色说明 A4530"}
+        # 专业技术成果
+        achievements_header = {"achievementsName": u"成果名称 A4605",
+                               "achievementsLevel": u"成果水平 A4615",
+                               "identificationUnit": u"鉴定单位 A4620",
+                               "achievementsRemark": u"备注"}
+        # A49.专业技术工作获奖
+        award_header = {"awardProjectName": u"获奖项目名称 A4910",
+                        "awardDate": u"获奖日期 A4905",
+                        "awardNameAndLevel": u"获奖名称及级别 A4925",
+                        "awardRoleInProject": u"项目中角色 A4920",
+                        "awardCompany": u"授予单位 A4925",
+                        "awardMemo": u"备注"}
 
-        for c in range(0, 10):
-            ws.col(c).width = 4000
+        # A52.专利情况
+        patents_header = {"patentName": u"获专利名称 A5210",
+                          "patentDate": u"获专利时间 A5205",
+                          "patenNo": u"专利号 A5215"}
+        # A70.专家情况
+        professor_header = {"professorName": u"专家名称 A7005",
+                            "approvalDate": u"批准时间 A7020",
+                            "approvalCompanyLevel": u"批准单位级别A7015",
+                            "approvalCompanyName": u"批准单位名称 A7010",
+                            "govSubsidiesType": u"政府津贴类别",
+                            "subsidiesDate": u"享受津贴时间"}
+        # 业务专长
+        specializedskill_header = {"specializedType": u"专业分类",
+                                   "specializedName": u"专业名称",
+                                   "specializedDetailName": u"专业详细名称"}
+        # 历任社内职务
+        formerClubOffice_header = {"formerOrganizationCategory": u"社内组织类别",
+                                   "formerOrganizationName": u"社内组织名称",
+                                   "formerOrganizationLevel": u"社会组织级别",
+                                   "formerOrganizationJob": u"社内职务名称",
+                                   "formerTheTime": u"届次",
+                                   "formerStartTime": u"开始时间",
+                                   "formerEndTime": "结束时间"}
+        # 政府和主要社会职务
+        social_headers = {"socialOrgType": u"社会组织类别",
+                          "socialOrgName": u"社会组织名称",
+                          "socialPositionLevel": u"社会职务级别",
+                          "socialPositionName": u"社会职务名称",
+                          "socialPeriod": u"届次",
+                          "socialBeginDate": u"开始时间",
+                          "socialEndDate": u"结束时间"}
+        # 其它社会职务
+        socialduties_header = {"socialOrganizationCategory": u"社会组织类别",
+                               "socialOrganizationLevel": u"社会组织名称",
+                               "socialPositionLevel": u"社会职务级别",
+                               "socialOrganizationJob": u"社会职务名称",
+                               "socialTheTime": u"届次",
+                               "socialStartTime": u"开始时间",
+                               "socialEndTime": u"结束时间"}
+        # 入社介绍人
+        agencybroker_header = {"agencyName": u"姓名",
+                               "agencyCompany": u"单位",
+                               "agencyJob": u"职务",
+                               "agencyRelationShip": u"与本人关系"}
 
-        ws.write_merge(0, 0, 0, 9, u'基本信息', style)
-        ws.write(1, 0, u'姓名', memberInfoStyle)
-        ws.write(1, 2, u'性别', memberInfoStyle)
-        ws.write(1, 4, u'籍贯', memberInfoStyle)
-        ws.write(2, 0, u'民族', memberInfoStyle)
-        ws.write(2, 2, u'出生地', memberInfoStyle)
-        ws.write(2, 4, u'出生年月日', memberInfoStyle)
-        ws.write(3, 0, u'外文姓名', memberInfoStyle)
-        ws.write(3, 3, u'曾用名', memberInfoStyle)
-        ws.write(4, 0, u'健康状态', memberInfoStyle)
-        ws.write(4, 3, u'婚姻状态', memberInfoStyle)
-        ws.write(5, 0, u'所属支社', memberInfoStyle)
-        ws.write(5, 3, u'所属基层组织', memberInfoStyle)
-        ws.write(6, 0, u'入社时间', memberInfoStyle)
-        ws.write(6, 3, u'党派交叉', memberInfoStyle)
-        ws.write(7, 0, u'单位名称', memberInfoStyle)
-        ws.write(7, 3, u'工作部门', memberInfoStyle)
-        ws.write(8, 0, u'职务', memberInfoStyle)
-        ws.write(8, 3, u'职称', memberInfoStyle)
-        ws.write(9, 0, u'学术职务', memberInfoStyle)
-        ws.write(9, 3, u'参加工作时间', memberInfoStyle)
-        ws.write_merge(9, 9, 6, 7, u'是否办理退休', memberInfoStyle)
-        ws.write(10, 0, u'公民身份证号', memberInfoStyle)
-        ws.write(10, 3, u'有效证件类别', memberInfoStyle)
-        ws.write_merge(10, 10, 6, 7, u'证件号码', memberInfoStyle)
-        ws.write(11, 0, u'家庭地址', memberInfoStyle)
-        ws.write(11, 4, u'邮编', memberInfoStyle)
-        ws.write(12, 0, u'单位地址', memberInfoStyle)
-        ws.write(12, 4, u'邮编', memberInfoStyle)
-        ws.write(13, 0, u'通信地址', memberInfoStyle)
-        ws.write(13, 4, u'邮编', memberInfoStyle)
-        ws.write(14, 0, u'手机', memberInfoStyle)
-        ws.write(14, 4, u'家庭电话', memberInfoStyle)
-        ws.write(15, 0, u'电子信箱', memberInfoStyle)
-        ws.write(15, 4, u'单位电话', memberInfoStyle)
-        ws.write(16, 0, u'爱好', memberInfoStyle)
-        ws.write(17, 0, u'专长', memberInfoStyle)
-        ws.write_merge(1, 7, 8, 9, '头像', memberInfoStyle)
-        ws.write(1, 1, member.get('name', ''), memberInfoStyle)
-        ws.write(1, 3, member.get('gender', ''), memberInfoStyle)
-        ws.write_merge(1, 1, 5, 7, member.get('nativePlace', ''), memberInfoStyle)
-        ws.write(2, 1, member.get('nation', ''), memberInfoStyle)
-        ws.write(2, 3, member.get('birthPlace', ''), memberInfoStyle)
-        ws.write_merge(2, 2, 5, 7, formatter_time(member.get('birthday', ''), '%Y-%m-%d'), memberInfoStyle)
-        ws.write_merge(3, 3, 1, 2, member.get('foreignName', ''), memberInfoStyle)
-        ws.write_merge(3, 3, 4, 7, member.get('usedName', ''), memberInfoStyle)
-        ws.write_merge(4, 4, 1, 2, member.get('health', ''), memberInfoStyle)
-        ws.write_merge(4, 4, 4, 7, member.get('marriage', ''), memberInfoStyle)
-        ws.write_merge(5, 5, 1, 2, member.get('branch', ''), memberInfoStyle)
-        ws.write_merge(5, 5, 4, 7, member.get('organ', ''), memberInfoStyle)
-        ws.write_merge(6, 6, 1, 2, formatter_time(member.get('branchTime', ''), '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
-        ws.write_merge(6, 6, 4, 7, member.get('partyCross', ''), memberInfoStyle)
-        ws.write_merge(7, 7, 1, 2, member.get('companyName', ''), memberInfoStyle)
-        ws.write_merge(7, 7, 4, 7, member.get('department', ''), memberInfoStyle)
-        ws.write_merge(8, 8, 1, 2, member.get('duty', ''), memberInfoStyle)
-        ws.write_merge(8, 8, 4, 9, member.get('jobTitle', ''), memberInfoStyle)
-        ws.write_merge(9, 9, 1, 2, member.get('academic', ''), memberInfoStyle)
-        ws.write_merge(9, 9, 4, 5, formatter_time(member.get('jobTime', ''), '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
-        ws.write_merge(9, 9, 8, 9, member.get('retire', ''), memberInfoStyle)
-        ws.write_merge(10, 10, 1, 2, member.get('idCard', ''), memberInfoStyle)
-        ws.write_merge(10, 10, 4, 5, member.get('idType', ''), memberInfoStyle)
-        ws.write_merge(10, 10, 8, 9, member.get('idNo', ''), memberInfoStyle)
-        ws.write_merge(11, 11, 1, 3, member.get('homeAddress', ''), memberInfoStyle)
-        ws.write_merge(11, 11, 5, 9, member.get('homePost', ''), memberInfoStyle)
-        ws.write_merge(12, 12, 1, 3, member.get('companyAddress', ''), memberInfoStyle)
-        ws.write_merge(12, 12, 5, 9, member.get('companyPost', ''), memberInfoStyle)
-        ws.write_merge(13, 13, 1, 3, member.get('commAddress', ''), memberInfoStyle)
-        ws.write_merge(13, 13, 5, 9, member.get('commPost', ''), memberInfoStyle)
-        ws.write_merge(14, 14, 1, 3, member.get('mobile', ''), memberInfoStyle)
-        ws.write_merge(14, 14, 5, 9, member.get('homeTel', ''), memberInfoStyle)
-        ws.write_merge(15, 15, 1, 3, member.get('email', ''), memberInfoStyle)
-        ws.write_merge(15, 15, 5, 9, member.get('companyTel', ''), memberInfoStyle)
-        ws.write_merge(16, 16, 1, 9, member.get('hobby', ''), memberInfoStyle)
-        ws.write_merge(17, 17, 1, 9, member.get('speciality', ''), memberInfoStyle)
+        sheet_names_info = {"educationDegree": [u"A04.学历与学位", u"学历及学位 A04", educationDegree_header],
+                            "jobResumes": [u"A19.工作履历", u"工作履历 A19", jobResumes_header],
+                            "professionalSkill": [u"A43.专业技术工作", u"专业技术工作:", professionalSkill_header],
+                            "familyRelations": [u"A79.家庭社会关系", u"家庭成员及社会关系（包括海外社会关系） A79", familyRelations_header],
+                            "paper": [u"A45.主要论文著作", U"主要论文及著作情况 A45", paper_header],
+                            "achievements": [u"A46.专业技术成果", u"专业技术成果，A46", achievements_header],
+                            "award": [u"A49.专业技术工作获奖", u"专业技术工作获奖， A49", award_header],
+                            "patents": [u"A52.专利情况", u"专利情况, A52", patents_header],
+                            "professor": [u"A70.专家情况", u"专家情况：A70", professor_header],
+                            "specializedskill": [u"业务专长", u"业务专长：", specializedskill_header],
+                            "formerClubOffice": [u"历任社内职务", u"历任社内职务", formerClubOffice_header],
+                            "social": [u"政府和主要社会职务", u"政府和主要社会职务（包括各级政府、人大、政协、特邀职务、青联、侨联、妇联）", social_headers],
+                            "socialduties": [u"其它社会职务", u"其它社会职务（包括各类社会团体和学术团体）", socialduties_header],
+                            "agencybroker": [u"入社介绍人", u"入社介绍人：", agencybroker_header]}
 
-        for obj in dict(member):
-            for case in switch(obj):
-                if case('specializedskill'):
-                    if len(member.get('specializedskill', [])) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'业务专长', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'专业分类', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'专业名称', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 5, 9, u'专业详细名称', memberInfoStyle)
-                        for i in range(0, len(member.get('specializedskill', []))):
-                            obj = member.get('specializedskill')[i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1,
-                                           obj.get('specializedType', ''),
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4,
-                                           obj.get('specializedName', ''),
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 9,
-                                           obj.get('specializedDetailName', ''),
-                                           memberInfoStyle)
-                        obj_row = 3 + len(member.get('specializedskill', []))
-                        current_row += obj_row
-                        break
-                if case('educationDegree'):
-                    if len(member['educationDegree']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'学历信息', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'学校名称', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 2, 3, u'起止时间', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'所学专业', memberInfoStyle)
-                        ws.write(current_row + 2, 6, u'取得学历', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 7, 8, u'所获学位', memberInfoStyle)
-                        ws.write(current_row + 2, 9, u'教育类别', memberInfoStyle)
-                        for i in range(0, len(member['educationDegree'])):
-                            obj = member['educationDegree'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['eduSchoolName'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3,
-                                           formatter_time(obj['eduStartingDate'], '%Y-%m-%d', '%Y.%m') + ' - ' +
-                                           formatter_time(obj['eduGraduateDate'], '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['eduMajor'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 6, obj['eduEducation'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8, obj['eduDegree'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 9, obj['eduEducationType'], memberInfoStyle)
-                        obj_row = 3 + len(member['educationDegree'])
-                        current_row += obj_row
-                        break
-                if case('familyRelations'):
-                    if len(member['familyRelations']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'社会关系', style)
-                        ws.write(current_row + 2, 0, u'姓名', memberInfoStyle)
-                        ws.write(current_row + 2, 1, u'与本人关系', memberInfoStyle)
-                        ws.write(current_row + 2, 2, u'性别', memberInfoStyle)
-                        ws.write(current_row + 2, 3, u'出生年月', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'工作单位', memberInfoStyle)
-                        ws.write(current_row + 2, 6, u'职务', memberInfoStyle)
-                        ws.write(current_row + 2, 7, u'国籍', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'政治面貌', memberInfoStyle)
-                        for i in range(0, len(member['familyRelations'])):
-                            obj = member['familyRelations'][i]
-                            ws.write(current_row + 3 + i, 0, obj['familyName'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 1, obj['familyRelation'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 2, obj['familyGender'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 3, formatter_time(obj['familyBirthDay'], '%Y-%m-%d'),
-                                     memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5, obj['familyCompany'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 6, obj['familyJob'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 7, obj['familyNationality'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9,
-                                           obj.get('familyPolitical', ''),
-                                           memberInfoStyle)
-                        obj_row = 3 + len(member['familyRelations'])
-                        current_row += obj_row
-                        break
-                if case('jobResumes'):
-                    if len(member['jobResumes']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'工作履历', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'单位名称', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 2, 3, u'工作部门', memberInfoStyle)
-                        ws.write(current_row + 2, 4, u'职务', memberInfoStyle)
-                        ws.write(current_row + 2, 5, u'职称', memberInfoStyle)
-                        ws.write(current_row + 2, 6, u'学术职务', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 7, 8, u'起止时间', memberInfoStyle)
-                        ws.write(current_row + 2, 9, u'证明人', memberInfoStyle)
-                        for i in range(0, len(member['jobResumes'])):
-                            obj = member['jobResumes'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['jobCompanyName'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 3, obj['jobDep'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 4, obj['jobDuties'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 5, obj['jobTitle'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 6, obj['jobAcademic'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 8,
-                                           formatter_time(obj.get('jobStartTime', ''), '%Y-%m-%d', '%Y.%m') + ' - ' +
-                                           formatter_time(obj.get('jobEndTime', ''), '%Y-%m-%d', '%Y.%m'),
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 9, obj['jobReterence'], memberInfoStyle)
-                        obj_row = 3 + len(member['jobResumes'])
-                        current_row += obj_row
-                        break
-                if case('award'):
-                    if len(member['award']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'获奖情况', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 2, u'获奖项目名称', memberInfoStyle)
-                        ws.write(current_row + 2, 3, u'获奖时间', memberInfoStyle)
-                        ws.write(current_row + 2, 4, u'获奖级别', memberInfoStyle)
-                        ws.write(current_row + 2, 5, u'项目中角色', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 6, 7, u'授予单位', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'备注', memberInfoStyle)
-                        for i in range(0, len(member['award'])):
-                            obj = member['award'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['awardProjectName'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 3, formatter_time(obj['awardDate'], '%Y-%m-%d', '%Y.%m'),
-                                     memberInfoStyle)
-                            ws.write(current_row + 3 + i, 4, obj['awardNameAndLevel'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 5, obj['awardRoleInProject'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['awardCompany'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['awardMemo'],
-                                           memberInfoStyle)
-                        obj_row = 3 + len(member['award'])
-                        current_row += obj_row
-                        break
-                if case('patents'):
-                    if len(member['patents']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专利情况', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 3, u'获专利名称', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 4, 5, u'获专利时间', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 6, 9, u'专利号', memberInfoStyle)
-                        for i in range(0, len(member['patents'])):
-                            obj = member['patents'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['patentName'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 5,
-                                           formatter_time(obj['patentDate'], '%Y-%m-%d'),
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 9, obj['patenNo'],
-                                           memberInfoStyle)
-                        obj_row = 3 + len(member['patents'])
-                        current_row += obj_row
-                        break
-                if case('paper'):
-                    if len(member['paper']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'主要论文著作', style)
-                        ws.write(current_row + 2, 0, u'论文/著作', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 1, 3, u'作品名称', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 4, 6, u'刊物/出版社', memberInfoStyle)
-                        ws.write(current_row + 2, 7, u'第几作者', memberInfoStyle)
-                        ws.write(current_row + 2, 8, u'发行时间', memberInfoStyle)
-                        ws.write(current_row + 2, 9, u'角色说明', memberInfoStyle)
-                        for i in range(0, len(member['paper'])):
-                            obj = member['paper'][i]
-                            ws.write(current_row + 3 + i, 0, obj['paperPublications'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 1, 3, obj['paperName'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 4, 6, obj['paperPress'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 7, obj['paperAuthorSort'], memberInfoStyle)
-                            ws.write(current_row + 3 + i, 8, formatter_time(obj['paperPressDate'], '%Y-%m-%d', '%Y.%m'),
-                                     memberInfoStyle)
-                            ws.write(current_row + 3 + i, 9, obj['paperRoleDetail'], memberInfoStyle)
-                        obj_row = 3 + len(member['paper'])
-                        current_row += obj_row
-                        break
-                if case('professionalSkill'):
-                    if len(member['professionalSkill']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专业技术工作', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 3, u'项目名称', memberInfoStyle)
-                        ws.write(current_row + 2, 4, u'项目类别', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 5, 6, u'项目下达单位', memberInfoStyle)
-                        ws.write(current_row + 2, 7, u'项目中所任角色', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'起止时间', memberInfoStyle)
-                        for i in range(0, len(member['professionalSkill'])):
-                            obj = member['professionalSkill'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 3, obj['proProjectName'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 4, obj['proProjectType'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 6, obj['proProjectCompany'],
-                                           memberInfoStyle)
-                            ws.write(current_row + 3 + i, 7, obj['proRolesInProject'], memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9,
-                                           formatter_time(obj['proStartDate'], '%Y-%m-%d', '%Y.%m') + ' - ' +
-                                           formatter_time(obj['porEndDate'], '%Y-%m-%d', '%Y.%m'), memberInfoStyle)
-                        obj_row = 3 + len(member['professionalSkill'])
-                        current_row += obj_row
-                        break
-                if case('achievements'):
-                    if len(member['achievements']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'专业技术成果', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 2, u'成果名称', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 3, 5, u'成果水平', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 6, 7, u'鉴定单位', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 8, 9, u'备注', memberInfoStyle)
-                        for i in range(0, len(member['achievements'])):
-                            obj = member['achievements'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 2, obj['achievementsName'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 3, 5, obj['achievementsLevel'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 6, 7, obj['identificationUnit'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 8, 9, obj['achievementsRemark'],
-                                           memberInfoStyle)
-                        obj_row = 3 + len(member['achievements'])
-                        current_row += obj_row
-                        break
-                if case('agencybroker'):
-                    if len(member['agencybroker']) > 0:
-                        ws.write_merge(current_row, current_row, 0, 9, u'')
-                        ws.write_merge(current_row + 1, current_row + 1, 0, 9, u'入社介绍人', style)
-                        ws.write_merge(current_row + 2, current_row + 2, 0, 1, u'姓名', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 2, 4, u'单位', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 5, 6, u'职务', memberInfoStyle)
-                        ws.write_merge(current_row + 2, current_row + 2, 7, 9, u'与本人关系', memberInfoStyle)
-                        for i in range(0, len(member['agencybroker'])):
-                            obj = member['agencybroker'][i]
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 0, 1, obj['agencyName'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 2, 4, obj['agencyCompany'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 5, 6, obj['agencyJob'],
-                                           memberInfoStyle)
-                            ws.write_merge(current_row + 3 + i, current_row + 3 + i, 7, 9, obj['agencyRelationShip'],
-                                           memberInfoStyle)
-                        obj_row = 3 + len(member['agencybroker'])
-                        current_row += obj_row
-                        break
-                if self.request.arguments:
-                    current_row = customizeObj(obj, current_row, ws, style, memberInfoStyle, member)
-
-        tall_style = xlwt.easyxf('font:height 360;')
-        for i in range(0, current_row):
-            first_row = ws.row(i)
-            first_row.set_style(tall_style)
+        self.basic_info_sheet(wb, basic_info_properties, member, memberInfoStyle, memberInfoStyle)
+        self.sheet_names_info_sheet(wb, sheet_names_info, member, memberInfoStyle, memberInfoStyle)
 
         sio = BytesIO()
         wb.save(sio)
@@ -390,59 +199,107 @@ class memberInfoExport(tornado.web.RequestHandler):
         self.write(sio.getvalue())
         self.finish()
 
+    def basic_info_sheet(self, work_book, basic_info_properties, member_info, style_header, style_body):
+        """
+        获得基本信息
+        :param work_book 写入Excel:
+        :param basic_info_properties 社员信息表属性和存储的属性对应关系 “name”:u"姓名":
+        :param member_info 社员信息表:
+        :param style_header 标题样式:
+        :param style_body 内容样式:
+        :return:
+        """
+        # 新建基本信息sheet，名称： u'A01.基本信息页'
+        worksheet = work_book.add_sheet(u'A01.基本信息页', cell_overwrite_ok=True)
+        # 标题
+        worksheet.col(0).width = 5 * 256
+        worksheet.col(1).width = 20 * 256
+        worksheet.col(2).width = 30 * 256
+        worksheet.col(3).width = 30 * 256
+        worksheet.col(4).width = 10 * 256
+        # 设置行高
+        tall_style = xlwt.easyxf('font:height 360;')
+        worksheet.row(1).set_style(tall_style)
 
-class switch(object):
-    def __init__(self, value):
-        self.value = value
-        self.fall = False
+        worksheet.write_merge(1, 1, 1, 2, u'个人信息-基本情况 A01', style_header)
+        worksheet.write(1, 3, u'说明', style_header)
+        worksheet.write(1, 4, u'标准代码', style_header)
+        # 内容
+        row_number = 2
+        for key in basic_info_properties:
+            worksheet.write(row_number, 1, basic_info_properties.get(key), style_body)
+            worksheet.write(row_number, 2, member_info.get(key, ''), style_body)
+            worksheet.write(row_number, 3, '', style_body)
+            worksheet.write(row_number, 4, '', style_body)
+            row_number += 1
 
-    def __iter__(self):
-        yield self.match
-        raise StopIteration
+    def sheet_names_info_sheet(self, work_book, sheet_names_infos, member_info, style_header, style_body):
+        # "educationDegree": [u"A04.学历与学位", u"学历及学位 A04", {}],
+        for sheet_key in sheet_names_infos:
+            # 获得数据库中sheet_key中的数据
+            key_info_in_db = member_info.get(sheet_key, [])
+            if key_info_in_db:
+                # 获得sheet名称，标题和列名
+                sheet_name = sheet_names_infos.get(sheet_key)[0]
+                sheet_title = sheet_names_infos.get(sheet_key)[1]
+                sheet_column = sheet_names_infos.get(sheet_key)[2]
+                # 新建sheet名称为XXX
+                worksheet = work_book.add_sheet(sheet_name, cell_overwrite_ok=True)
+                # 写入sheet标题
+                worksheet.write_merge(0, 0, 1, len(sheet_column), sheet_title, style_body)
+                # 写入sheet列名
+                header_column_number = 1
+                worksheet.col(0).width = 5 * 256
+                for header_key in sheet_column:
+                    # 列名
+                    column_name = sheet_column.get(header_key)
+                    worksheet.col(header_column_number).width = 20 * 256
+                    worksheet.write(1, header_column_number, column_name, style_header)
+                    header_column_number += 1
 
-    def match(self, *args):
-        if self.fall or not args:
-            return True
-        elif self.value in args:
-            self.fall = True
-            return True
-        else:
-            return False
+                # 写入sheet内容
+                key_column_number = 2
+                for info_key in key_info_in_db:
+                    row_number = 1
+                    for key_row_value in sheet_column:
+                        value = info_key.get(key_row_value, '')
+                        worksheet.write(key_column_number, row_number, value, style_body)
+                        row_number += 1
+                    key_column_number += 1
 
-
-def customizeObj(obj, current_row, ws, style, memberInfoStyle, member):
-    if len(obj) > 6:
-        if obj[0:7] == 'custab_':
-            selector = {
-                "selector": {
-                    "type": {
-                        "$eq": "tab"
-                    },
-                    "tab_id": {
-                        "$eq": obj
+    def customizeObj(obj, current_row, ws, style, memberInfoStyle, member):
+        if len(obj) > 6:
+            if obj[0:7] == 'custab_':
+                selector = {
+                    "selector": {
+                        "type": {
+                            "$eq": "tab"
+                        },
+                        "tab_id": {
+                            "$eq": obj
+                        }
                     }
                 }
-            }
-            response = couch_db.post(r'/jsmm/_find/', selector)
-            tab = json.loads(response.body.decode('utf-8'))
-            tabObj = tab['docs'][0]
-            ws.write_merge(current_row, current_row, 0, 9, u'')
-            ws.write_merge(current_row + 1, current_row + 1, 0, 9, tabObj['gridTitle'], style)
-            columns = tabObj['columns']
-            for y in range(0, len(columns)):
-                ws.write(current_row + 2, y, columns[y]['title'], memberInfoStyle)
+                response = couch_db.post(r'/jsmm/_find/', selector)
+                tab = json.loads(response.body.decode('utf-8'))
+                tabObj = tab['docs'][0]
+                ws.write_merge(current_row, current_row, 0, 9, u'')
+                ws.write_merge(current_row + 1, current_row + 1, 0, 9, tabObj['gridTitle'], style)
+                columns = tabObj['columns']
+                for y in range(0, len(columns)):
+                    ws.write(current_row + 2, y, columns[y]['title'], memberInfoStyle)
 
-            for i in range(0, len(member[obj])):
-                memberObj = member[obj][i]
-                x = 0
-                for z in columns:
-                    print(z.get('title') + ":" + memberObj.get(z.get('field'), ''))
-                    ws.write(current_row + 3 + i, x, memberObj.get(z.get('field'), ''), memberInfoStyle)
-                    x += 1
+                for i in range(0, len(member[obj])):
+                    memberObj = member[obj][i]
+                    x = 0
+                    for z in columns:
+                        print(z.get('title') + ":" + memberObj.get(z.get('field'), ''))
+                        ws.write(current_row + 3 + i, x, memberObj.get(z.get('field'), ''), memberInfoStyle)
+                        x += 1
 
-            obj_row = 3 + len(member[obj])
-            current_row += obj_row
-    return current_row
+                obj_row = 3 + len(member[obj])
+                current_row += obj_row
+        return current_row
 
 
 @tornado_utils.bind_to(r'/member/information/(.+)')
