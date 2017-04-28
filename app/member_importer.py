@@ -3,6 +3,7 @@
 '''
 Copyright lixia@ccrise.com
 '''
+import re
 import traceback
 import uuid
 from enum import Enum, unique
@@ -41,7 +42,10 @@ class ErrorType(Enum):
     """使用枚举定义错误类型
     """
     SHEETERROR = u'Excel中sheet名称或者数量和标准格式不一致'
-    BASICINFOERROR = u'基本信息表中姓名或出生日期为空'
+    NAMEERROR = u'基本信息表中姓名不能为空'
+    NAMEALLDIGITERROR = u'基本信息表中姓名不能全部是数字'
+    BIRTHDAYERROR = u'基本信息表中出生日期不能为空'
+    BRANCHERROR = u'基本信息表中所属支社不能为空'
     FILETYPEERROR = u'文件类型错误,只能导入.xls.xlsx'
     FILEREPEATERROR = u'社员信息重复(姓名+出生日期)'
     DATAFORMATEERROR = u'日期格式错误(正确格式ex:1980.01.01)'
@@ -61,18 +65,32 @@ def import_info(file_info):
                       "errorContent": ErrorType.FILETYPEERROR.value}
         else:
             member_info_importer = MemberInfoImporter(file_info)
+            # sheet数量、名称检查
             check_sheet_result = member_info_importer.checkSheet(file_info["filename"]);
             if check_sheet_result:
                 result = member_info_importer.checkSheet(file_info["filename"])
             else:
                 member_info_importer.get_basic_info()
-                if member_info_importer.member.get('name') and member_info_importer.member.get('birthday'):
+                if not member_info_importer.member.get('name', ''):
+                    # 基础信息表中姓名为空
+                    result = {"success": False, "fileName": file_info["filename"],
+                              "errorContent": ErrorType.NAMEERROR.value}
+                elif type(member_info_importer.member.get('name')) == float:
+                    # 基础信息表中姓名全部位数字
+                    result = {"success": False, "fileName": file_info["filename"],
+                              "errorContent": ErrorType.NAMEALLDIGITERROR.value}
+                elif not member_info_importer.member.get('birthday', ''):
+                    # 基础信息表中出生日期为空
+                    result = {"success": False, "fileName": file_info["filename"],
+                              "errorContent": ErrorType.BIRTHDAYERROR.value}
+                elif not member_info_importer.member.get('branch', ''):
+                    # 基础信息表中所属支社为空
+                    result = {"success": False, "fileName": file_info["filename"],
+                              "errorContent": ErrorType.BRANCHERROR.value}
+                else:
                     member_info_importer.main_function()
                     result = member_info_importer.save_member(file_info["filename"])
-                else:
-                    # 基础信息表中姓名或者出生日期为空
-                    result = {"success": False, "fileName": file_info["filename"],
-                              "errorContent": ErrorType.BASICINFOERROR.value}
+
     except Exception as e:
         print(Exception, ":", e)
         result = {"success": False, "fileName": file_info["filename"], "errorContent": ErrorType.OTHERERROR.value}
@@ -544,6 +562,26 @@ class MemberInfoImporter:
             return msg
         else:
             try:
+                # 判断组织机构树中是否已经存在该机构名称，如果不存在则添加
+                branch = self._member.get('branch', '')
+                if branch:
+                    response = couch_db.get(r'/jsmm/_design/organ/_view/getOrgan')
+                    organ_content = json.loads(response.body.decode('utf-8'))
+                    organ_row = organ_content['rows'][0]
+                    organ_value = organ_row['value']
+                    organ_cy = (((organ_value['organ'])[0])['children'])[0]
+
+                    organ = {'id': branch, 'text': branch}
+
+                    if 'children' not in organ_cy:
+                        organ_cy['children'] = list()
+
+                    # 如果支社名称不存在，则添加支社
+                    if organ not in organ_cy['children']:
+                        organ_cy['children'].append(organ)
+                        couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+
+                # 保存社员信息
                 self._member["retireTime"] = get_retire_time(self._member["birthday"], self._member["gender"])
                 self._member["lost"] = "否"
                 self._member["stratum"] = "否"

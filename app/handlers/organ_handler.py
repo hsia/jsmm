@@ -46,72 +46,82 @@ class OrganHandler(tornado.web.RequestHandler):
         if flag == 'add':
             # 添加支社
             new_organ_value = self.get_argument('organName')
-            organ = {'id': new_organ_value, 'text': new_organ_value}
+            if new_organ_value:
+                organ = {'id': new_organ_value, 'text': new_organ_value}
 
-            if 'children' not in organ_cy:
-                organ_cy['children'] = list()
+                if 'children' not in organ_cy:
+                    organ_cy['children'] = list()
 
-            # 判断是否有重名的
-            if organ in organ_cy['children']:
-                result['success'] = False
-                result['content'] = u'支社已经存在，请重新输入支社名称！'
+                # 判断是否有重名的
+                if organ in organ_cy['children']:
+                    result['success'] = False
+                    result['content'] = u'支社已经存在，请重新输入支社名称！'
+                else:
+                    organ_cy['children'].append(organ)
+                    couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+
+                    result["success"] = True
+                    result['content'] = organ_value['organ']
             else:
-                organ_cy['children'].append(organ)
-                couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
-
-                result["success"] = True
-                result['content'] = organ_value['organ']
+                result['success'] = False
+                result['content'] = u'支社名称不能为空，请重新输入支社名称！'
         elif flag == 'edit':
             # 编辑支社
             new_organ_value = self.get_argument('organName')
             organ_id = self.get_argument('organId')
+            if new_organ_value and organ_id:
+                organ = {'id': new_organ_value, 'text': new_organ_value}
+                # 判断修改后的机构是否重名
+                if organ in organ_cy['children']:
+                    result['success'] = False
+                    result['content'] = u'支社已经存在，请重新输入支社名称！'
+                else:
+                    selector = {"selector": {"branch": {"$eq": organ_id}}}
+                    response_member = couch_db.post(r'/jsmm/_find', selector)
+                    members = json.loads(response_member.body.decode('utf-8'))['docs']
+                    if len(members) < 1:
+                        pass
+                    else:
+                        for member in members:
+                            member['branch'] = new_organ_value
+                            couch_db.put(r'/jsmm/%(id)s' % {"id": member['_id']}, member)
 
-            organ = {'id': new_organ_value, 'text': new_organ_value}
-            # 判断修改后的机构是否重名
-            if organ in organ_cy['children']:
-                result['success'] = False
-                result['content'] = u'支社已经存在，请重新输入支社名称！'
+                    for organ in organ_cy['children']:
+                        if organ['id'] == organ_id:
+                            organ['text'] = new_organ_value
+                            organ['id'] = new_organ_value
+                    couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+
+                    result['success'] = True
+                    result['content'] = organ_value['organ']
             else:
-                selector = {"selector": {"branch": {"$eq": organ_id}}}
+                result['success'] = False
+                result['content'] = u'支社名称不能为空，请重新输入支社名称！'
+        elif flag == 'merge':
+            # 合并支社
+            source_organ_id = self.get_argument('organId')
+            target_organ_id = self.get_argument('organName')
+
+            if source_organ_id and target_organ_id:
+                selector = {"selector": {"branch": {"$eq": source_organ_id}}}
                 response_member = couch_db.post(r'/jsmm/_find', selector)
                 members = json.loads(response_member.body.decode('utf-8'))['docs']
                 if len(members) < 1:
                     pass
                 else:
                     for member in members:
-                        member['branch'] = new_organ_value
+                        member['branch'] = target_organ_id
                         couch_db.put(r'/jsmm/%(id)s' % {"id": member['_id']}, member)
 
                 for organ in organ_cy['children']:
-                    if organ['id'] == organ_id:
-                        organ['text'] = new_organ_value
-                        organ['id'] = new_organ_value
+                    if organ['id'] == source_organ_id:
+                        organ_cy['children'].remove(organ)
+
                 couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
 
-                result['success'] = True
-                result['content'] = organ_value['organ']
-        elif flag == 'merge':
-            # 合并支社
-            source_organ_id = self.get_argument('organId')
-            target_organ_id = self.get_argument('organName')
-
-            selector = {"selector": {"branch": {"$eq": source_organ_id}}}
-            response_member = couch_db.post(r'/jsmm/_find', selector)
-            members = json.loads(response_member.body.decode('utf-8'))['docs']
-            if len(members) < 1:
-                pass
+                result = organ_value['organ']
             else:
-                for member in members:
-                    member['branch'] = target_organ_id
-                    couch_db.put(r'/jsmm/%(id)s' % {"id": member['_id']}, member)
-
-            for organ in organ_cy['children']:
-                if organ['id'] == source_organ_id:
-                    organ_cy['children'].remove(organ)
-
-            couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
-
-            result = organ_value['organ']
+                result = []
         elif flag == 'delete':
             # 删除支社
             organ_id = self.get_argument('')

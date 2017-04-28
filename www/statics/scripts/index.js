@@ -377,6 +377,7 @@ $(function () {
                             success: function (data) {
                                 var member = JSON.parse(data);
                                 $memberList.datagrid('reload');
+                                $('#organTree').tree('reload');
                                 if (member.success == false) {
                                     // error_members = '';
                                     // var error1_members = '';
