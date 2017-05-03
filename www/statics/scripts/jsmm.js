@@ -24413,6 +24413,7 @@ function mkRslt(arr) {
 var GridTab = function (tabId, $grid) {
     this.member = null;
     this.memberId = null;
+    console.log(this.memberId)
     this.tabId = tabId;
     this.$grid = $grid;
     this.editIndex = undefined;
@@ -24433,6 +24434,7 @@ GridTab.prototype.endEditing = function () {
 };
 
 GridTab.prototype.addRow = function () {
+    console.log(this.memberId)
     if (!this.memberId) {
         $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
         return;
@@ -24441,7 +24443,8 @@ GridTab.prototype.addRow = function () {
         var row = this.$grid.datagrid('getSelected');
         if (row != null) {
             this.editIndex = this.$grid.datagrid('getRowIndex', row);
-            console.log(this.editIndex)
+            console.log('this.editIndex:' + this.editIndex)
+            console.log(this)
             this.$grid.datagrid('insertRow', {
                 index: this.editIndex,	// index start with 0
                 row: {}
@@ -24511,8 +24514,12 @@ GridTab.prototype.saveRow = function () {
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
-                    //删除成功以后，重新加载数据，并将choiceRows置为空。
-                    $.messager.alert('提示', '数据保存成功!', 'info');
+                    if (data.success == "false") {
+                        $.messager.alert('提示', data.content, 'error');
+                    } else {
+                        //删除成功以后，重新加载数据，并将choiceRows置为空。
+                        $.messager.alert('提示', '数据保存成功!', 'info');
+                    }
                 },
                 error: function (data) {
                     $.messager.alert('提示', '数据更新失败!', 'error');
@@ -24592,6 +24599,7 @@ GridTab.prototype.docDelete = function () {
 GridTab.prototype.buildGrid = function (toolbar, columns) {
     var height = $("#member-info").height();
     var that = this;
+    console.log(this)
     this.$grid.datagrid({
         iconCls: 'icon-ok',
         height: height * 0.89,
@@ -24694,6 +24702,7 @@ GridTab.prototype.registerListeners = function () {
     window.addEventListener("tree-row-selection", function (event) {
         that.reloadGrid(true);
     });
+    console.log(that)
 };
 
 function mySort(index, type, $grid) {
@@ -24984,6 +24993,8 @@ $(function () {
                 //清空页签内容
                 window.dispatchEvent(eventDelete);
                 // $.messager.alert('提示信息', '添加社员成功！', 'info');
+            } else {
+                $.messager.alert('提示', data.content, 'error');
             }
         })
     });
@@ -25005,14 +25016,18 @@ $(function () {
             type: 'PUT',
             data: JSON.stringify(memberInfo),
             success: function (data) {
-                $('#memberEdit-dialog').dialog('close');
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                // console.log(getRow);
-                $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
-                //清空页签内容
-                // window.dispatchEvent(eventDelete);
-                // $memberList.datagrid('selectRow', getRow);
-                // $.messager.alert('提示', '数据更新成功!', 'info');
+                if (data.success == "true") {
+                    $('#memberEdit-dialog').dialog('close');
+                    //删除成功以后，重新加载数据，并将choiceRows置为空。
+                    // console.log(getRow);
+                    $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
+                    //清空页签内容
+                    // window.dispatchEvent(eventDelete);
+                    // $memberList.datagrid('selectRow', getRow);
+                    // $.messager.alert('提示', '数据更新成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'error');
+                }
             },
             error: function (data) {
                 $.messager.alert('提示', '数据更新失败!', 'error');
@@ -26454,63 +26469,65 @@ $(function () {
 });
 $(function () {
 
+    $('#custom_tab').tabs({
+        // onSelect: function (title, index) {
+        onAdd: function (title, index) {
+            var tab = $('#custom_tab').tabs('getTab', index);
+            var id = $('table', $(tab))[0].id;
+            var columns = $('table', $(tab)).data('columns');
+            var $grid = $('#' + id);
+            var gridTab = new GridTab(id, $grid);
+
+            var toolbar = [
+                {
+                    text: '添加记录',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        gridTab.addRow();
+                    }
+                }/*, '-', {
+                 text: '上移记录',
+                 iconCls: 'icon-move-up',
+                 handler: function () {
+                 gridTab.moveUp();
+                 }
+                 }, '-', {
+                 text: '下移记录',
+                 iconCls: 'icon-move-down',
+                 handler: function () {
+                 gridTab.moveDown();
+                 }
+                 }*/, '-', {
+                    text: '移除记录',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        gridTab.removeRow();
+                    }
+                }, '-', {
+                    text: '保存记录',
+                    iconCls: 'icon-save',
+                    handler: function () {
+                        gridTab.saveRow();
+                    }
+                }
+            ];
+            gridTab.buildGrid(toolbar, columns);
+            gridTab.registerListeners();
+        }
+    });
+
     $.get('/tab/', function (data) {
         var tabData = data.docs;
+        console.log("hello:" + data)
         for (var i = 0; i < tabData.length; i++) {
             var obj = tabData[i];
             $('#custom_tab').tabs('add', {
                 title: obj.gridTitle,
                 content: '<table id=' + obj.tab_id + ' data-columns=' + JSON.stringify(obj.columns) + ' style="width:100%;height:100%;"></table>',
                 closable: false,
-                selected: false
+                selected: i == 0 ? true : false
             });
         }
-
-        $('#custom_tab').tabs({
-            onSelect: function (title, index) {
-                var tab = $('#custom_tab').tabs('getTab', index);
-                var id = $('table', $(tab))[0].id;
-                var columns = $('table', $(tab)).data('columns');
-                var $grid = $('#' + id);
-                var gridTab = new GridTab(id, $grid);
-
-                var toolbar = [
-                    {
-                        text: '添加记录',
-                        iconCls: 'icon-add',
-                        handler: function () {
-                            gridTab.addRow();
-                        }
-                    }/*, '-', {
-                        text: '上移记录',
-                        iconCls: 'icon-move-up',
-                        handler: function () {
-                            gridTab.moveUp();
-                        }
-                    }, '-', {
-                        text: '下移记录',
-                        iconCls: 'icon-move-down',
-                        handler: function () {
-                            gridTab.moveDown();
-                        }
-                     }*/, '-', {
-                        text: '移除记录',
-                        iconCls: 'icon-remove',
-                        handler: function () {
-                            gridTab.removeRow();
-                        }
-                    }, '-', {
-                        text: '保存记录',
-                        iconCls: 'icon-save',
-                        handler: function () {
-                            gridTab.saveRow();
-                        }
-                    }
-                ];
-                gridTab.buildGrid(toolbar, columns);
-                gridTab.registerListeners();
-            }
-        });
     });
 });
 $(function () {
@@ -26691,7 +26708,7 @@ $(function () {
                         if (data.success) {
                             window.location.href = '/'; //成功以后刷新页面
                             $('#client_edit_tab').dialog('close');
-                            $.messager.alert('提示信息', '删除tab成功！', 'info');
+                            // $.messager.alert('提示信息', '删除tab成功！', 'info');
                         } else {
                             $.messager.alert('提示信息', data.content, 'warning');
                         }
@@ -26843,7 +26860,7 @@ $(function () {
                 if (data.success) {
                     $('#client_add_tab').dialog('close');
                     window.location.href = '/'; //成功以后刷新页面
-                    $.messager.alert('提示信息', '添加tab成功！', 'info');
+                    // $.messager.alert('提示信息', '添加tab成功！', 'info');
                 } else if (!data.success) {
                     $.messager.alert('提示信息', data.content, 'warning');
                 } else {
@@ -27111,7 +27128,7 @@ $(function () {
 $(function () {
 
     var $grid = $("#formerClubOffice-list");
-    var tabId = 'formercluboffice';
+    var tabId = 'formerClubOffice';
     var gridTab = new GridTab(tabId, $grid);
 
     var columns = [
@@ -27181,7 +27198,7 @@ $(function () {
 $(function () {
 
     var $grid = $("#socialDuties-list");
-    var tabId = 'achievements';
+    var tabId = 'socialDuties';
     var gridTab = new GridTab(tabId, $grid);
 
     var columns = [

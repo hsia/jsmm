@@ -35,6 +35,12 @@ class TabCollectionHandler(tornado.web.RequestHandler):
         创建tab对象。
         """
         tab = json.loads(self.request.body.decode('utf-8'))
+        if tab.get('columns', []):
+            for column in tab.get('columns'):
+                if column.get('editor', ''):
+                    pass
+                else:
+                    column['editor'] = 'textbox'
         tab['type'] = 'tab'
         tab['_id'] = make_uuid()
         tab['tab_id'] = 'custab_' + ''.join(lazy_pinyin(tab['gridTitle']))

@@ -23,12 +23,21 @@ class memberInfoExport(tornado.web.RequestHandler):
 
         pattern = xlwt.Pattern()
         pattern.pattern = xlwt.Pattern.SOLID_PATTERN
-        pattern.pattern_fore_colour = 22
-        style = xlwt.XFStyle()
-        style.borders.THIN
-        style.pattern = pattern
-        style.font.height = 220
-        style.font.name = '宋体'
+
+        # 垂直靠上，水平靠左
+        alignment = xlwt.Alignment()
+        alignment.vert = xlwt.Alignment.VERT_TOP
+        alignment.horz = xlwt.Alignment.HORZ_LEFT
+
+        # 垂直居中，水平居中
+        alignment1 = xlwt.Alignment()
+        alignment1.vert = xlwt.Alignment.VERT_CENTER
+        alignment1.horz = xlwt.Alignment.HORZ_CENTER
+
+        # 垂直居中，水平靠左
+        alignment2 = xlwt.Alignment()
+        alignment2.vert = xlwt.Alignment.VERT_CENTER
+        alignment2.horz = xlwt.Alignment.HORZ_LEFT
 
         borders = xlwt.Borders()
         borders.left = 1
@@ -37,10 +46,33 @@ class memberInfoExport(tornado.web.RequestHandler):
         borders.bottom = 1
         borders.bottom_colour = 0x3A
 
-        memberInfoStyle = xlwt.XFStyle()
-        memberInfoStyle.borders = borders
-        memberInfoStyle.font.name = '宋体'
-        memberInfoStyle.font.height = 220
+        detail_style = xlwt.XFStyle()
+        detail_style.alignment = alignment
+        detail_style.font.name = '宋体'
+        detail_style.font.height = 220
+
+        common_style = xlwt.XFStyle()
+        common_style.borders = borders
+        common_style.alignment = alignment2
+        common_style.font.name = '宋体'
+        common_style.font.height = 220
+
+        organ_head_style = xlwt.XFStyle()
+        organ_head_style.font.name = '宋体'
+        organ_head_style.font.height = 220
+        organ_head_style.font.bold = True
+        organ_head_style.alignment = alignment1
+
+        organ_body_style = xlwt.XFStyle()
+        organ_body_style.font.name = '宋体'
+        organ_body_style.font.height = 220
+
+        basic_info_head_style = xlwt.XFStyle()
+        basic_info_head_style.borders = borders
+        basic_info_head_style.font.name = '宋体'
+        basic_info_head_style.font.height = 220
+        basic_info_head_style.font.bold = True
+        basic_info_head_style.alignment = alignment2
 
         wb = xlwt.Workbook()
         basic_head_width = {u'title': 10, u'content': 6, u'说明': 10, u'标准代码': 12}
@@ -168,9 +200,19 @@ class memberInfoExport(tornado.web.RequestHandler):
                             "social": [u"政府和主要社会职务", u"政府和主要社会职务（包括各级政府、人大、政协、特邀职务、青联、侨联、妇联）", social_headers],
                             "socialduties": [u"其它社会职务", u"其它社会职务（包括各类社会团体和学术团体）", socialduties_header],
                             "agencybroker": [u"入社介绍人", u"入社介绍人：", agencybroker_header]}
-
-        self.basic_info_sheet(wb, basic_info_properties, member, memberInfoStyle, memberInfoStyle)
-        self.sheet_names_info_sheet(wb, sheet_names_info, member, memberInfoStyle, memberInfoStyle)
+        # 字典表数据
+        self.dic_sheet(wb, common_style)
+        # 组织机构
+        self.organ_sheet(wb, organ_head_style, organ_body_style)
+        # 填写说明
+        self.detail_sheet(wb, detail_style)
+        # 基本信息页
+        self.basic_info_sheet(wb, basic_info_properties, member, basic_info_head_style, common_style)
+        # 其他信息页
+        self.sheet_names_info_sheet(wb, sheet_names_info, member, common_style, common_style)
+        # 自定义信息页
+        if self.request.arguments:
+            self.custom_obj(wb, member, common_style, common_style)
 
         sio = BytesIO()
         wb.save(sio)
@@ -199,6 +241,27 @@ class memberInfoExport(tornado.web.RequestHandler):
         self.write(sio.getvalue())
         self.finish()
 
+    def dic_sheet(self, work_book, style_body):
+        worksheet = work_book.add_sheet(u'字典表数据', cell_overwrite_ok=True)
+
+    def organ_sheet(self, work_book, style_header, style_body):
+        worksheet = work_book.add_sheet(u'组织机构', cell_overwrite_ok=True)
+        worksheet.write(0, 0, u'一级组织', style_header)
+        worksheet.write(0, 1, u'二级组织', style_header)
+        worksheet.col(0).width = 30 * 256
+        worksheet.col(1).width = 30 * 256
+
+        worksheet.write(1, 0, u'九三学社北京市朝阳区委员会', style_body)
+
+    def detail_sheet(self, work_book, style_body):
+        worksheet = work_book.add_sheet(u'填写说明', cell_overwrite_ok=True)
+        worksheet.write_merge(0, 23, 1, 8, u'''
+1.所有系统中的日期，需要按照 2010.10.10这样的格式填写，
+表示2010年的10月10号。如果只记得月份。天数写为1号。为2010.10.01。
+2.有下拉选择的内容，建议从下拉中选择合适的选项。
+3.填完表，另存文件名称为：人员信息采集-李某某.xls。
+4.同时附上电子档的免冠照一张，名称为：人员信息采集-李某某.jpg。''', style_body)
+
     def basic_info_sheet(self, work_book, basic_info_properties, member_info, style_header, style_body):
         """
         获得基本信息
@@ -218,7 +281,7 @@ class memberInfoExport(tornado.web.RequestHandler):
         worksheet.col(3).width = 30 * 256
         worksheet.col(4).width = 10 * 256
         # 设置行高
-        tall_style = xlwt.easyxf('font:height 360;')
+        tall_style = xlwt.easyxf('font:height 600;')
         worksheet.row(1).set_style(tall_style)
 
         worksheet.write_merge(1, 1, 1, 2, u'个人信息-基本情况 A01', style_header)
@@ -227,10 +290,21 @@ class memberInfoExport(tornado.web.RequestHandler):
         # 内容
         row_number = 2
         for key in basic_info_properties:
+            if key == 'birthday':
+                member_info['birthday'] = formatter_time(member_info.get('birthday', ''), '%Y-%m-%d')
+            if key == 'branchTime':
+                member_info['branchTime'] = formatter_time(member_info.get('branchTime', ''), '%Y-%m-%d')
+            if key == 'jobTime':
+                member_info['jobTime'] = formatter_time(member_info.get('jobTime', ''), '%Y-%m-%d')
             worksheet.write(row_number, 1, basic_info_properties.get(key), style_body)
             worksheet.write(row_number, 2, member_info.get(key, ''), style_body)
             worksheet.write(row_number, 3, '', style_body)
             worksheet.write(row_number, 4, '', style_body)
+
+            # 设置行高
+            tall_style = xlwt.easyxf('font:height 310;')
+            worksheet.row(row_number).set_style(tall_style)
+
             row_number += 1
 
     def sheet_names_info_sheet(self, work_book, sheet_names_infos, member_info, style_header, style_body):
@@ -250,6 +324,12 @@ class memberInfoExport(tornado.web.RequestHandler):
                 # 写入sheet列名
                 header_column_number = 1
                 worksheet.col(0).width = 5 * 256
+                # 设置行高 -- 标题
+                tall_style = xlwt.easyxf('font:height 600;')
+                worksheet.row(0).set_style(tall_style)
+                # 设置行高 -- 列
+                tall_style = xlwt.easyxf('font:height 300;')
+                worksheet.row(1).set_style(tall_style)
                 for header_key in sheet_column:
                     # 列名
                     column_name = sheet_column.get(header_key)
@@ -261,45 +341,68 @@ class memberInfoExport(tornado.web.RequestHandler):
                 key_column_number = 2
                 for info_key in key_info_in_db:
                     row_number = 1
+                    # 设置行高
+                    tall_style = xlwt.easyxf('font:height 300;')
+                    worksheet.row(key_column_number).set_style(tall_style)
                     for key_row_value in sheet_column:
                         value = info_key.get(key_row_value, '')
+                        if key_row_value in ['eduStartingDate', 'eduGraduateDate', 'jobStartTime', 'jobEndTime',
+                                             'proStartDate', 'porEndDate', 'familyBirthDay', 'paperPressDate',
+                                             'awardDate', 'patentDate', 'approvalDate', 'subsidiesDate',
+                                             'formerStartTime', 'formerEndTime', 'socialStartTime', 'socialEndTime',
+                                             'socialBeginDate', 'socialEndDate']:
+                            value = formatter_time(value, '%Y-%m-%d')
                         worksheet.write(key_column_number, row_number, value, style_body)
                         row_number += 1
                     key_column_number += 1
 
-    def customizeObj(obj, current_row, ws, style, memberInfoStyle, member):
-        if len(obj) > 6:
-            if obj[0:7] == 'custab_':
-                selector = {
-                    "selector": {
-                        "type": {
-                            "$eq": "tab"
-                        },
-                        "tab_id": {
-                            "$eq": obj
-                        }
-                    }
-                }
-                response = couch_db.post(r'/jsmm/_find/', selector)
-                tab = json.loads(response.body.decode('utf-8'))
-                tabObj = tab['docs'][0]
-                ws.write_merge(current_row, current_row, 0, 9, u'')
-                ws.write_merge(current_row + 1, current_row + 1, 0, 9, tabObj['gridTitle'], style)
-                columns = tabObj['columns']
-                for y in range(0, len(columns)):
-                    ws.write(current_row + 2, y, columns[y]['title'], memberInfoStyle)
+    def custom_obj(self, work_book, member_info, style_header, style_body):
+        response = couch_db.get(r'/jsmm/_design/tab/_view/tab-tabId')
+        tab = json.loads(response.body.decode('utf-8'))
+        tab_objects = tab['rows']
+        if tab_objects:
+            for tab_object in tab_objects:
+                if tab_object.get('key') in member_info:
+                    # sheet名称
+                    custom_sheet_name = tab_object.get('value').get('gridTitle')
+                    # sheet 标题
+                    custom_sheet_header = tab_object.get('value').get('columns')
+                    # sheet 内容
+                    custom_sheet_body = member_info.get(tab_object.get('key'))
 
-                for i in range(0, len(member[obj])):
-                    memberObj = member[obj][i]
-                    x = 0
-                    for z in columns:
-                        print(z.get('title') + ":" + memberObj.get(z.get('field'), ''))
-                        ws.write(current_row + 3 + i, x, memberObj.get(z.get('field'), ''), memberInfoStyle)
-                        x += 1
+                    if custom_sheet_body:
+                        # 新建sheet名称为XXX
+                        worksheet = work_book.add_sheet(custom_sheet_name, cell_overwrite_ok=True)
+                        # 写入sheet标题,和sheet名称一致
+                        worksheet.write_merge(0, 0, 1, len(custom_sheet_header), custom_sheet_name, style_body)
+                        # 写入sheet列名
+                        col_num = 1
+                        # 设置列宽
+                        worksheet.col(0).width = 5 * 256
+                        # 设置行高 -- 标题
+                        tall_style = xlwt.easyxf('font:height 600;')
+                        worksheet.row(0).set_style(tall_style)
+                        # 设置行高 -- 列
+                        tall_style = xlwt.easyxf('font:height 300;')
+                        worksheet.row(1).set_style(tall_style)
+                        for col_name in custom_sheet_header:
+                            # 设置列宽
+                            worksheet.write(1, col_num, col_name.get('title'), style_body)
+                            worksheet.col(col_num).width = 20 * 256
+                            col_num += 1
 
-                obj_row = 3 + len(member[obj])
-                current_row += obj_row
-        return current_row
+                        # 写入sheet内容
+                        row_number = 2
+                        for row_data in custom_sheet_body:
+                            header_number = 1
+                            # 设置行高
+                            tall_style = xlwt.easyxf('font:height 300;')
+                            worksheet.row(row_number).set_style(tall_style)
+                            for header in custom_sheet_header:
+                                worksheet.write(row_number, header_number, row_data.get(header.get("col_id")),
+                                                style_body)
+                                header_number += 1
+                            row_number += 1
 
 
 @tornado_utils.bind_to(r'/member/information/(.+)')

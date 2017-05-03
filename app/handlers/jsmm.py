@@ -8,7 +8,8 @@ import tornado.web
 import tornado_utils
 from pypinyin import lazy_pinyin
 
-from commons import couch_db, get_retire_time, make_uuid
+from app.member_importer import ErrorType
+from commons import couch_db, get_retire_time, make_uuid, formatter_time
 
 
 @tornado_utils.bind_to(r'/members/search/?')
@@ -134,13 +135,20 @@ class MemberCollectionHandler(tornado.web.RequestHandler):
         '''
         创建member对象。
         '''
-        print(self.request.files)
         member = json.loads(self.request.body.decode('utf-8'))
-        member['type'] = 'member'
-        member['_id'] = make_uuid()
-        member["retireTime"] = get_retire_time(member["birthday"], member["gender"])
-        couch_db.post(r'/jsmm/', member)
-        response = {"success": "true"}
+        try:
+            formatter_time(member.get('birthday', ''), '%Y-%m-%d', '%Y-%m-%d')
+            formatter_time(member.get('branchTime', ''), '%Y-%m-%d', '%Y-%m-%d')
+            formatter_time(member.get('jobTime', ''), '%Y-%m-%d', '%Y-%m-%d')
+            member['type'] = 'member'
+            member['_id'] = make_uuid()
+            member["retireTime"] = get_retire_time(member["birthday"], member["gender"])
+            couch_db.post(r'/jsmm/', member)
+            response = {"success": "true"}
+        except Exception as e:
+            print(e)
+            response = {"success": "false", "content": ErrorType.DATAFORMATEERROR1.value}
+
         self.write(response)
 
     def delete(self):

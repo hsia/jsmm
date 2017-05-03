@@ -260,6 +260,8 @@ $(function () {
                 //清空页签内容
                 window.dispatchEvent(eventDelete);
                 // $.messager.alert('提示信息', '添加社员成功！', 'info');
+            } else {
+                $.messager.alert('提示', data.content, 'error');
             }
         })
     });
@@ -281,14 +283,18 @@ $(function () {
             type: 'PUT',
             data: JSON.stringify(memberInfo),
             success: function (data) {
-                $('#memberEdit-dialog').dialog('close');
-                //删除成功以后，重新加载数据，并将choiceRows置为空。
-                // console.log(getRow);
-                $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
-                //清空页签内容
-                // window.dispatchEvent(eventDelete);
-                // $memberList.datagrid('selectRow', getRow);
-                // $.messager.alert('提示', '数据更新成功!', 'info');
+                if (data.success == "true") {
+                    $('#memberEdit-dialog').dialog('close');
+                    //删除成功以后，重新加载数据，并将choiceRows置为空。
+                    // console.log(getRow);
+                    $memberList.datagrid('gotoPage', getCurrentPage).datagrid('reload');
+                    //清空页签内容
+                    // window.dispatchEvent(eventDelete);
+                    // $memberList.datagrid('selectRow', getRow);
+                    // $.messager.alert('提示', '数据更新成功!', 'info');
+                } else {
+                    $.messager.alert('提示', data.content, 'error');
+                }
             },
             error: function (data) {
                 $.messager.alert('提示', '数据更新失败!', 'error');

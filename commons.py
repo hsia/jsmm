@@ -42,7 +42,7 @@ def get_retire_time(birthday, gender):
 
 
 def formatter_time(input_date, formatter, formatter2='%Y.%m.%d'):
-    if input_date:
+    if input_date and input_date != u'至今':
         return datetime.strptime(input_date, formatter).strftime(formatter2)
     else:
-        return input_date
+        return ''

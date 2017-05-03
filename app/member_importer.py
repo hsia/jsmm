@@ -9,7 +9,7 @@ import uuid
 from enum import Enum, unique
 
 from xlrd import open_workbook
-from commons import couch_db, get_retire_time
+from commons import couch_db, get_retire_time, formatter_time
 import json
 
 
@@ -48,7 +48,8 @@ class ErrorType(Enum):
     BRANCHERROR = u'基本信息表中所属支社不能为空'
     FILETYPEERROR = u'文件类型错误,只能导入.xls.xlsx'
     FILEREPEATERROR = u'社员信息重复(姓名+出生日期)'
-    DATAFORMATEERROR = u'日期格式错误(正确格式ex:1980.01.01)'
+    DATAFORMATEERROR = u'日期格式错误(正确格式Ex:1980.01.01)'
+    DATAFORMATEERROR1 = u'日期格式错误(正确格式Ex:1980-01-01)'
     OTHERERROR = u'其他错误'
 
 
@@ -88,8 +89,11 @@ def import_info(file_info):
                     result = {"success": False, "fileName": file_info["filename"],
                               "errorContent": ErrorType.BRANCHERROR.value}
                 else:
-                    member_info_importer.main_function()
-                    result = member_info_importer.save_member(file_info["filename"])
+                    result_main = member_info_importer.main_function(file_info["filename"])
+                    if result_main:
+                        result = result_main
+                    else:
+                        result = member_info_importer.save_member(file_info["filename"])
 
     except Exception as e:
         print(Exception, ":", e)
@@ -207,9 +211,13 @@ class MemberInfoImporter:
 
         for key in basic_info_mapper.keys():
             self._member[basic_info_mapper[key]] = basic_info_sheet.cell_value(key[0], key[1])
-        self._member['branchTime'] = format_date(str(self._member['branchTime']))
-        self._member['birthday'] = format_date(str(self._member['birthday']))
-        self._member['jobTime'] = format_date(str(self._member['jobTime']))
+        # self._member['branchTime'] = format_date(str(self._member['branchTime']))
+        # self._member['birthday'] = format_date(str(self._member['birthday']))
+        # self._member['jobTime'] = format_date(str(self._member['jobTime']))
+
+        self._member['branchTime'] = formatter_time(str(self._member['branchTime']), '%Y.%m.%d', '%Y-%m-%d')
+        self._member['birthday'] = formatter_time(str(self._member['birthday']), '%Y.%m.%d', '%Y-%m-%d')
+        self._member['jobTime'] = formatter_time(str(self._member['jobTime']), '%Y.%m.%d', '%Y-%m-%d')
 
         # 对1.xx格式进行处理，保留xx
         self._member['gender'] = self._member.get('gender', '').split(',')[-1]
@@ -220,9 +228,14 @@ class MemberInfoImporter:
         self._member['branchTime'] = self._member.get('branchTime', '').split(',')[-1]
         self._member['branchTime'] = self._member.get('branchTime', '').split(',')[-1]
 
-    def main_function(self):
-        for i in self._tabs_name:
-            self._tabs_name[i]()
+    def main_function(self, file_name):
+        exception_file_name = ''
+        try:
+            for i in self._tabs_name:
+                self._tabs_name[i]()
+        except Exception as e:
+            print(e)
+            return {'success': False, "fileName": file_name, 'errorContent': ErrorType.DATAFORMATEERROR.value}
 
     def member_edu_degree(self):
         """
@@ -236,8 +249,12 @@ class MemberInfoImporter:
                 return
             else:
                 edu_degree = {"eduSchoolName": edu_degree_sheet.cell_value(i, 1),
-                              "eduStartingDate": format_date(str(edu_degree_sheet.cell_value(i, 2))),
-                              "eduGraduateDate": format_date(str(edu_degree_sheet.cell_value(i, 3))),
+                              # "eduStartingDate": format_date(str(edu_degree_sheet.cell_value(i, 2))),
+                              # "eduGraduateDate": format_date(str(edu_degree_sheet.cell_value(i, 3))),
+                              "eduStartingDate": formatter_time(str(edu_degree_sheet.cell_value(i, 2)), '%Y.%m.%d',
+                                                                '%Y-%m-%d'),
+                              "eduGraduateDate": formatter_time(str(edu_degree_sheet.cell_value(i, 3)), '%Y.%m.%d',
+                                                                '%Y-%m-%d'),
                               "eduMajor": edu_degree_sheet.cell_value(i, 4),
                               "eduEducation": edu_degree_sheet.cell_value(i, 5),
                               "eduDegree": edu_degree_sheet.cell_value(i, 6),
@@ -265,8 +282,12 @@ class MemberInfoImporter:
                               "jobDuties": job_resumes_sheet.cell_value(i, 3),
                               "jobTitle": job_resumes_sheet.cell_value(i, 4),
                               "jobAcademic": job_resumes_sheet.cell_value(i, 5),
-                              "jobStartTime": format_date(str(job_resumes_sheet.cell_value(i, 6))),
-                              "jobEndTime": format_date(str(job_resumes_sheet.cell_value(i, 7))),
+                              # "jobStartTime": format_date(str(job_resumes_sheet.cell_value(i, 6))),
+                              # "jobEndTime": format_date(str(job_resumes_sheet.cell_value(i, 7))),
+                              "jobStartTime": formatter_time(str(job_resumes_sheet.cell_value(i, 6)), '%Y.%m.%d',
+                                                             '%Y-%m-%d'),
+                              "jobEndTime": formatter_time(str(job_resumes_sheet.cell_value(i, 7)), '%Y.%m.%d',
+                                                           '%Y-%m-%d'),
                               "jobReterence": job_resumes_sheet.cell_value(i, 8)}
                 self._member["jobResumes"].append(job_esumes)
 
@@ -286,8 +307,13 @@ class MemberInfoImporter:
                     "proProjectType": member_professional_sheet.cell_value(i, 2),
                     "proProjectCompany": member_professional_sheet.cell_value(i, 3),
                     "proRolesInProject": member_professional_sheet.cell_value(i, 4),
-                    "proStartDate": format_date(str(member_professional_sheet.cell_value(i, 5))),
-                    "porEndDate": format_date(str(member_professional_sheet.cell_value(i, 6)))}
+                    # "proStartDate": format_date(str(member_professional_sheet.cell_value(i, 5))),
+                    # "porEndDate": format_date(str(member_professional_sheet.cell_value(i, 6)))}
+                    "proStartDate": formatter_time(str(member_professional_sheet.cell_value(i, 5)), '%Y.%m.%d',
+                                                   '%Y-%m-%d'),
+                    "porEndDate": formatter_time(str(member_professional_sheet.cell_value(i, 6)), '%Y.%m.%d',
+                                                 '%Y-%m-%d')
+                }
 
                 # 对1.xx格式进行处理，保留xx
                 professional_skill['proProjectType'] = professional_skill.get('proProjectType', '').split(',')[-1]
@@ -309,7 +335,9 @@ class MemberInfoImporter:
                     "familyName": family_relation_sheet.cell_value(i, 1),
                     "familyRelation": family_relation_sheet.cell_value(i, 2),
                     "familyGender": family_relation_sheet.cell_value(i, 3),
-                    "familyBirthDay": format_date(str(family_relation_sheet.cell_value(i, 4))),
+                    # "familyBirthDay": format_date(str(family_relation_sheet.cell_value(i, 4))),
+                    "familyBirthDay": formatter_time(str(family_relation_sheet.cell_value(i, 4)), '%Y.%m.%d',
+                                                     '%Y-%m-%d'),
                     "familyCompany": family_relation_sheet.cell_value(i, 5),
                     "familyJob": family_relation_sheet.cell_value(i, 6),
                     "familyNationality": family_relation_sheet.cell_value(i, 7),
@@ -338,7 +366,9 @@ class MemberInfoImporter:
                     "paperName": paper_sheet.cell_value(i, 2),
                     "paperPress": paper_sheet.cell_value(i, 3),
                     "paperAuthorSort": paper_sheet.cell_value(i, 4),
-                    "paperPressDate": format_date(str(paper_sheet.cell_value(i, 5))),
+                    # "paperPressDate": format_date(str(paper_sheet.cell_value(i, 5))),
+                    "paperPressDate": formatter_time(str(paper_sheet.cell_value(i, 5)), '%Y.%m.%d',
+                                                     '%Y-%m-%d'),
                     "paperRoleDetail": paper_sheet.cell_value(i, 6)}
 
                 # 对1.xx格式进行处理，保留xx
@@ -382,7 +412,9 @@ class MemberInfoImporter:
             else:
                 award = {
                     "awardProjectName": award_sheet.cell_value(i, 1),
-                    "awardDate": format_date(str(award_sheet.cell_value(i, 2))),
+                    # "awardDate": format_date(str(award_sheet.cell_value(i, 2))),
+                    "awardDate": formatter_time(str(award_sheet.cell_value(i, 2)), '%Y.%m.%d',
+                                                '%Y-%m-%d'),
                     "awardNameAndLevel": award_sheet.cell_value(i, 3),
                     "awardRoleInProject": award_sheet.cell_value(i, 4),
                     "awardCompany": award_sheet.cell_value(i, 5),
@@ -403,7 +435,9 @@ class MemberInfoImporter:
             else:
                 patents = {
                     "patentName": patents_sheet.cell_value(i, 1),
-                    "patentDate": format_date(str(patents_sheet.cell_value(i, 2))),
+                    # "patentDate": format_date(str(patents_sheet.cell_value(i, 2))),
+                    "patentDate": formatter_time(str(patents_sheet.cell_value(i, 2)), '%Y.%m.%d',
+                                                 '%Y-%m-%d'),
                     "patenNo": patents_sheet.cell_value(i, 3)}
                 self._member["patents"].append(patents)
 
@@ -424,7 +458,9 @@ class MemberInfoImporter:
                     "approvalCompanyLevel": professor_sheet.cell_value(i, 3),
                     "approvalCompanyName": professor_sheet.cell_value(i, 4),
                     "govSubsidiesType": professor_sheet.cell_value(i, 5),
-                    "subsidiesDate": format_date(str(professor_sheet.cell_value(i, 6))),
+                    # "subsidiesDate": format_date(str(professor_sheet.cell_value(i, 6))),
+                    "subsidiesDate": formatter_time(str(professor_sheet.cell_value(i, 6)), '%Y.%m.%d',
+                                                    '%Y-%m-%d'),
                 }
                 self._member["professor"].append(professor)
 
@@ -462,8 +498,12 @@ class MemberInfoImporter:
                     "formerOrganizationLevel": former_club_office_sheet.cell_value(i, 3),
                     "formerOrganizationJob": former_club_office_sheet.cell_value(i, 4),
                     "formerTheTime": former_club_office_sheet.cell_value(i, 5),
-                    "formerStartTime": format_date(str(former_club_office_sheet.cell_value(i, 6))),
-                    "formerEndTime": format_date(str(former_club_office_sheet.cell_value(i, 7)))
+                    # "formerStartTime": format_date(str(former_club_office_sheet.cell_value(i, 6))),
+                    # "formerEndTime": format_date(str(former_club_office_sheet.cell_value(i, 7)))
+                    "formerStartTime": formatter_time(str(former_club_office_sheet.cell_value(i, 6)), '%Y.%m.%d',
+                                                      '%Y-%m-%d'),
+                    "formerEndTime": formatter_time(str(former_club_office_sheet.cell_value(i, 7)), '%Y.%m.%d',
+                                                    '%Y-%m-%d')
                 }
 
                 # 对1.xx格式进行处理，保留xx
@@ -489,8 +529,12 @@ class MemberInfoImporter:
                     "socialPositionLevel": social_sheet.cell_value(i, 3),
                     "socialPositionName": social_sheet.cell_value(i, 4),
                     "socialPeriod": social_sheet.cell_value(i, 5),
-                    "socialBeginDate": format_date(str(social_sheet.cell_value(i, 6))),
-                    "socialEndDate": format_date(str(social_sheet.cell_value(i, 7)))
+                    # "socialBeginDate": format_date(str(social_sheet.cell_value(i, 6))),
+                    # "socialEndDate": format_date(str(social_sheet.cell_value(i, 7)))
+                    "socialBeginDate": formatter_time(str(social_sheet.cell_value(i, 6)), '%Y.%m.%d',
+                                                      '%Y-%m-%d'),
+                    "socialEndDate": formatter_time(str(social_sheet.cell_value(i, 7)), '%Y.%m.%d',
+                                                    '%Y-%m-%d'),
                 }
 
                 # 对1.xx格式进行处理，保留xx
@@ -515,8 +559,12 @@ class MemberInfoImporter:
                     "socialPositionLevel": social_duties_sheet.cell_value(i, 3),
                     "socialOrganizationJob": social_duties_sheet.cell_value(i, 4),
                     "socialTheTime": social_duties_sheet.cell_value(i, 5),
-                    "socialStartTime": format_date(str(social_duties_sheet.cell_value(i, 6))),
-                    "socialEndTime": format_date(str(social_duties_sheet.cell_value(i, 7)))
+                    # "socialStartTime": format_date(str(social_duties_sheet.cell_value(i, 6))),
+                    # "socialEndTime": format_date(str(social_duties_sheet.cell_value(i, 7)))
+                    "socialStartTime": formatter_time(str(social_duties_sheet.cell_value(i, 6)), '%Y.%m.%d',
+                                                      '%Y-%m-%d'),
+                    "socialEndTime": formatter_time(str(social_duties_sheet.cell_value(i, 7)), '%Y.%m.%d',
+                                                    '%Y-%m-%d')
                 }
                 self._member["socialduties"].append(social_duties)
 

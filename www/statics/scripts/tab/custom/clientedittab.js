@@ -176,7 +176,7 @@ $(function () {
                         if (data.success) {
                             window.location.href = '/'; //成功以后刷新页面
                             $('#client_edit_tab').dialog('close');
-                            $.messager.alert('提示信息', '删除tab成功！', 'info');
+                            // $.messager.alert('提示信息', '删除tab成功！', 'info');
                         } else {
                             $.messager.alert('提示信息', data.content, 'warning');
                         }

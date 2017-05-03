@@ -135,7 +135,7 @@ $(function () {
                 if (data.success) {
                     $('#client_add_tab').dialog('close');
                     window.location.href = '/'; //成功以后刷新页面
-                    $.messager.alert('提示信息', '添加tab成功！', 'info');
+                    // $.messager.alert('提示信息', '添加tab成功！', 'info');
                 } else if (!data.success) {
                     $.messager.alert('提示信息', data.content, 'warning');
                 } else {

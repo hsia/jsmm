@@ -6,7 +6,7 @@
 $(function () {
 
     var $grid = $("#formerClubOffice-list");
-    var tabId = 'formercluboffice';
+    var tabId = 'formerClubOffice';
     var gridTab = new GridTab(tabId, $grid);
 
     var columns = [

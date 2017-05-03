@@ -1,6 +1,7 @@
 var GridTab = function (tabId, $grid) {
     this.member = null;
     this.memberId = null;
+    console.log(this.memberId)
     this.tabId = tabId;
     this.$grid = $grid;
     this.editIndex = undefined;
@@ -21,6 +22,7 @@ GridTab.prototype.endEditing = function () {
 };
 
 GridTab.prototype.addRow = function () {
+    console.log(this.memberId)
     if (!this.memberId) {
         $.messager.alert('提示信息', '请选择一行社员信息!', 'error');
         return;
@@ -29,7 +31,8 @@ GridTab.prototype.addRow = function () {
         var row = this.$grid.datagrid('getSelected');
         if (row != null) {
             this.editIndex = this.$grid.datagrid('getRowIndex', row);
-            console.log(this.editIndex)
+            console.log('this.editIndex:' + this.editIndex)
+            console.log(this)
             this.$grid.datagrid('insertRow', {
                 index: this.editIndex,	// index start with 0
                 row: {}
@@ -99,8 +102,12 @@ GridTab.prototype.saveRow = function () {
                 type: 'PUT',
                 data: JSON.stringify(memberInfo),
                 success: function (data) {
-                    //删除成功以后，重新加载数据，并将choiceRows置为空。
-                    $.messager.alert('提示', '数据保存成功!', 'info');
+                    if (data.success == "false") {
+                        $.messager.alert('提示', data.content, 'error');
+                    } else {
+                        //删除成功以后，重新加载数据，并将choiceRows置为空。
+                        $.messager.alert('提示', '数据保存成功!', 'info');
+                    }
                 },
                 error: function (data) {
                     $.messager.alert('提示', '数据更新失败!', 'error');
@@ -180,6 +187,7 @@ GridTab.prototype.docDelete = function () {
 GridTab.prototype.buildGrid = function (toolbar, columns) {
     var height = $("#member-info").height();
     var that = this;
+    console.log(this)
     this.$grid.datagrid({
         iconCls: 'icon-ok',
         height: height * 0.89,
@@ -282,6 +290,7 @@ GridTab.prototype.registerListeners = function () {
     window.addEventListener("tree-row-selection", function (event) {
         that.reloadGrid(true);
     });
+    console.log(that)
 };
 
 function mySort(index, type, $grid) {

@@ -6,7 +6,7 @@
 $(function () {
 
     var $grid = $("#socialDuties-list");
-    var tabId = 'achievements';
+    var tabId = 'socialDuties';
     var gridTab = new GridTab(tabId, $grid);
 
     var columns = [

@@ -166,6 +166,15 @@ try_(couch_db.put('/jsmm/_design/tab', {
       }
     }
     '''
+        },
+        "tab-tabId": {
+            "map": '''
+    function (doc) {
+      if(doc.type=="tab"){
+        emit(doc.tab_id, doc);
+      }
+    }
+    '''
         }
     }
 }))
