@@ -200,8 +200,7 @@ class memberInfoExport(tornado.web.RequestHandler):
                             "social": [u"政府和主要社会职务", u"政府和主要社会职务（包括各级政府、人大、政协、特邀职务、青联、侨联、妇联）", social_headers],
                             "socialduties": [u"其它社会职务", u"其它社会职务（包括各类社会团体和学术团体）", socialduties_header],
                             "agencybroker": [u"入社介绍人", u"入社介绍人：", agencybroker_header]}
-        # 字典表数据
-        self.dic_sheet(wb, common_style)
+
         # 组织机构
         self.organ_sheet(wb, organ_head_style, organ_body_style)
         # 填写说明
@@ -213,6 +212,8 @@ class memberInfoExport(tornado.web.RequestHandler):
         # 自定义信息页
         if self.request.arguments:
             self.custom_obj(wb, member, common_style, common_style)
+        # 字典表数据
+        self.dic_sheet(wb, common_style)
 
         sio = BytesIO()
         wb.save(sio)
