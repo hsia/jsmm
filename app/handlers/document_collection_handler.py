@@ -37,6 +37,7 @@ class Document1Handler(tornado.web.RequestHandler):
 
             if key_word_attachment != '':
                 params_str += key_word_attachment + '*'
+                # params_str += key_word_attachment + '*'
             else:
                 pass
 
@@ -54,9 +55,11 @@ class Document1Handler(tornado.web.RequestHandler):
             # else:
             #     pass
             if key_word != '' and params_str != '':
-                params_str += ' AND (fileName:' + key_word + '* OR name:' + key_word + '*)'
+                params_str += ' AND (fileName:' + key_word + ' OR name:' + key_word + ')'
+                # params_str += ' AND (fileName:' + key_word + '* OR name:' + key_word + '*)'
             elif key_word != '' and params_str == '':
-                params_str += '(fileName:' + key_word + '* OR name:' + key_word + '*)'
+                params_str += '(fileName:' + key_word + ' OR name:' + key_word + ')'
+                # params_str += '(fileName:' + key_word + '* OR name:' + key_word + '*)'
             else:
                 pass
 
