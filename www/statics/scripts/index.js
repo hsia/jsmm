@@ -583,7 +583,7 @@ $(function () {
     <div class="member-picture">
         <img id="member_image" src="${rowData.picture || 'static/image/deaulf.jpg'}" style="width:100%;">
         <form id="member_image_upload" action='/image/upload/' enctype="multipart/form-data" method='post'>
-            <input id="create_file" type="file" name="picture" accept="image/*" style="width:100%">
+            <input id="create_file" type="file" name="picture" accept="image/jpg, image/jpeg, image/bmp, image/png" style="width:100%">
             <input id="create_file" type="hidden" name="picture_id" value="${rowData._id}">
         </form>      
     </div>
