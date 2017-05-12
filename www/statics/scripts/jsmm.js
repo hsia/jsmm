@@ -26091,7 +26091,7 @@ $(function () {
         $('#document-search').dialog({
             width: 600,
             height: 300,
-            title: '社员查询',
+            title: '文档查询',
             closed: false,
             cache: false,
             modal: true,
