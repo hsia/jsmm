@@ -24442,7 +24442,7 @@ GridTab.prototype.addRow = function () {
     if (this.endEditing()) {
         var row = this.$grid.datagrid('getSelected');
         if (row != null) {
-            this.editIndex = this.$grid.datagrid('getRowIndex', row);
+            this.editIndex = this.$grid.datagrid('getRowIndex', row) + 1;
             console.log('this.editIndex:' + this.editIndex)
             console.log(this)
             this.$grid.datagrid('insertRow', {
@@ -26151,6 +26151,8 @@ $(function () {
             }
         ]]
     });
+
+    $dataGrid.datagrid("keyCtr");
 
     //点击组织机构触发事件
     var organName = null;
