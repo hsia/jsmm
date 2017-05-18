@@ -5,12 +5,12 @@
 import json
 import urllib
 from io import BytesIO
-import time
+
 import tornado.web
-import tornado_utils
 import xlwt
 
 from commons import couch_db, formatter_time
+from lib import tornado_utils
 
 
 @tornado_utils.bind_to(r'/member/export/([0-9a-f]+)/?')
@@ -417,7 +417,8 @@ class MembersExport(tornado.web.RequestHandler):
                   u'单位电话': 15, u'单位地址': 40, u'邮编': 10}
         selector = {
             "selector": {},
-            "fields": column_name
+            "fields": column_name,
+            "limit": 999999
         }
         selector_content = selector["selector"]
         search = json.loads(search_obj.replace('/', ''))

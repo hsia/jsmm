@@ -8,9 +8,9 @@ import time
 import urllib
 
 import tornado.web
-import tornado_utils
 
 from commons import couch_db, make_uuid
+from lib import tornado_utils
 
 
 @tornado_utils.bind_to(r'/document/([0-9a-f]+)/(.+)')

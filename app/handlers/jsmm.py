@@ -4,12 +4,10 @@
 import json
 
 import tornado.web
-
-import tornado_utils
 from pypinyin import lazy_pinyin
 
-from app.member_importer import ErrorType
 from commons import couch_db, get_retire_time, make_uuid, formatter_time
+from lib import tornado_utils, ErrorType
 
 
 @tornado_utils.bind_to(r'/members/search/?')

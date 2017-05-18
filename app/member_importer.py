@@ -3,14 +3,13 @@
 '''
 Copyright lixia@ccrise.com
 '''
-import re
-import traceback
+import json
 import uuid
-from enum import Enum, unique
 
 from xlrd import open_workbook
+
 from commons import couch_db, get_retire_time, formatter_time
-import json
+from lib.ErrorType import ErrorType
 
 
 def make_uuid():
@@ -35,22 +34,6 @@ def format_date(date_str):
     elif len(splited) == 2:  # ['YYYY', 'MM']
         splited.append('01')  # ['YYYY', 'MM', '01']
     return '-'.join(splited)  # 'YYYY-MM-DD'
-
-
-@unique
-class ErrorType(Enum):
-    """使用枚举定义错误类型
-    """
-    SHEETERROR = u'Excel中sheet名称或者数量和标准格式不一致'
-    NAMEERROR = u'基本信息表中姓名不能为空'
-    NAMEALLDIGITERROR = u'基本信息表中姓名不能全部是数字'
-    BIRTHDAYERROR = u'基本信息表中出生日期不能为空'
-    BRANCHERROR = u'基本信息表中所属支社不能为空'
-    FILETYPEERROR = u'文件类型错误,只能导入.xls.xlsx'
-    FILEREPEATERROR = u'社员信息重复(姓名+出生日期)'
-    DATAFORMATEERROR = u'日期格式错误(正确格式Ex:1980.01.01)'
-    DATAFORMATEERROR1 = u'日期格式错误(正确格式Ex:1980-01-01)'
-    OTHERERROR = u'其他错误'
 
 
 def import_info(file_info):
@@ -229,7 +212,6 @@ class MemberInfoImporter:
         self._member['branchTime'] = self._member.get('branchTime', '').split(',')[-1]
 
     def main_function(self, file_name):
-        exception_file_name = ''
         try:
             for i in self._tabs_name:
                 self._tabs_name[i]()
@@ -623,11 +605,15 @@ class MemberInfoImporter:
 
                     if 'children' not in organ_cy:
                         organ_cy['children'] = list()
+                    else:
+                        pass
 
                     # 如果支社名称不存在，则添加支社
                     if organ not in organ_cy['children']:
                         organ_cy['children'].append(organ)
                         couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+                    else:
+                        pass
 
                 # 保存社员信息
                 self._member["retireTime"] = get_retire_time(self._member["birthday"], self._member["gender"])

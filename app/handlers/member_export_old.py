@@ -5,16 +5,16 @@
 import json
 import urllib
 from io import BytesIO
-import time
+
 import tornado.web
-import tornado_utils
 import xlwt
 
 from commons import couch_db, formatter_time
+from lib import tornado_utils
 
 
-@tornado_utils.bind_to(r'/member/export/([0-9a-f]+)/?')
-class memberInfoExport(tornado.web.RequestHandler):
+@tornado_utils.bind_to(r'/member/exportold/([0-9a-f]+)/?')
+class memberInfoExportOld(tornado.web.RequestHandler):
     @tornado.web.addslash
     def get(self, member_id):
 
@@ -444,149 +444,148 @@ def customizeObj(obj, current_row, ws, style, memberInfoStyle, member):
             current_row += obj_row
     return current_row
 
-
-@tornado_utils.bind_to(r'/member/information/(.+)')
-class MembersExport(tornado.web.RequestHandler):
-    @tornado.web.addslash
-    def get(self, search_obj):
-        keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'titleLevel', 'highestEducation']
-        column_name = ["name", "gender", "highestEducation", "jobTitle", "duty", "mobile",
-                       "email", "companyName", "companyTel", "commAddress", "commPost"]
-        titles = {u'姓名': 10, u'性别': 6, u'最高学历': 10, u'职称': 12, u'职务': 12, u'移动电话': 13, u'邮箱': 25, u'单位名称': 26,
-                  u'单位电话': 15, u'单位地址': 40, u'邮编': 10}
-        selector = {
-            "selector": {},
-            "fields": column_name
-        }
-        selector_content = selector["selector"]
-        search = json.loads(search_obj.replace('/', ''))
-
-        for key in keys:
-            if key in search:
-                if search[key] != '':
-                    selector_content[key] = {'$regex': search[key]}
-
-        if 'retireTime' in search:
-            if search['retireTime'] != '':
-                selector_content['retireTime'] = {"$lt": search["retireTime"]}
-
-        if 'branch' in search:
-            if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
-                selector_content['branch'] = {"$eq": search["branch"]}
-
-        if 'socialPositionName' in search:
-            if search['socialPositionName'] != '':
-                selector_content['social'] = {
-                    "$elemMatch": {"socialPositionName": {"$regex": search['socialPositionName']}}}
-
-        if 'socialPositionLevel' in search:
-            if search['socialPositionLevel'] != '':
-                selector_content['social'] = {
-                    "$elemMatch": {"socialPositionLevel": {"$regex": search['socialPositionLevel']}}}
-
-        if 'formeOrganizationJob' in search:
-            if search['formeOrganizationJob'] != '':
-                selector_content['formercluboffice'] = {
-                    "$elemMatch": {"formeOrganizationJob": {"$regex": search['formeOrganizationJob']}}}
-
-        if 'formeOrganizationLevel' in search:
-            if search['formeOrganizationLevel'] != '':
-                selector_content['formercluboffice'] = {
-                    "$elemMatch": {"formeOrganizationLevel": {"$regex": search['formeOrganizationLevel']}}}
-
-        if 'startAge' in search and 'endAge' in search:
-            if search['startAge'] != '' and search['endAge']:
-                selector_content['birthday'] = {"$gte": search['endAge'], "$lte": search['startAge']}
-
-        selector_content['type'] = {"$eq": "member"}
-
-        response = couch_db.post(r'/jsmm/_find/', selector)
-        members_simple_info = json.loads(response.body.decode('utf-8'))["docs"]
-
-        style_heading = xlwt.easyxf("""
-                font:
-                    name 微软雅黑,
-                    colour_index black,
-                    bold on,
-                    height 200;
-                align:
-                    wrap off,
-                    vert center,
-                    horiz centre;
-                pattern:
-                    pattern solid,
-                    fore-colour 22;
-                borders:
-                    left THIN,
-                    right THIN,
-                    top THIN,
-                    bottom THIN;
-                """)
-        style_data = xlwt.easyxf("""
-                        font:
-                            name 微软雅黑,
-                            colour_index black,
-                            bold off,
-                            height 180;
-                        align:
-                            wrap off,
-                            vert center,
-                            horiz left;
-                        pattern:
-                            pattern solid,
-                            fore-colour 1;
-                        borders:
-                            left thin,
-                            right thin,
-                            top thin,
-                            bottom thin;
-                        """)
-
-        workbook = xlwt.Workbook()
-        worksheet = workbook.add_sheet('社员信息简表')
-
-        column = 0
-        row = 0
-        for title in titles:
-            worksheet.write(row, column, title, style_heading)
-            worksheet.col(column).width = titles[title] * 256
-            column += 1
-
-        if len(members_simple_info) > 0:
-            row = 1
-            for member in members_simple_info:
-                column = 0
-                for key in column_name:
-                    worksheet.write(row, column, '', style_data) if key not in member else worksheet.write(row, column,
-                                                                                                           member[key],
-                                                                                                           style_data)
-                    column += 1
-
-                row += 1
-        else:
-            pass
-
-        sio = BytesIO()
-        workbook.save(sio)
-
-        agent = self.request.headers.get('User-Agent')
-        if 'Firefox' in agent:
-            if self.request.arguments:
-                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
-                    '社员信息汇总表.xls',
-                    "utf-8")
-            else:
-                download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
-                    '社员信息汇总表.xls',
-                    "utf-8")
-        else:
-            if self.request.arguments:
-                download_file_name = 'attachment; filename=' + urllib.parse.quote(
-                    '社员信息汇总表.xls', "utf-8")
-            else:
-                download_file_name = 'attachment; filename=' + urllib.parse.quote(
-                    '社员信息汇总表.xls', "utf-8")
-        self.set_header('Content-Type', 'application/vnd.ms-excel')
-        self.set_header('Content-Disposition', download_file_name)
-        self.write(sio.getvalue())
-        self.finish()
+# @tornado_utils.bind_to(r'/member/information/(.+)')
+# class MembersExport(tornado.web.RequestHandler):
+#     @tornado.web.addslash
+#     def get(self, search_obj):
+#         keys = ['name', 'gender', 'sector', 'lost', 'stratum', 'jobLevel', 'titleLevel', 'highestEducation']
+#         column_name = ["name", "gender", "highestEducation", "jobTitle", "duty", "mobile",
+#                        "email", "companyName", "companyTel", "commAddress", "commPost"]
+#         titles = {u'姓名': 10, u'性别': 6, u'最高学历': 10, u'职称': 12, u'职务': 12, u'移动电话': 13, u'邮箱': 25, u'单位名称': 26,
+#                   u'单位电话': 15, u'单位地址': 40, u'邮编': 10}
+#         selector = {
+#             "selector": {},
+#             "fields": column_name
+#         }
+#         selector_content = selector["selector"]
+#         search = json.loads(search_obj.replace('/', ''))
+#
+#         for key in keys:
+#             if key in search:
+#                 if search[key] != '':
+#                     selector_content[key] = {'$regex': search[key]}
+#
+#         if 'retireTime' in search:
+#             if search['retireTime'] != '':
+#                 selector_content['retireTime'] = {"$lt": search["retireTime"]}
+#
+#         if 'branch' in search:
+#             if search['branch'] != '' and search['branch'] != u'北京市' and search['branch'] != u'朝阳区':
+#                 selector_content['branch'] = {"$eq": search["branch"]}
+#
+#         if 'socialPositionName' in search:
+#             if search['socialPositionName'] != '':
+#                 selector_content['social'] = {
+#                     "$elemMatch": {"socialPositionName": {"$regex": search['socialPositionName']}}}
+#
+#         if 'socialPositionLevel' in search:
+#             if search['socialPositionLevel'] != '':
+#                 selector_content['social'] = {
+#                     "$elemMatch": {"socialPositionLevel": {"$regex": search['socialPositionLevel']}}}
+#
+#         if 'formeOrganizationJob' in search:
+#             if search['formeOrganizationJob'] != '':
+#                 selector_content['formercluboffice'] = {
+#                     "$elemMatch": {"formeOrganizationJob": {"$regex": search['formeOrganizationJob']}}}
+#
+#         if 'formeOrganizationLevel' in search:
+#             if search['formeOrganizationLevel'] != '':
+#                 selector_content['formercluboffice'] = {
+#                     "$elemMatch": {"formeOrganizationLevel": {"$regex": search['formeOrganizationLevel']}}}
+#
+#         if 'startAge' in search and 'endAge' in search:
+#             if search['startAge'] != '' and search['endAge']:
+#                 selector_content['birthday'] = {"$gte": search['endAge'], "$lte": search['startAge']}
+#
+#         selector_content['type'] = {"$eq": "member"}
+#
+#         response = couch_db.post(r'/jsmm/_find/', selector)
+#         members_simple_info = json.loads(response.body.decode('utf-8'))["docs"]
+#
+#         style_heading = xlwt.easyxf("""
+#                 font:
+#                     name 微软雅黑,
+#                     colour_index black,
+#                     bold on,
+#                     height 200;
+#                 align:
+#                     wrap off,
+#                     vert center,
+#                     horiz centre;
+#                 pattern:
+#                     pattern solid,
+#                     fore-colour 22;
+#                 borders:
+#                     left THIN,
+#                     right THIN,
+#                     top THIN,
+#                     bottom THIN;
+#                 """)
+#         style_data = xlwt.easyxf("""
+#                         font:
+#                             name 微软雅黑,
+#                             colour_index black,
+#                             bold off,
+#                             height 180;
+#                         align:
+#                             wrap off,
+#                             vert center,
+#                             horiz left;
+#                         pattern:
+#                             pattern solid,
+#                             fore-colour 1;
+#                         borders:
+#                             left thin,
+#                             right thin,
+#                             top thin,
+#                             bottom thin;
+#                         """)
+#
+#         workbook = xlwt.Workbook()
+#         worksheet = workbook.add_sheet('社员信息简表')
+#
+#         column = 0
+#         row = 0
+#         for title in titles:
+#             worksheet.write(row, column, title, style_heading)
+#             worksheet.col(column).width = titles[title] * 256
+#             column += 1
+#
+#         if len(members_simple_info) > 0:
+#             row = 1
+#             for member in members_simple_info:
+#                 column = 0
+#                 for key in column_name:
+#                     worksheet.write(row, column, '', style_data) if key not in member else worksheet.write(row, column,
+#                                                                                                            member[key],
+#                                                                                                            style_data)
+#                     column += 1
+#
+#                 row += 1
+#         else:
+#             pass
+#
+#         sio = BytesIO()
+#         workbook.save(sio)
+#
+#         agent = self.request.headers.get('User-Agent')
+#         if 'Firefox' in agent:
+#             if self.request.arguments:
+#                 download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+#                     '社员信息汇总表.xls',
+#                     "utf-8")
+#             else:
+#                 download_file_name = "attachment;filename*=utf-8'zh_cn'" + urllib.parse.quote(
+#                     '社员信息汇总表.xls',
+#                     "utf-8")
+#         else:
+#             if self.request.arguments:
+#                 download_file_name = 'attachment; filename=' + urllib.parse.quote(
+#                     '社员信息汇总表.xls', "utf-8")
+#             else:
+#                 download_file_name = 'attachment; filename=' + urllib.parse.quote(
+#                     '社员信息汇总表.xls', "utf-8")
+#         self.set_header('Content-Type', 'application/vnd.ms-excel')
+#         self.set_header('Content-Disposition', download_file_name)
+#         self.write(sio.getvalue())
+#         self.finish()

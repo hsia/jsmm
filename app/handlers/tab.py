@@ -3,10 +3,10 @@
 
 import json
 import tornado.web
-import tornado_utils
 from pypinyin import lazy_pinyin
 
 from commons import couch_db, make_uuid
+from lib import tornado_utils
 
 
 @tornado_utils.bind_to(r'/tab/?')

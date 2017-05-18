@@ -3,9 +3,9 @@
 
 import json
 import tornado.web
-import tornado_utils
 import re
 from commons import couch_db
+from lib import tornado_utils
 
 
 @tornado_utils.bind_to(r'/members/reminder/(.*)')

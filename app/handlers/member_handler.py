@@ -5,10 +5,8 @@ import json
 
 import tornado.web
 
-import tornado_utils
-
-from app.member_importer import ErrorType
 from commons import couch_db, formatter_time
+from lib import tornado_utils, ErrorType
 
 
 @tornado_utils.bind_to(r'/members/([0-9a-f]+)')

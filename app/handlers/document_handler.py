@@ -5,9 +5,9 @@
 import json
 
 import tornado.web
-import tornado_utils
 
 from commons import couch_db
+from lib import tornado_utils
 
 
 @tornado_utils.bind_to(r'/document/([0-9a-f]+)')

@@ -3,11 +3,13 @@
 '''
 Copyright lixia@ccrise.com
 '''
-import traceback
-import uuid
-from xlrd import open_workbook
-from commons import couch_db, get_retire_time
 import json
+import uuid
+
+from xlrd import open_workbook
+
+from commons import couch_db, get_retire_time
+from lib.ErrorType import ErrorType
 
 
 def make_uuid():
@@ -34,21 +36,43 @@ def format_date(date_str):
     return '-'.join(splited)  # 'YYYY-MM-DD'
 
 
-def import_info(file_info):
+def import_info_old(file_info):
+    """返回错误的格式
+            成功：{"success":True}
+            错误：{"success":False, "fileName":file_name,"errorContent":ErrorType.errorType.value}
+    """
     try:
         if 'excel' not in file_info['content_type'] and 'sheet' not in file_info['content_type']:
-            result = {"success": False, "filename": file_info["filename"]}
+            result = {"success": False, "filename": file_info["filename"],
+                      "errorContent": ErrorType.FILETYPEERROR.value}
         else:
             member_info_importer = MemberInfoImporter(file_info['path'])
             member_info_importer.get_basic_info()
-            if member_info_importer.member.get('name') and member_info_importer.member.get('birthday'):
-                member_info_importer.main_function()
-                result = member_info_importer.save_member()
+            if not member_info_importer.member.get('name', ''):
+                # 基础信息表中姓名为空
+                result = {"success": False, "fileName": file_info["filename"],
+                          "errorContent": ErrorType.NAMEERROR.value}
+            elif type(member_info_importer.member.get('name')) == float:
+                # 基础信息表中姓名全部位数字
+                result = {"success": False, "fileName": file_info["filename"],
+                          "errorContent": ErrorType.NAMEALLDIGITERROR.value}
+            elif not member_info_importer.member.get('birthday', ''):
+                # 基础信息表中出生日期为空
+                result = {"success": False, "fileName": file_info["filename"],
+                          "errorContent": ErrorType.BIRTHDAYERROR.value}
+            elif not member_info_importer.member.get('branch', ''):
+                # 基础信息表中所属支社为空
+                result = {"success": False, "fileName": file_info["filename"],
+                          "errorContent": ErrorType.BRANCHERROR.value}
             else:
-                result = {"success": False, "filename": file_info["filename"]}
+                result_main = member_info_importer.main_function(file_info["filename"])
+                if result_main:
+                    result = result_main
+                else:
+                    result = member_info_importer.save_member(file_info["filename"])
     except Exception as e:
         print(Exception, ":", e)
-        result = {"success": False, "filename": file_info["filename"]}
+        result = {"success": False, "filename": file_info["filename"], "errorContent": ErrorType.OTHERERROR.value}
     finally:
         return result
 
@@ -152,11 +176,15 @@ class MemberInfoImporter:
         self._member['birthday'] = format_date(str(self._member['birthday']))
         self._member['jobTime'] = format_date(str(self._member['jobTime']))
 
-    def main_function(self):
-        for row_index in range(self.current_row, self._sheet.nrows):
-            name = self._sheet.cell_value(row_index, 0)
-            if name in self._tabs_name:
-                self._tabs_name[name](row_index + 2)
+    def main_function(self, file_name):
+        try:
+            for row_index in range(self.current_row, self._sheet.nrows):
+                name = self._sheet.cell_value(row_index, 0)
+                if name in self._tabs_name:
+                    self._tabs_name[name](row_index + 2)
+        except Exception as e:
+            print(e)
+            return {'success': False, "fileName": file_name, 'errorContent': ErrorType.DATAFORMATEERROR.value}
 
     def member_edu_degree(self, row_index):
         """
@@ -415,7 +443,7 @@ class MemberInfoImporter:
                 social_duties = {}
                 self._member["socialduties"].append(social_duties)
 
-    def save_member(self):
+    def save_member(self, file_name):
         """
         保存社员信息
         :return:
@@ -434,10 +462,34 @@ class MemberInfoImporter:
         result = {}
         if len(member["docs"]):
             memberInfo = member["docs"]
-            msg = {"success": False, "name": memberInfo[0]["name"], "birthday": memberInfo[0]["birthday"]}
+            # 根据姓名和出生日期判断重复数据
+            msg = {"success": False, "fileName": file_name, "errorContent": ErrorType.FILEREPEATERROR.value}
             return msg
         else:
             try:
+                # 判断组织机构树中是否已经存在该机构名称，如果不存在则添加
+                branch = self._member.get('branch', '')
+                if branch:
+                    response = couch_db.get(r'/jsmm/_design/organ/_view/getOrgan')
+                    organ_content = json.loads(response.body.decode('utf-8'))
+                    organ_row = organ_content['rows'][0]
+                    organ_value = organ_row['value']
+                    organ_cy = (((organ_value['organ'])[0])['children'])[0]
+
+                    organ = {'id': branch, 'text': branch}
+
+                    if 'children' not in organ_cy:
+                        organ_cy['children'] = list()
+                    else:
+                        pass
+
+                    # 如果支社名称不存在，则添加支社
+                    if organ not in organ_cy['children']:
+                        organ_cy['children'].append(organ)
+                        couch_db.put(r'/jsmm/%(id)s' % {"id": organ_value['_id']}, organ_value)
+                    else:
+                        pass
+
                 self._member["retireTime"] = get_retire_time(self._member["birthday"], self._member["gender"])
                 self._member["lost"] = "否"
                 self._member["stratum"] = "否"
@@ -445,7 +497,8 @@ class MemberInfoImporter:
                 result = {'success': True}
             except Exception as e:
                 print(Exception, ":", e)
-                result = {'success': False, 'content': '日期错误，请检查文件中的日期格式(年.月.日(1980.01.01))或者日期超出正常范围'}
+                # 日期格式错误
+                result = {'success': False, "fileName": file_name, 'errorContent': ErrorType.DATAFORMATEERROR.value}
             finally:
                 return result
 

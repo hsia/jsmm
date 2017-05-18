@@ -10,6 +10,7 @@ __all__ = [
     'tab',
     'reminder_handler',
     'member_export',
+    'member_export_old',
     'organ_handler',
     'login_handler',
     'user_manage_handler'

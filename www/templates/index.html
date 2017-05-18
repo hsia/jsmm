@@ -153,6 +153,15 @@
            data-options="label:'tab名称:',required:true,prompt:'点击下拉框选中tab,进行编辑或者修改。'">
     <table id="client_edit_tab_table" style="width:100%;height:100%"></table>
 </div>
+<div id="member_upload_old">
+    <div style="margin: 45px 0 0 40px">
+        <form id="member_upload_old_form" action='/members/uploadold/' enctype="multipart/form-data" method='post'>
+            <input id="memeberUploadNameOld" class="easyui-filebox" name='members' data-options="prompt:'请选择文件'"
+                   style="width: 80%"
+                   accept=".xls,.xlsx" multiple/><br/>
+        </form>
+    </div>
+</div>
 <div id="member_upload">
     <div style="margin: 45px 0 0 40px">
         <form id="member_upload_form" action='/members/upload/' enctype="multipart/form-data" method='post'>
@@ -297,9 +306,15 @@
 <!--</div>-->
 <div id="members_export_excel">
     <div style="padding:5px 0;">
-        <a id="memberInfo_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton" style="width:100%">个人信息导出</a>
-        <a id="memberInfo_cus_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton"
+        <!--导入从北京市社员系统中导出的社员信息-->
+        <a id="memberInfo_export_old" data-options="iconCls:'export-excel'" class="easyui-linkbutton"
+           style="width:100%">个人信息导出</a>
+        <a id="memberInfo_cus_export_old" data-options="iconCls:'export-excel'" class="easyui-linkbutton"
            style="width:100%">个人信息导出(自定义)</a>
+        <!--导入从标准的社员信息-->
+        <!--<a id="memberInfo_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton" style="width:100%">个人信息导出</a>-->
+        <!--<a id="memberInfo_cus_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton"-->
+        <!--style="width:100%">个人信息导出(自定义)</a>-->
         <a id="members_export" data-options="iconCls:'export-excel'" class="easyui-linkbutton"
            style="width:100%">社员简表导出</a>
     </div>

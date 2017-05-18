@@ -25087,6 +25087,64 @@ $(function () {
             memberSearch();
         }
     }, '-', {
+        /*导入从北京市社员系统中导出的社员信息*/
+        text: '社员导入',
+        iconCls: 'icon-import',
+        handler: function () {
+            $('#member_upload_old_form').form('clear');
+            $('#member_upload_old').dialog({
+                width: 300,
+                height: 200,
+                title: '导入社员',
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons: [{
+                    iconCls: 'icon-import',
+                    text: '导入',
+                    handler: function () {
+                        uploadName = $("#memeberUploadNameOld").filebox('getValue')
+                        console.log(uploadName)
+                        if (uploadName == '') {
+                            $.messager.alert('提示信息', "请选择需要导入的社员信息文件！");
+                            return false;
+                        }
+                        $('#member_upload_old').dialog('close');
+                        $.messager.progress({
+                            title: 'Please waiting',
+                            msg: 'Loading data...'
+                        });
+                        $('#member_upload_old_form').form('submit', {
+                            success: function (data) {
+                                var member = JSON.parse(data);
+                                $memberList.datagrid('reload');
+                                $('#organTree').tree('reload');
+                                if (member.success == false) {
+                                    var error_members = '<b>以下文件导入发生错误:</b><br/>';
+                                    member.msg.forEach(function (obj) {
+                                        error_members += obj.fileName + ":" + obj.errorContent + "<br/>";
+                                    });
+
+                                    $.messager.progress('close');
+                                    $.messager.alert('提示信息', error_members);
+                                } else {
+                                    $.messager.progress('close');
+                                    // $.messager.alert('提示信息', '导入社员成功！', 'info');
+                                }
+                            }
+                        });
+                    }
+                }, {
+                    iconCls: 'icon-cancel',
+                    text: '取消',
+                    handler: function () {
+                        $('#member_upload_form').form('clear');
+                        $('#member_upload').dialog('close');
+                    }
+                }]
+            })
+        }
+    }, /*'-', {/!*导入从标准的社员信息*!/
         text: '社员导入',
         iconCls: 'icon-import',
         handler: function () {
@@ -25118,24 +25176,7 @@ $(function () {
                                 $memberList.datagrid('reload');
                                 $('#organTree').tree('reload');
                                 if (member.success == false) {
-                                    // error_members = '';
-                                    // var error1_members = '';
-                                    // var error2_members = '';
-                                    // member.msg.forEach(function (obj) {
-                                    //     if (obj.name != undefined) {
-                                    //         error1_members += obj.name + "【" + obj.birthday + "】<br/>";
-                                    //     }
-                                    //     if (obj.filename != undefined) {
-                                    //         error2_members += obj.filename + "<br/>";
-                                    //     }
-                                    // });
-                                    // if (error1_members != '') {
-                                    //     error_members += '<b>以下社员导入失败(姓名和出生日期重复):</b><br/>' + error1_members;
-                                    // }
-                                    // if (error2_members != '') {
-                                    //     error_members += '<b>以下导入文件发生错误,请检查文件内容或者文件格式:</b><br/>' + error2_members;
-                                    // }
-                                    error_members = '<b>以下文件导入发生错误:</b><br/>';
+     var error_members = '<b>以下文件导入发生错误:</b><br/>';
                                     member.msg.forEach(function (obj) {
                                         error_members += obj.fileName + ":" + obj.errorContent + "<br/>";
                                     });
@@ -25159,7 +25200,7 @@ $(function () {
                 }]
             })
         }
-    }, '-', {
+     }, */'-', {
         text: '社员导出',
         iconCls: 'save-excel',
         handler: function () {
@@ -25553,14 +25594,34 @@ $(function () {
 
     function exportMembersExcel() {
         $('#members_export_excel').dialog({
+            height: 200,
+            width: 250,
             title: '社员导出',
             closed: false,
             cache: false,
-            modal: true,
-            height: 150,
-            width: 200
+            modal: true
         })
     }
+
+    $('#memberInfo_export_old').click(function () {
+        var member = $memberList.datagrid('getSelected');
+        if (member == null) {
+            $.messager.alert('提示', '请选择需要导出的社员!', 'error');
+            return;
+        }
+        window.location.href = '/member/exportold/' + member._id;
+        $('#members_export_excel').dialog('close');
+    });
+
+    $('#memberInfo_cus_export_old').click(function () {
+        var member = $memberList.datagrid('getSelected');
+        if (member == null) {
+            $.messager.alert('提示', '请选择需要导出的社员!', 'error');
+            return;
+        }
+        window.location.href = '/member/exportold/' + member._id + '?cus = cus';
+        $('#members_export_excel').dialog('close');
+    });
 
     $('#memberInfo_export').click(function () {
         var member = $memberList.datagrid('getSelected');
