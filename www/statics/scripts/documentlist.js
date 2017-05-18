@@ -55,6 +55,8 @@ $(function () {
         ]]
     });
 
+    $dataGrid.datagrid("keyCtr");
+
     //点击组织机构触发事件
     var organName = null;
     window.addEventListener("tree-row-selection", function (event) {

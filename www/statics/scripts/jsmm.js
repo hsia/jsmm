@@ -24735,6 +24735,107 @@ function mySort(index, type, $grid) {
  * Created by S on 2017/2/16.
  */
 $(function () {
+    $.extend($.fn.datagrid.methods, {
+        keyCtr: function (jq) {
+            return jq.each(function () {
+                var grid = $(this);
+                grid.datagrid('getPanel').panel('panel').attr('tabindex', 1).bind('keydown', function (e) {
+                    switch (e.keyCode) {
+                        case 38: // up
+                            var selected = grid.datagrid('getSelected');
+                            if (selected) {
+                                var index = grid.datagrid('getRowIndex', selected);
+                                grid.datagrid('selectRow', index - 1);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    $('#tt').datagrid('beginEdit', index - 1);
+                                    var ed = $('#tt').datagrid('getEditor', {index: index - 1, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            } else {
+                                var rows = grid.datagrid('getRows');
+                                grid.datagrid('selectRow', rows.length - 1);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    $('#tt').datagrid('beginEdit', rows.length - 1);
+                                    var ed = $('#tt').datagrid('getEditor', {index: rows.length - 1, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            }
+                            break;
+                        case 40: // down
+                            var selected = grid.datagrid('getSelected');
+                            if (selected) {
+                                var index = grid.datagrid('getRowIndex', selected);
+                                grid.datagrid('selectRow', index + 1);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    $('#tt').datagrid('beginEdit', index + 1);
+                                    var ed = $('#tt').datagrid('getEditor', {index: index + 1, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            } else {
+                                grid.datagrid('selectRow', 0);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    $('#tt').datagrid('beginEdit', 0);
+                                    var ed = $('#tt').datagrid('getEditor', {index: 0, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            }
+                            break;
+                        case 37: // left
+                            var selected = grid.datagrid('getSelected');
+                            if (selected) {
+                                var index = grid.datagrid('getRowIndex', selected);
+                                //grid.datagrid('selectRow', index - 1);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    $('#tt').datagrid('beginEdit', index);
+                                    if (columnMap[fieldname] - 1 == 0) fieldname = columnarray[columnarray.length - 1];//因本表格的第一列是不可编辑列，所以到了第二列时再向左直接到最后一列;
+                                    else fieldname = columnarray[columnMap[fieldname] - 1];
+                                    var ed = $('#tt').datagrid('getEditor', {index: index, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            } else {
+                                var rows = grid.datagrid('getRows');
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    $('#tt').datagrid('beginEdit', rows.length - 1);
+                                    fieldname = columnarray[columnarray.length - 1];
+                                    var ed = $('#tt').datagrid('getEditor', {index: rows.length - 1, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            }
+                            break;
+                        case 39: // right
+                            var selected = grid.datagrid('getSelected');
+                            if (selected) {
+                                var index = grid.datagrid('getRowIndex', selected);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    if (columnMap[fieldname] + 1 == columnarray.length) fieldname = columnarray[1];//因第一列为不可编辑列，所以在最右边时直接跳到第二列
+                                    else fieldname = columnarray[columnMap[fieldname] + 1];
+                                    var ed = $('#tt').datagrid('getEditor', {index: index, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            } else {
+                                grid.datagrid('selectRow', 0);
+                                //单元格聚焦
+                                if (fieldname != "") {
+                                    fieldname = columnarray[1];//因第一列为不可编辑列，所以在最右边时直接跳到第二列
+                                    var ed = $('#tt').datagrid('getEditor', {index: 0, field: fieldname});
+                                    $(ed.target).focus();
+                                }
+                            }
+                            break;
+                    }
+                });
+            });
+        }
+    });
+
+
     $("#logout").click(function () {
         $.messager.confirm('确定', '注销当前用户？', function (r) {
             if (r) {
@@ -25145,61 +25246,61 @@ $(function () {
             })
         }
     }, /*'-', {/!*导入从标准的社员信息*!/
-        text: '社员导入',
-        iconCls: 'icon-import',
-        handler: function () {
-            $('#member_upload_form').form('clear');
-            $('#member_upload').dialog({
-                width: 300,
-                height: 200,
-                title: '导入社员',
-                closed: false,
-                cache: false,
-                modal: true,
-                buttons: [{
-                    iconCls: 'icon-import',
-                    text: '导入',
-                    handler: function () {
-                        uploadName = $("#memeberUploadName").filebox('getValue')
-                        if (uploadName == '') {
-                            $.messager.alert('提示信息', "请选择需要导入的社员信息文件！");
-                            return false;
-                        }
-                        $('#member_upload').dialog('close');
-                        $.messager.progress({
-                            title: 'Please waiting',
-                            msg: 'Loading data...'
-                        });
-                        $('#member_upload_form').form('submit', {
-                            success: function (data) {
-                                var member = JSON.parse(data);
-                                $memberList.datagrid('reload');
-                                $('#organTree').tree('reload');
-                                if (member.success == false) {
+     text: '社员导入',
+     iconCls: 'icon-import',
+     handler: function () {
+     $('#member_upload_form').form('clear');
+     $('#member_upload').dialog({
+     width: 300,
+     height: 200,
+     title: '导入社员',
+     closed: false,
+     cache: false,
+     modal: true,
+     buttons: [{
+     iconCls: 'icon-import',
+     text: '导入',
+     handler: function () {
+     uploadName = $("#memeberUploadName").filebox('getValue')
+     if (uploadName == '') {
+     $.messager.alert('提示信息', "请选择需要导入的社员信息文件！");
+     return false;
+     }
+     $('#member_upload').dialog('close');
+     $.messager.progress({
+     title: 'Please waiting',
+     msg: 'Loading data...'
+     });
+     $('#member_upload_form').form('submit', {
+     success: function (data) {
+     var member = JSON.parse(data);
+     $memberList.datagrid('reload');
+     $('#organTree').tree('reload');
+     if (member.success == false) {
      var error_members = '<b>以下文件导入发生错误:</b><br/>';
-                                    member.msg.forEach(function (obj) {
-                                        error_members += obj.fileName + ":" + obj.errorContent + "<br/>";
-                                    });
+     member.msg.forEach(function (obj) {
+     error_members += obj.fileName + ":" + obj.errorContent + "<br/>";
+     });
 
-                                    $.messager.progress('close');
-                                    $.messager.alert('提示信息', error_members);
-                                } else {
-                                    $.messager.progress('close');
-                                    // $.messager.alert('提示信息', '导入社员成功！', 'info');
-                                }
-                            }
-                        });
-                    }
-                }, {
-                    iconCls: 'icon-cancel',
-                    text: '取消',
-                    handler: function () {
-                        $('#member_upload_form').form('clear');
-                        $('#member_upload').dialog('close');
-                    }
-                }]
-            })
-        }
+     $.messager.progress('close');
+     $.messager.alert('提示信息', error_members);
+     } else {
+     $.messager.progress('close');
+     // $.messager.alert('提示信息', '导入社员成功！', 'info');
+     }
+     }
+     });
+     }
+     }, {
+     iconCls: 'icon-cancel',
+     text: '取消',
+     handler: function () {
+     $('#member_upload_form').form('clear');
+     $('#member_upload').dialog('close');
+     }
+     }]
+     })
+     }
      }, */'-', {
         text: '社员导出',
         iconCls: 'save-excel',
@@ -25332,6 +25433,8 @@ $(function () {
             });
         }
     });
+
+    $memberList.datagrid("keyCtr");
 
     function refreshDocumentListEvent() {
         var event = new CustomEvent("organ-tree-operation", {});
