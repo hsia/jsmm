@@ -23,6 +23,7 @@ class OrganHandler(tornado.web.RequestHandler):
     def get(self):
         """获取组织机构信息
         """
+        print(self.get_secure_cookie("username"))
         response = couch_db.get(r'/jsmm/_design/organ/_view/getOrgan')
         organ_content = json.loads(response.body.decode('utf-8'))
         organ_row = organ_content['rows'][0]
